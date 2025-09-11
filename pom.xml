@@ -20,10 +20,5 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>24.0.2</version>
-        </dependency>
     </dependencies>
 </project>
