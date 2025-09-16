@@ -8,4 +8,8 @@ public class Player {
         this.name = name;
         this.symbol = symbol;
     }
+
+    public Tile getSymbol(){
+        return symbol;
+    }
 }
