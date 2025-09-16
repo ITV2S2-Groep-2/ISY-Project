@@ -1,4 +1,5 @@
 package com.isy;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,7 +12,7 @@ public class Main {
 //
 //        boolean xOrY = true;
 //        int x = 0, y = 0;
-//        while (scanner.hasNext()){
+//        while (scanner.hasNext() && !board.checkWin(x, y, null)){
 //            String next = scanner.next();
 //
 //            if (next.equalsIgnoreCase("exit()")){
@@ -58,6 +59,7 @@ public class Main {
 //            }else{
 //                System.out.println("Y: ");
 //            }
+//
 //        }
     }
 }

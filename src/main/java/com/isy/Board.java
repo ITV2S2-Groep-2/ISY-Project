@@ -37,6 +37,51 @@ public class Board {
         return true;
     }
 
+    public boolean checkWin(int x, int y, Player p) {
+        Tile symbol = p.getSymbol();
+
+        boolean rowWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (this.tiles[i][y] != symbol) {
+                rowWin = false;
+            }
+        }
+        if (rowWin) return true;
+
+
+        boolean colWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (this.tiles[x][i] != symbol) {
+                colWin = false;
+            }
+        }
+        if (colWin) return true;
+
+
+        if (x == y) {
+            boolean diagWin = true;
+            for (int i = 0; i < 3; i++) {
+                if (this.tiles[i][i] != symbol) {
+                    diagWin = false;
+                }
+            }
+            if (diagWin) return true;
+        }
+
+
+        if (x + y == 2) {
+            boolean antiDiagWin = true;
+            for (int i = 0; i < 3; i++) {
+                if (this.tiles[i][2 - i] != symbol) {
+                    antiDiagWin = false;
+                }
+            }
+            if (antiDiagWin) return true;
+        }
+
+        return false;
+    }
+
     /**
      * Reset the boards to EMPTY
      */
