@@ -1,6 +1,7 @@
 package com.isy;
+import java.util.Scanner;
 
-public class Player {
+public abstract class Player {
     private final String name;
     private final Tile symbol;
 
@@ -9,7 +10,13 @@ public class Player {
         this.symbol = symbol;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Tile getSymbol(){
         return symbol;
     }
+
+    public abstract int[] getMove(Board board);
 }
