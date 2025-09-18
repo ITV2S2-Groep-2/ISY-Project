@@ -16,7 +16,7 @@ public class TicTacToeScene extends Scene {
     @Override
     public void init() {
         JPanel controlPanel = this.getScenePanel();
-        controlPanel.setLayout(new FlowLayout());
+        controlPanel.setLayout(new GridBagLayout());
 
         JPanel panel = new JPanel();
         GridLayout layout = new GridLayout(3, 3);
@@ -45,6 +45,6 @@ public class TicTacToeScene extends Scene {
             }
         }
 
-        controlPanel.add(panel);
+        controlPanel.add(panel, new GridBagConstraints());
     }
 }

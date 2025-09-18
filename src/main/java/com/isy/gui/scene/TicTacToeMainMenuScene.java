@@ -17,6 +17,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
+        panel.add(createHeader("TicTacToe"));
         panel.add(createDefaultButton("Player VS Player(Offline)"), getConstraints());
         panel.add(createDefaultButton("Player VS AI(Offline)", this::startTicTacToeGame), getConstraints());
         panel.add(createDefaultButton("AI VS AI(Offline)"), getConstraints());

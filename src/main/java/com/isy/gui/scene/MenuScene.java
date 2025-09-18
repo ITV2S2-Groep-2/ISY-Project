@@ -54,4 +54,12 @@ public abstract class MenuScene extends Scene{
     public JButton createDefaultButton(String text){
         return createDefaultButton(text, null);
     }
+
+    public JLabel createHeader(String text){
+        JLabel label = new JLabel(text);
+        label.setForeground(Style.primaryTextColor);
+        label.setFont(new Font("Arial", Font.BOLD, 24));
+
+        return label;
+    }
 }
