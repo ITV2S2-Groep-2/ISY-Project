@@ -46,6 +46,10 @@ public class Board {
         }
     }
 
+    public Tile[][] getTiles() {
+        return tiles;
+    }
+
     /**
      * Converts board to String, usefully for debugging
      * @return A string containing an ascii layout of the board
