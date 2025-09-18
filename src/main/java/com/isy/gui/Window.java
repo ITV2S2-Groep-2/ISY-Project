@@ -3,9 +3,11 @@ package com.isy.gui;
 import com.isy.Board;
 import com.isy.gui.scene.Scene;
 import com.isy.gui.scene.SceneManager;
+import com.isy.gui.scene.TicTacToeMainMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Window {
     private Board board;
@@ -16,12 +18,7 @@ public class Window {
 
         this.manager = new SceneManager(this);
         this.manager.addScene(new TicTacToeScene(this), true);
-        this.manager.addScene(new Scene("a", this) {
-            @Override
-            public void init() {
-                this.getScenePanel().add(new JButton("TEST"));
-            }
-        }, true);
+        this.manager.addScene(new TicTacToeMainMenuScene(this), true);
 
         SwingUtilities.invokeLater(this::createAndShowGUI);
     }
@@ -31,7 +28,8 @@ public class Window {
         JFrame frame = new JFrame("HelloWorldSwing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.add(this.manager.generatePanel());
+        frame.setLayout(new BorderLayout());
+        frame.add(this.manager.generatePanel(), BorderLayout.CENTER);
 
         //Display the window.
         frame.setSize(800, 800);

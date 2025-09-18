@@ -4,6 +4,7 @@ import com.isy.gui.Window;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class SceneManager {
             scene.show();
             currentScene = scene;
         }
+
+        scene.init();
     }
 
     public void addScene(Scene scene){
@@ -56,11 +59,11 @@ public class SceneManager {
 
     public JPanel generatePanel(){
         JPanel panel = new JPanel();
-        BoxLayout layout = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        BorderLayout layout = new BorderLayout();
         panel.setLayout(layout);
 
         for (Scene scene : this.scenes) {
-            panel.add(scene.getScenePanel());
+            panel.add(scene.getScenePanel(), BorderLayout.CENTER);
         }
 
         return panel;
