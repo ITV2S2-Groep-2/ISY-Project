@@ -23,8 +23,8 @@ public class TicTacToeScene extends Scene {
         panel.setSize(100, 100);
         panel.setLayout(layout);
 
-        for (int x = 0; x < this.getWindow().getBoard().getTiles().length; x++) {
-            for (int y = 0; y < this.getWindow().getBoard().getTiles()[x].length; y++) {
+        for (int y = 0; y < this.getWindow().getBoard().getHeight(); y++) {
+            for (int x = 0; x < this.getWindow().getBoard().getWidth(); x++) {
                 final JButton button = new JButton(this.getWindow().getBoard().getTile(x, y).toString());
                 button.setBackground(Style.primaryBackgroundColor);
                 button.setBorder(new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor));
@@ -32,7 +32,7 @@ public class TicTacToeScene extends Scene {
                 button.setFocusPainted(false);
                 button.setContentAreaFilled(false);
                 button.setOpaque(true);
-                button.setPreferredSize(new Dimension(50, 50));
+                button.setPreferredSize(new Dimension(80, 80));
 
                 final int finalX = x;
                 final int finalY = y;

@@ -116,4 +116,14 @@ public class Board {
 
         return stringBuilder.toString();
     }
+
+    //TODO:MAKE THIS DYNAMIC
+    public int getHeight() {
+        return 3;
+    }
+
+    //TODO:MAKE THIS DYNAMIC
+    public int getWidth() {
+        return 3;
+    }
 }
