@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.PlayerTurnEventListener;
 import com.isy.Tile;
 import com.isy.gui.Window;
 
@@ -22,8 +23,8 @@ public class TicTacToeScene extends Scene {
         panel.setSize(100, 100);
         panel.setLayout(layout);
 
-        for (int x = 0; x < this.getWindow().getBoard().getTiles().length; x++) {
-            for (int y = 0; y < this.getWindow().getBoard().getTiles()[x].length; y++) {
+        for (int y = 0; y < this.getWindow().getBoard().getTiles().length; y++) {
+            for (int x = 0; x < this.getWindow().getBoard().getTiles()[y].length; x++) {
                 final JButton button = new JButton(this.getWindow().getBoard().getTile(x, y).toString());
                 button.setBackground(new Color(255, 255, 255));
                 button.setBorder(new StrokeBorder(new BasicStroke(2), new Color(0, 0, 0)));
@@ -33,12 +34,7 @@ public class TicTacToeScene extends Scene {
                 button.setOpaque(true);
                 button.setPreferredSize(new Dimension(50, 50));
 
-                final int finalX = x;
-                final int finalY = y;
-                button.addActionListener((e -> {
-                    this.getWindow().getBoard().setTile(finalX, finalY, Tile.X);
-                    button.setText(this.getWindow().getBoard().getTile(finalX, finalY).toString());
-                }));
+                button.addActionListener(new PlayerTurnEventListener(x, y));
 
                 panel.add(button);
             }

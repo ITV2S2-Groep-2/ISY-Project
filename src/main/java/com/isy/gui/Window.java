@@ -1,6 +1,7 @@
 package com.isy.gui;
 
 import com.isy.Board;
+import com.isy.Game;
 import com.isy.gui.scene.Scene;
 import com.isy.gui.scene.SceneManager;
 import com.isy.gui.scene.TicTacToeScene;
@@ -8,11 +9,12 @@ import com.isy.gui.scene.TicTacToeScene;
 import javax.swing.*;
 
 public class Window {
-    private Board board;
+    private Game game;
+//    private Board board;
     private final SceneManager manager;
 
     public Window(){
-        this.board = new Board();
+        this.game = new Game();
 
         this.manager = new SceneManager(this);
         this.manager.addScene(new TicTacToeScene(this), true);
@@ -21,7 +23,7 @@ public class Window {
             public void init() {
                 this.getScenePanel().add(new JButton("TEST"));
             }
-        }, true);
+        }, false);
 
         SwingUtilities.invokeLater(this::createAndShowGUI);
     }
@@ -40,6 +42,6 @@ public class Window {
     }
 
     public Board getBoard() {
-        return board;
+        return this.game.getBoard();
     }
 }
