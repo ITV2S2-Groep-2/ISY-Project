@@ -6,4 +6,9 @@ public class AiPlayer extends Player {
     }
 
     // getMove() etc.
+
+    @Override
+    public int[] getMove(Board board) {
+        return new int[0];
+    }
 }
