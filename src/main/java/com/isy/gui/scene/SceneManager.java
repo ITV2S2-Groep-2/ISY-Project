@@ -48,23 +48,23 @@ public class SceneManager {
     public void showScene(String name){
         Scene scene = getScene(name);
         if (scene != null){
-            if (currentScene != null){
-                currentScene.hide();
+            JPanel panel = scene.getScenePanel().getParent() instanceof JPanel ? (JPanel) scene.getScenePanel().getParent() : null;
+            if (panel != null) {
+                CardLayout cl = (CardLayout) panel.getLayout();
+                cl.show(panel, name);
             }
-
-            scene.show();
             currentScene = scene;
         }
     }
 
     public JPanel generatePanel(){
-        JPanel panel = new JPanel();
-        BorderLayout layout = new BorderLayout();
-        panel.setLayout(layout);
+        JPanel panel = new JPanel(new CardLayout());
 
         for (Scene scene : this.scenes) {
-            panel.add(scene.getScenePanel(), BorderLayout.CENTER);
+            panel.add(scene.getScenePanel(), scene.getName());
         }
+
+        ((CardLayout) panel.getLayout()).show(panel, currentScene.getName());
 
         return panel;
     }

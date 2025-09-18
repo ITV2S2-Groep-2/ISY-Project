@@ -17,6 +17,7 @@ public abstract class Scene {
         this.show = false;
 
         this.scenePanel.setVisible(this.show);
+        this.scenePanel.setName(this.name);
     }
 
     public String getName(){

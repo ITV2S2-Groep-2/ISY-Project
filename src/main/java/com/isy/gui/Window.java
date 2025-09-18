@@ -17,8 +17,8 @@ public class Window {
         this.board = new Board();
 
         this.manager = new SceneManager(this);
-        this.manager.addScene(new TicTacToeScene(this), true);
-//        this.manager.addScene(new TicTacToeMainMenuScene(this), false);
+        this.manager.addScene(new TicTacToeScene(this), false);
+        this.manager.addScene(new TicTacToeMainMenuScene(this), true);
 
         SwingUtilities.invokeLater(this::createAndShowGUI);
     }
@@ -39,5 +39,9 @@ public class Window {
 
     public Board getBoard() {
         return board;
+    }
+
+    public SceneManager getManager() {
+        return manager;
     }
 }

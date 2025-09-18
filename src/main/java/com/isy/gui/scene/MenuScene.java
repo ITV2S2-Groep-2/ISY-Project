@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.StrokeBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public abstract class MenuScene extends Scene{
     private final GridBagConstraints constraints;
@@ -32,7 +33,7 @@ public abstract class MenuScene extends Scene{
         return constraints;
     }
 
-    public JButton createDefaultButton(String text){
+    public JButton createDefaultButton(String text, ActionListener listener){
         JButton button = new JButton(text);
         button.setBackground(Style.primaryBackgroundColor);
         button.setBorder(BorderFactory.createCompoundBorder(
@@ -44,6 +45,13 @@ public abstract class MenuScene extends Scene{
         button.setContentAreaFilled(false);
         button.setOpaque(true);
 
+        if (listener != null)
+            button.addActionListener(listener);
+
         return button;
+    }
+
+    public JButton createDefaultButton(String text){
+        return createDefaultButton(text, null);
     }
 }
