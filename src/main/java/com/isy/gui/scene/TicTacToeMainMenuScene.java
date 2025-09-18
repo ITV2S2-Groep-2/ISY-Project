@@ -1,8 +1,10 @@
 package com.isy.gui.scene;
 
+import com.isy.gui.Style;
 import com.isy.gui.Window;
 
 import javax.swing.*;
+import javax.swing.border.StrokeBorder;
 import java.awt.*;
 
 public class TicTacToeMainMenuScene extends MenuScene{
@@ -14,9 +16,10 @@ public class TicTacToeMainMenuScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        panel.add(new JButton("Player VS Player(Offline)"), getConstraints());
-        panel.add(new JButton("Player VS AI(Offline)"), getConstraints());
-        panel.add(new JButton("AI VS AI(Offline)"), getConstraints());
-        panel.setBackground(new Color(255, 0 , 0));
+        panel.add(createDefaultButton("Player VS Player(Offline)"), getConstraints());
+        panel.add(createDefaultButton("Player VS AI(Offline)"), getConstraints());
+        panel.add(createDefaultButton("AI VS AI(Offline)"), getConstraints());
+
+        panel.setBackground(Style.menuBackgroundColor);
     }
 }

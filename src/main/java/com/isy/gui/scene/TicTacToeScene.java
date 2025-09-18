@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.Tile;
+import com.isy.gui.Style;
 import com.isy.gui.Window;
 
 import javax.swing.*;
@@ -25,8 +26,8 @@ public class TicTacToeScene extends Scene {
         for (int x = 0; x < this.getWindow().getBoard().getTiles().length; x++) {
             for (int y = 0; y < this.getWindow().getBoard().getTiles()[x].length; y++) {
                 final JButton button = new JButton(this.getWindow().getBoard().getTile(x, y).toString());
-                button.setBackground(new Color(255, 255, 255));
-                button.setBorder(new StrokeBorder(new BasicStroke(2), new Color(0, 0, 0)));
+                button.setBackground(Style.primaryBackgroundColor);
+                button.setBorder(new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor));
                 button.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 button.setFocusPainted(false);
                 button.setContentAreaFilled(false);
