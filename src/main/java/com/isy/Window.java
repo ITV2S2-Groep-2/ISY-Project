@@ -25,8 +25,8 @@ public class Window {
         panel.setSize(100, 100);
         panel.setLayout(layout);
 
-        for (int x = 0; x < board.getTiles().length; x++) {
-            for (int y = 0; y < board.getTiles()[x].length; y++) {
+        for (int y = 0; y < board.getTiles().length; y++) {
+            for (int x = 0; x < board.getTiles()[y].length; x++) {
                 final JButton button = new JButton(board.getTile(x, y).toString());
                 button.setBackground(new Color(255, 255, 255));
                 button.setBorder(new StrokeBorder(new BasicStroke(2), new Color(0, 0, 0)));
@@ -38,10 +38,8 @@ public class Window {
 
                 final int finalX = x;
                 final int finalY = y;
-                button.addActionListener((e -> {
-                    board.setTile(finalX, finalY, Tile.X);
-                    button.setText(board.getTile(finalX, finalY).toString());
-                }));
+
+                button.addActionListener(new PlayerTurnEventListener(finalX, finalY));
 
                 panel.add(button);
             }
