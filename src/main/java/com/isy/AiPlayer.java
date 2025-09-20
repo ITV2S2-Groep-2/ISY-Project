@@ -9,6 +9,15 @@ public class AiPlayer extends Player {
 
     @Override
     public int[] getMove(Board board) {
-        return new int[0];
+        //TEMP
+        Tile[][] tiles = board.getTiles();
+        for (int r = 0; r < board.getHeight(); r++) {
+            for (int c = 0; c < board.getWidth(); c++) {
+                if (tiles[r][c] == Tile.EMPTY) {
+                    return new int[] {r,c};
+                }
+            }
+        }
+        return new int[]{1,1};
     }
 }

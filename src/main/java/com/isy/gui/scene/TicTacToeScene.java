@@ -10,8 +10,11 @@ import javax.swing.border.StrokeBorder;
 import java.awt.*;
 
 public class TicTacToeScene extends Scene {
+    JButton[][] boardButtons;
+
     public TicTacToeScene(Window window) {
         super("ticTacToe", window);
+        this.boardButtons = new JButton[][]{new JButton[]{null,null,null}, new JButton[]{null,null,null}, new JButton[]{null,null,null}};
     }
 
     @Override
@@ -35,12 +38,21 @@ public class TicTacToeScene extends Scene {
                 button.setOpaque(true);
                 button.setPreferredSize(new Dimension(80, 80));
 
-                button.addActionListener(new PlayerTurnEventListener(x, y));
-
+                button.addActionListener(new PlayerTurnEventListener(this.getWindow().getGame(), x, y));
+                this.boardButtons[x][y] = button;
                 panel.add(button);
             }
         }
-
         controlPanel.add(panel, new GridBagConstraints());
+    }
+
+    public void reloadBoardValues() {
+        Tile[][] tiles = this.getWindow().getBoard().getTiles();
+        for (int y = 0; y < this.getWindow().getBoard().getHeight(); y++) {
+            for (int x = 0; x < this.getWindow().getBoard().getWidth(); x++) {
+                this.boardButtons[x][y].setText(tiles[x][y].toString());
+                this.boardButtons[x][y].repaint();
+            }
+        }
     }
 }
