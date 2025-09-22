@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.Game;
+import com.isy.TicTacToeGame;
 import com.isy.gui.Window;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public abstract class Scene {
         return this.show;
     }
 
-    public void initGame(Game game){}
+    public void initGame(Game ticTacToeGame){}
 
     public abstract void init();
 }

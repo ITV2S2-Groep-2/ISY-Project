@@ -5,17 +5,17 @@ import java.awt.event.ActionListener;
 import java.util.Optional;
 
 public class PlayerTurnEventListener implements ActionListener {
-    private final Game game;
+    private final TicTacToeGame ticTacToeGame;
     private final int x;
     private final int y;
 
-    public PlayerTurnEventListener(Game game, int x, int y) {
-        this.game = game;
+    public PlayerTurnEventListener(TicTacToeGame ticTacToeGame, int x, int y) {
+        this.ticTacToeGame = ticTacToeGame;
         this.x = x;
         this.y = y;
     }
 
     public void actionPerformed(ActionEvent e) {
-        this.game.handleGameTurn(Optional.of(new int[]{this.x, this.y}));
+        this.ticTacToeGame.handleGameTurn(new int[]{this.x, this.y});
     }
 }

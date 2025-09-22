@@ -1,8 +1,5 @@
 package com.isy.gui;
 
-import com.isy.Board;
-import com.isy.Game;
-import com.isy.gui.scene.Scene;
 import com.isy.gui.scene.SceneManager;
 import com.isy.gui.scene.TicTacToeMainMenuScene;
 import com.isy.gui.scene.TicTacToeScene;

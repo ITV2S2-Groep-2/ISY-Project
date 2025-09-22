@@ -1,12 +1,10 @@
 package com.isy.gui.scene;
 
-import com.isy.Game;
+import com.isy.TicTacToeGame;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
 
 import javax.swing.*;
-import javax.swing.border.StrokeBorder;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class TicTacToeMainMenuScene extends MenuScene{
@@ -27,8 +25,8 @@ public class TicTacToeMainMenuScene extends MenuScene{
     }
 
     private void startTicTacToeGame(ActionEvent actionEvent) {
-        Game game = new Game();
-        game.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
+        TicTacToeGame ticTacToeGame = new TicTacToeGame();
+        ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
         this.getWindow().getManager().showScene("ticTacToe");
     }
 }
