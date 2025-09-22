@@ -11,18 +11,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Window {
-    private final Game game;
     private final SceneManager manager;
 
     public Window(){
-        // TODO: handle given input to create different game types (ai vs ai, player vs player, etc.)
-        this.game = new Game();
-
         this.manager = new SceneManager(this);
-        Scene scene = new TicTacToeScene(this);
-        this.manager.addScene(scene, false);
+
+        this.manager.addScene(new TicTacToeScene(this), false);
         this.manager.addScene(new TicTacToeMainMenuScene(this), true);
-        this.game.setRenderScene(scene);
+
         SwingUtilities.invokeLater(this::createAndShowGUI);
     }
 
@@ -38,14 +34,6 @@ public class Window {
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    public Board getBoard() {
-        return this.game.getBoard();
-    }
-
-    public Game getGame() {
-        return this.game;
     }
 
     public SceneManager getManager() {

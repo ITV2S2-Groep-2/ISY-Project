@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.Game;
 import com.isy.gui.Window;
 
 import javax.swing.*;
@@ -45,6 +46,8 @@ public abstract class Scene {
     public boolean isHidden(){
         return this.show;
     }
+
+    public void initGame(Game game){}
 
     public abstract void init();
 }

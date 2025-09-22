@@ -48,7 +48,7 @@ public class Game {
         }
 
         if (this.renderScene != null && this.renderScene instanceof TicTacToeScene) {
-            ((TicTacToeScene) this.renderScene).reloadBoardValues();
+            ((TicTacToeScene) this.renderScene).reloadBoardValues(this);
         }
         //TODO: check for winstate
     }
@@ -67,5 +67,6 @@ public class Game {
 
     public void setRenderScene(Scene scene) {
         this.renderScene = scene;
+        scene.initGame(this);
     }
 }
