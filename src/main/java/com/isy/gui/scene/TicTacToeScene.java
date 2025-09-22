@@ -1,9 +1,9 @@
 package com.isy.gui.scene;
 
-import com.isy.Game;
-import com.isy.TicTacToeGame;
-import com.isy.PlayerTurnEventListener;
-import com.isy.Tile;
+import com.isy.game.Game;
+import com.isy.game.ticTacToe.TicTacToeGame;
+import com.isy.gui.PlayerTurnEventListener;
+import com.isy.game.ticTacToe.Tile;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
 

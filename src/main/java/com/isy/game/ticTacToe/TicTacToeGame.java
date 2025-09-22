@@ -1,5 +1,7 @@
-package com.isy;
+package com.isy.game.ticTacToe;
 
+import com.isy.game.Player;
+import com.isy.game.Game;
 import com.isy.gui.scene.TicTacToeScene;
 import org.jetbrains.annotations.Nullable;
 

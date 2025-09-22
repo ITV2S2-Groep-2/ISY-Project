@@ -1,5 +1,6 @@
-package com.isy;
-import java.util.Scanner;
+package com.isy.game;
+import com.isy.game.ticTacToe.Board;
+import com.isy.game.ticTacToe.Tile;
 
 public abstract class Player {
     private final String name;

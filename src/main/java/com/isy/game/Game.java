@@ -1,4 +1,4 @@
-package com.isy;
+package com.isy.game;
 
 import com.isy.gui.scene.Scene;
 

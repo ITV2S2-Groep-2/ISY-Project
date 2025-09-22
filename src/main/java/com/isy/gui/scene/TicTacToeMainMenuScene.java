@@ -1,6 +1,6 @@
 package com.isy.gui.scene;
 
-import com.isy.TicTacToeGame;
+import com.isy.game.ticTacToe.TicTacToeGame;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
 

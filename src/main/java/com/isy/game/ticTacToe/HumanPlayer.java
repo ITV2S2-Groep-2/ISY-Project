@@ -1,6 +1,8 @@
-package com.isy;
+package com.isy.game.ticTacToe;
 
-public class HumanPlayer extends Player{
+import com.isy.game.Player;
+
+public class HumanPlayer extends Player {
 
     public HumanPlayer(String name, Tile symbol){
         super(name, symbol);

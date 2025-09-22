@@ -1,7 +1,6 @@
 package com.isy.gui.scene;
 
-import com.isy.Game;
-import com.isy.TicTacToeGame;
+import com.isy.game.Game;
 import com.isy.gui.Window;
 
 import javax.swing.*;

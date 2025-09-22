@@ -1,4 +1,6 @@
-package com.isy;
+package com.isy.game.ticTacToe;
+
+import com.isy.game.Player;
 
 import java.util.Arrays;
 
