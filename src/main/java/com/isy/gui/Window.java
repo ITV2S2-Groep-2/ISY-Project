@@ -1,5 +1,6 @@
 package com.isy.gui;
 
+import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.gui.scene.SceneManager;
 import com.isy.gui.scene.TicTacToeMainMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
@@ -15,6 +16,7 @@ public class Window {
 
         this.manager.addScene(new TicTacToeScene(this), false);
         this.manager.addScene(new TicTacToeMainMenuScene(this), true);
+        this.manager.addScene(new JoinGameServerMenuScene(this), false);
 
         SwingUtilities.invokeLater(this::createAndShowGUI);
     }

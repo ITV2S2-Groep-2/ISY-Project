@@ -20,6 +20,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
         panel.add(createDefaultButton("Player VS Player(Offline)"), getConstraints());
         panel.add(createDefaultButton("Player VS AI(Offline)", this::startTicTacToeGame), getConstraints());
         panel.add(createDefaultButton("AI VS AI(Offline)"), getConstraints());
+        panel.add(createDefaultButton("Join game server (temp)", this::goToJoinGameServer), getConstraints());
 
         panel.setBackground(Style.menuBackgroundColor);
     }
@@ -29,5 +30,9 @@ public class TicTacToeMainMenuScene extends MenuScene{
         ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
         new Thread(ticTacToeGame).start();
         this.getWindow().getManager().showScene("ticTacToe");
+    }
+
+    private void goToJoinGameServer(ActionEvent actionEvent){
+        this.getWindow().getManager().showScene("joinGameServerMenuScene");
     }
 }
