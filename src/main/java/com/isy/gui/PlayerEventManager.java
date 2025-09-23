@@ -29,7 +29,7 @@ public class PlayerEventManager implements IWaitable<int[]> {
 
     @Override
     public boolean hasData() {
-        return (System.currentTimeMillis() - this.lastClick) < waitTime;
+        return (System.currentTimeMillis() - this.lastClick) < waitTime + 10;
     }
 
     @Override

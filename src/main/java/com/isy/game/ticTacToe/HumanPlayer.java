@@ -1,6 +1,9 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.game.Player;
+import com.isy.gui.PlayerEventManager;
+
+import static com.isy.await.Await.await;
 
 public class HumanPlayer extends Player {
 
@@ -10,6 +13,6 @@ public class HumanPlayer extends Player {
 
     @Override
     public int[] getMove(Board board) {
-        return null;
+        return await(PlayerEventManager.get());
     }
 }

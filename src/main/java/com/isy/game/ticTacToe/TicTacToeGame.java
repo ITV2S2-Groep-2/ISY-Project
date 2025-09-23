@@ -28,23 +28,14 @@ public class TicTacToeGame extends Game implements Runnable {
                 ttts.reloadBoardValues(this);
             }
 
-            if (this.activeTurnPlayer instanceof AiPlayer aiPlayer){
-                move = aiPlayer.getMove(this.getBoard());
-            }
-
-            if (this.activeTurnPlayer instanceof HumanPlayer){
-                move = await(PlayerEventManager.get());
-            }
-
-            if (move != null) {
-                boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
-                if (correctMove) {
-                    if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
-                        this.state = GameState.WON;
-                        continue;
-                    }
-                    this.giveTurnOver();
+            move = this.activeTurnPlayer.getMove(this.getBoard());
+            boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+            if (correctMove) {
+                if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
+                    this.state = GameState.WON;
+                    continue;
                 }
+                this.giveTurnOver();
             }
         }
 
