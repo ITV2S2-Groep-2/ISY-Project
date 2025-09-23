@@ -3,7 +3,7 @@ package com.isy.await;
 public class Await {
     public static final int waitTime = 100;
 
-    public static <A extends IWaitable<B>, B> B await(A waitable){
+    public static <T> T await(IWaitable<T> waitable){
         while (!waitable.hasData()){
             try {
                 Thread.sleep(waitTime);
