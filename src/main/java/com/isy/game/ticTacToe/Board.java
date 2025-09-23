@@ -46,6 +46,7 @@ public class Board {
         for (int i = 0; i < 3; i++) {
             if (this.tiles[i][y] != symbol) {
                 rowWin = false;
+                break;
             }
         }
         if (rowWin) return true;
@@ -55,6 +56,7 @@ public class Board {
         for (int i = 0; i < 3; i++) {
             if (this.tiles[x][i] != symbol) {
                 colWin = false;
+                break;
             }
         }
         if (colWin) return true;
@@ -65,6 +67,7 @@ public class Board {
             for (int i = 0; i < 3; i++) {
                 if (this.tiles[i][i] != symbol) {
                     diagWin = false;
+                    break;
                 }
             }
             if (diagWin) return true;
@@ -76,9 +79,10 @@ public class Board {
             for (int i = 0; i < 3; i++) {
                 if (this.tiles[i][2 - i] != symbol) {
                     antiDiagWin = false;
+                    break;
                 }
             }
-            if (antiDiagWin) return true;
+            return antiDiagWin;
         }
 
         return false;

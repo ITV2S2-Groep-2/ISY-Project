@@ -21,32 +21,28 @@ public class TicTacToeGame extends Game {
     public void handleGameTurn(int @Nullable [] move) {
         if (this.state == GameState.WON) { return; }
 
-        switch (this.activeTurnPlayer) {
-            case AiPlayer p -> {
-                System.out.println("ai turn");
-                int[] aiMove = p.getMove(this.getBoard());
-                boolean correctMove = this.getBoard().setTile(aiMove[0], aiMove[1], p.getSymbol());
-                if (correctMove) {
-                    this.giveTurnOver();
-                }
-                this.handleGameTurn(null);
-            }
-            case HumanPlayer p -> {
-                System.out.println("human turn");
-                if (move == null) {
-                    break;
-                }
-                boolean correctMove = this.getBoard().setTile(move[0], move[1], p.getSymbol());
-                if (correctMove) {
-                    this.giveTurnOver();
-                }
-                this.handleGameTurn(null);
-            }
-            default -> {}
+        if (this.activeTurnPlayer instanceof AiPlayer aiPlayer){
+            move = aiPlayer.getMove(this.getBoard());
         }
 
-        if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene) {
-            ((TicTacToeScene) this.getRenderScene()).reloadBoardValues(this);
+        if (move != null) {
+            boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+            if (correctMove) {
+                if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
+                    this.state = GameState.WON;
+                    if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
+                        ttts.reloadBoardValues(this);
+                    }
+                    return;
+                }
+                this.giveTurnOver();
+            }
+            this.handleGameTurn(null);
+            return;
+        }
+
+        if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
+            ttts.reloadBoardValues(this);
         }
         //TODO: check for winstate
     }
