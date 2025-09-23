@@ -47,7 +47,7 @@ public abstract class Scene {
         return this.show;
     }
 
-    public void initGame(Game ticTacToeGame){}
+    public void initGame(Game game){}
 
     public abstract void init();
 }
