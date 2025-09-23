@@ -2,6 +2,8 @@ package com.isy.gui;
 
 import com.isy.await.IWaitable;
 
+import static com.isy.await.Await.waitTime;
+
 public class PlayerEventManager implements IWaitable<int[]> {
     private static PlayerEventManager instance;
     private long lastClick;
@@ -27,7 +29,7 @@ public class PlayerEventManager implements IWaitable<int[]> {
 
     @Override
     public boolean hasData() {
-        return (System.currentTimeMillis() - this.lastClick) < 150;
+        return (System.currentTimeMillis() - this.lastClick) < waitTime;
     }
 
     @Override
