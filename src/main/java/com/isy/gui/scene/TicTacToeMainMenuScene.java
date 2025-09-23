@@ -27,6 +27,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
     private void startTicTacToeGame(ActionEvent actionEvent) {
         TicTacToeGame ticTacToeGame = new TicTacToeGame();
         ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
+        new Thread(ticTacToeGame).start();
         this.getWindow().getManager().showScene("ticTacToe");
     }
 }

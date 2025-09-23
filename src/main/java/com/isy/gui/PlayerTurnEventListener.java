@@ -17,6 +17,6 @@ public class PlayerTurnEventListener implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        this.ticTacToeGame.handleGameTurn(new int[]{this.x, this.y});
+        PlayerEventManager.get().newClick(this.x, this.y);
     }
 }
