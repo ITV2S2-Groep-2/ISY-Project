@@ -1,10 +1,15 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.game.GameServer;
+import com.isy.Main;
+import com.isy.await.IWaitable;
 import com.isy.game.Player;
 import com.isy.game.Game;
 import com.isy.gui.PlayerEventManager;
 import com.isy.gui.scene.TicTacToeScene;
+import com.isy.gui.scene.WinScene;
+
+import java.util.Arrays;
 
 import static com.isy.await.Await.await;
 
@@ -15,9 +20,9 @@ public class TicTacToeGame extends Game implements Runnable {
     private GameState state;
     private GameServer client;
 
-    public TicTacToeGame() {
+    public TicTacToeGame(Player[] players) {
         this.board = new Board();
-        this.players = new Player[]{new HumanPlayer("1", Tile.X), new AiPlayer("2", Tile.O)};
+        this.players = players;
         this.activeTurnPlayer = players[0];
         this.state = GameState.ONGOING;
         this.client = null;
@@ -38,16 +43,33 @@ public class TicTacToeGame extends Game implements Runnable {
             move = this.activeTurnPlayer.getMove(this.getBoard());
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
             if (correctMove) {
+                System.out.println(this.board.isBoardFull());
+
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;
+                } else if (this.board.isBoardFull()) {
+                    break;
                 }
+
                 this.giveTurnOver();
             }
         }
 
         if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
             ttts.reloadBoardValues(this);
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (this.state == GameState.WON){
+            ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName());
+        }else{
+            ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody");
         }
     }
 
