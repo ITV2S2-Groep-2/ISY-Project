@@ -1,11 +1,13 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.await.IWaitable;
+import com.isy.game.Game;
+import com.isy.game.GameServer;
 import com.isy.game.Player;
 
 public class AiPlayer extends Player {
-    public AiPlayer(String name, Tile symbol){
-        super(name, symbol);
+    public AiPlayer(String name, Tile symbol, GameServer client){
+        super(name, symbol, client);
     }
 
     int boardSize = 3;

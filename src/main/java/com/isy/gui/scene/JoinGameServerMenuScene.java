@@ -1,7 +1,8 @@
 package com.isy.gui.scene;
 
 import com.isy.game.GameServer;
-import com.isy.game.ticTacToe.TicTacToeGame;
+import com.isy.game.Player;
+import com.isy.game.ticTacToe.*;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
 
@@ -49,7 +50,7 @@ public class JoinGameServerMenuScene extends MenuScene {
                 while ((line = client.readServerLine()) != null) {
                     if (line.startsWith("SVR GAME MATCH")) {
                         SwingUtilities.invokeLater(() -> {
-                            TicTacToeGame ticTacToeGame = new TicTacToeGame();
+                            TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, client), new RemotePlayer("2", Tile.O, client)});
                             ticTacToeGame.setClient(client);
                             ticTacToeGame.setRenderScene(
                                     this.getWindow().getManager().getScene("ticTacToe")
