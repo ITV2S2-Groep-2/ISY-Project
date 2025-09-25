@@ -29,8 +29,18 @@ public abstract class Player {
 
     public void sendServerData(int[] move){
         if(client != null){
-            System.out.println("Stuurt command move nu: (debug)" + move[0] + "en " + move[1]);
-            client.sendCommand("move " + move[0] + move[1]);
+            System.out.println("(DEBUG)Stuurt nu command: move " + formatMove(move));
+            client.sendCommand("move " + formatMove(move));
         }
+    }
+
+    /**
+     * Formats move for game server's regular input
+     * @param move int array with the x and y coords of the clicked tile.
+     * @return a single int which was converted by calculating x + (y * 3)
+     */
+    public int formatMove(int[] move){
+        // TODO: columns parameter meegeven (8 voor othello) i.p.v. hard coded 3.
+        return move[0] + (move[1] * 3);
     }
 }
