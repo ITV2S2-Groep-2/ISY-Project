@@ -16,9 +16,9 @@ public class TicTacToeGame extends Game implements Runnable {
     private Player activeTurnPlayer;
     private GameState state;
 
-    public TicTacToeGame() {
+    public TicTacToeGame(Player[] players) {
         this.board = new Board();
-        this.players = new Player[]{new HumanPlayer("1", Tile.X), new AiPlayer("2", Tile.O)};
+        this.players = players;
         this.activeTurnPlayer = players[0];
         this.state = GameState.ONGOING;
     }
@@ -32,16 +32,15 @@ public class TicTacToeGame extends Game implements Runnable {
             }
 
             move = this.activeTurnPlayer.getMove(this.getBoard());
-            System.out.println(Arrays.toString(move));
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
-            System.out.println(correctMove);
             if (correctMove) {
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;
+                } else if (this.board.isBoardFull()) {
+                    continue;
                 }
                 this.giveTurnOver();
-                System.out.println("OVER");
             }
         }
 

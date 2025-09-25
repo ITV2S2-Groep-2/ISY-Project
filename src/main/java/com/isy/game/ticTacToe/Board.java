@@ -88,6 +88,19 @@ public class Board {
         return false;
     }
 
+    public boolean isBoardFull(){
+        boolean isFull = true;
+
+        for (Tile[] tiles : this.tiles) {
+            for (Tile tile : tiles) {
+                if (tile == Tile.EMPTY)
+                    isFull = false;
+            }
+        }
+
+        return isFull;
+    }
+
     /**
      * Reset the boards to EMPTY
      */
