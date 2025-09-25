@@ -3,6 +3,7 @@ package com.isy.gui;
 import com.isy.gui.scene.SceneManager;
 import com.isy.gui.scene.TicTacToeMainMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
+import com.isy.gui.scene.WinScene;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +15,7 @@ public class Window {
         this.manager = new SceneManager(this);
 
         this.manager.addScene(new TicTacToeScene(this), false);
+        this.manager.addScene(new WinScene(this), false);
         this.manager.addScene(new TicTacToeMainMenuScene(this), true);
 
         this.createAndShowGUI();
