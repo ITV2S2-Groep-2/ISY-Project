@@ -1,9 +1,12 @@
 package com.isy.game.ticTacToe;
 
+import com.isy.await.IWaitable;
 import com.isy.game.Player;
 import com.isy.game.Game;
 import com.isy.gui.PlayerEventManager;
 import com.isy.gui.scene.TicTacToeScene;
+
+import java.util.Arrays;
 
 import static com.isy.await.Await.await;
 
@@ -29,13 +32,16 @@ public class TicTacToeGame extends Game implements Runnable {
             }
 
             move = this.activeTurnPlayer.getMove(this.getBoard());
+            System.out.println(Arrays.toString(move));
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+            System.out.println(correctMove);
             if (correctMove) {
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;
                 }
                 this.giveTurnOver();
+                System.out.println("OVER");
             }
         }
 
