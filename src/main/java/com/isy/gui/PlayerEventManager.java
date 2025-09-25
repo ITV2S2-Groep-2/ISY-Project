@@ -34,6 +34,7 @@ public class PlayerEventManager implements IWaitable<int[]> {
 
     @Override
     public int[] getData() {
+        lastClick = 0;
         return this.clickedButton;
     }
 }

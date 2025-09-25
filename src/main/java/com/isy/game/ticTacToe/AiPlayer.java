@@ -1,5 +1,6 @@
 package com.isy.game.ticTacToe;
 
+import com.isy.await.IWaitable;
 import com.isy.game.Player;
 
 public class AiPlayer extends Player {
@@ -8,11 +9,15 @@ public class AiPlayer extends Player {
     }
 
     int boardSize = 3;
-    int maxDepth = 12;
+    int maxDepth = 9;
+
+    Tile symbol = getSymbol();
+    Tile otherSymbol = (symbol == Tile.X) ? Tile.O : Tile.X;
     // getMove() etc.
 
     @Override
     public int[] getMove(Board board) {
+        System.out.println("AI");
         //TEMP
         Tile[][] tiles = board.getTiles();
         return getBestMove(tiles);
@@ -30,8 +35,6 @@ public class AiPlayer extends Player {
     public int[] getBestMove(Tile[][] tiles){
         int[] bestMove = new int[]{-1, -1};
         int bestValue = Integer.MIN_VALUE;
-        Tile symbol = getSymbol();
-        Tile otherSymbol = (symbol == Tile.X) ? Tile.O : Tile.X;
 
         for(int col = 0; col < boardSize; col++){
             for(int row = 0; row < boardSize; row++){
@@ -40,8 +43,8 @@ public class AiPlayer extends Player {
                     int moveValue = Minimax(tiles, maxDepth, false);
                     tiles[col][row] = Tile.EMPTY;
                     if (moveValue > bestValue) {
-                        bestMove[0] = row;
-                        bestMove[1] = col;
+                        bestMove[0] = col;
+                        bestMove[1] = row;
                         bestValue = moveValue;
                     }
                 }
@@ -52,8 +55,6 @@ public class AiPlayer extends Player {
     }
 
     public int evaluateBoard(Tile[][] tiles){
-        Tile symbol = getSymbol();
-        Tile otherSymbol = (symbol == Tile.X) ? Tile.O : Tile.X;
         int win = 3;
         int sumSymbol = 0;
         int sumOther = 0;
@@ -96,10 +97,11 @@ public class AiPlayer extends Player {
         sumOther = 0;
 
         int indexMax = boardSize - 1;
-        for(int i = 0; i < indexMax; i++){
-            if(tiles[i][indexMax - i] == symbol) { sumSymbol++; }
-            else if(tiles[i][indexMax - i] == otherSymbol){ sumOther++; }
+        for (int i = 0; i < boardSize; i++) {
+            if (tiles[i][indexMax - i] == symbol) sumSymbol++;
+            else if (tiles[i][indexMax - i] == otherSymbol) sumOther++;
         }
+
 
         if(sumSymbol == win){ return 10; }
         else if(sumOther == win) {return -10;}
@@ -120,12 +122,10 @@ public class AiPlayer extends Player {
 
     public int Minimax(Tile[][] tiles, int depth, boolean isMax){
         int boardValue = evaluateBoard(tiles);
-        Tile symbol = getSymbol();
-        Tile otherSymbol = (symbol == Tile.X) ? Tile.O : Tile.X;
 
         // Terminal node (win/lose/draw) or max depth reached.
         if (Math.abs(boardValue) == 10 || depth == 0
-                || !boardFull(tiles)) {
+                || boardFull(tiles)) {
             return boardValue;
         }
 
@@ -148,7 +148,7 @@ public class AiPlayer extends Player {
                 for(int row = 0; row < boardSize; row++){
                     if(tiles[col][row] == Tile.EMPTY){
                         tiles[col][row] = otherSymbol;
-                        lowestVal = Math.max(lowestVal, Minimax(tiles, depth-1, true));
+                        lowestVal = Math.min(lowestVal, Minimax(tiles, depth-1, true));
                         tiles[col][row] = Tile.EMPTY;
                     }
                 }
