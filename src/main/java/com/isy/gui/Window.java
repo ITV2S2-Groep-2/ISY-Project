@@ -16,7 +16,7 @@ public class Window {
         this.manager.addScene(new TicTacToeScene(this), false);
         this.manager.addScene(new TicTacToeMainMenuScene(this), true);
 
-        SwingUtilities.invokeLater(this::createAndShowGUI);
+        this.createAndShowGUI();
     }
 
     private void createAndShowGUI() {
