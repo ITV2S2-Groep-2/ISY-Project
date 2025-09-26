@@ -5,6 +5,7 @@ import com.isy.game.Player;
 import com.isy.game.ticTacToe.*;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
+import java.util.UUID;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -40,33 +41,26 @@ public class JoinGameServerMenuScene extends MenuScene {
         GameServer client = new GameServer("127.0.0.1", 7789);
         new Thread(client).start();
 
-        client.sendCommand("login speler" + System.currentTimeMillis() % 1000);
+        String ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+        client.sendCommand("login " + ownName);
         client.sendCommand("subscribe tic-tac-toe");
 
-        // Wacht tot server een match toewijst
-        new Thread(() -> {
-            try {
-                String line;
-                while ((line = client.readServerLine()) != null) {
-                    if (line.startsWith("SVR GAME MATCH")) {
-                        SwingUtilities.invokeLater(() -> {
-                            TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, client), new RemotePlayer("2", Tile.O, client)});
-                            ticTacToeGame.setClient(client);
-                            ticTacToeGame.setRenderScene(
-                                    this.getWindow().getManager().getScene("ticTacToe")
-                            );
-                            new Thread(ticTacToeGame).start();
-                            this.getWindow().getManager().showScene("ticTacToe");
+        client.addListener(line -> {
+            if (line.startsWith("SVR GAME MATCH")) {
+                SwingUtilities.invokeLater(() -> {
+                    TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{
+                            new HumanPlayer("1", Tile.X, client),
+                            new RemotePlayer("2", Tile.O, client)
+                    });
+                    ticTacToeGame.setClient(client);
+                    ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
+                    new Thread(ticTacToeGame).start();
+                    this.getWindow().getManager().showScene("ticTacToe");
 
-                            waitingLabel.setVisible(false);
-                        });
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                    waitingLabel.setVisible(false);
+                });
             }
-        }).start();
+        });
     }
 
 }

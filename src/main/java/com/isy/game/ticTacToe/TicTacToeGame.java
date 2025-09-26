@@ -43,8 +43,6 @@ public class TicTacToeGame extends Game implements Runnable {
             move = this.activeTurnPlayer.getMove(this.getBoard());
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
             if (correctMove) {
-                System.out.println(this.board.isBoardFull());
-
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;

@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GameServer implements Runnable {
 
@@ -22,6 +24,8 @@ public class GameServer implements Runnable {
     boolean placed = false;
 
     private volatile boolean running = true;
+
+    private List<Consumer<String>> listeners = new ArrayList<>();
 
     private List<Integer> gohitthese;
 
@@ -40,11 +44,11 @@ public class GameServer implements Runnable {
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            out.println("login "+ "iemand"+ LocalDateTime.now().getSecond());
-
-            out.println("get gamelist");
-
-            out.println("subscribe tic-tac-toe");
+//            out.println("login "+ "iemand"+ LocalDateTime.now().getSecond());
+//
+//            out.println("get gamelist");
+//
+//            out.println("subscribe tic-tac-toe");
 
             String inputMessage; // we maken een input message aan
 
@@ -53,13 +57,8 @@ public class GameServer implements Runnable {
                 try {
                     String line;
                     while (running && (line = in.readLine()) != null) {
-                        System.out.println(line);
-
-//                        if (line.contains("YOURTURN")) {
-//                            SwingUtilities.invokeLater(() -> {
-//                                System.out.println("Jouw beurt!");
-//                            });
-//                        }
+                        System.out.println("[SERVER] " + line);
+                        notifyListeners(line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -67,6 +66,16 @@ public class GameServer implements Runnable {
             }).start();
         } catch (IOException e) {
             //TODO handle
+        }
+    }
+
+    public void addListener(Consumer<String> listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListeners(String message) {
+        for (Consumer<String> l : listeners) {
+            l.accept(message);
         }
     }
 
