@@ -49,11 +49,13 @@ public class JoinGameServerMenuScene extends MenuScene {
             if (line.startsWith("SVR GAME MATCH")) {
                 SwingUtilities.invokeLater(() -> {
                     TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{
-                            new HumanPlayer("1", Tile.X, client),
-                            new RemotePlayer("2", Tile.O, client)
+                            new HumanPlayer(ownName, Tile.X, client),
+                            new RemotePlayer("Tegenstander", Tile.O, client)
                     });
                     ticTacToeGame.setClient(client);
-                    ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
+                    TicTacToeScene ttts = (TicTacToeScene) this.getWindow().getManager().getScene("ticTacToe");
+                    ticTacToeGame.setRenderScene(ttts);
+                    ttts.setPlayerName(ownName);
                     new Thread(ticTacToeGame).start();
                     this.getWindow().getManager().showScene("ticTacToe");
 
