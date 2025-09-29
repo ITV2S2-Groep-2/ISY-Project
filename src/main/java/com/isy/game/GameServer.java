@@ -44,12 +44,6 @@ public class GameServer implements Runnable {
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-//            out.println("login "+ "iemand"+ LocalDateTime.now().getSecond());
-//
-//            out.println("get gamelist");
-//
-//            out.println("subscribe tic-tac-toe");
-
             String inputMessage; // we maken een input message aan
 
             // Start een aparte thread om server-berichten te lezen
@@ -67,6 +61,21 @@ public class GameServer implements Runnable {
         } catch (IOException e) {
             //TODO handle
         }
+
+        // Thread om console-input te lezen
+        new Thread(() -> {
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+            String line;
+            try {
+                while (running && (line = consoleReader.readLine()) != null) {
+                    if (line.trim().isEmpty()) continue;
+                    sendCommand(line);  // stuurt naar server
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
     }
 
     public void addListener(Consumer<String> listener) {
