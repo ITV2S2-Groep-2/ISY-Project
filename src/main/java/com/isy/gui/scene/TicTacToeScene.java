@@ -14,6 +14,7 @@ import java.awt.*;
 public class TicTacToeScene extends Scene {
     private final JButton[][] boardButtons;
     private JPanel gridPanel;
+    private JLabel playerNameLabel;
 
     public TicTacToeScene(Window window) {
         super("ticTacToe", window);
@@ -24,6 +25,21 @@ public class TicTacToeScene extends Scene {
     public void init() {
         JPanel controlPanel = this.getScenePanel();
         controlPanel.setLayout(new GridBagLayout());
+
+        playerNameLabel = new JLabel("");
+        playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        playerNameLabel.setForeground(Color.BLACK);
+        playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        GridBagConstraints labelConstraints = new GridBagConstraints();
+        labelConstraints.gridx = 0;
+        labelConstraints.gridy = 0;
+        labelConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        labelConstraints.insets = new Insets(0, 0, 10, 0);
+        labelConstraints.anchor = GridBagConstraints.CENTER;
+        labelConstraints.fill = GridBagConstraints.HORIZONTAL;
+
+        controlPanel.add(playerNameLabel, labelConstraints);
 
         gridPanel = new JPanel();
         GridLayout layout = new GridLayout(3, 3);
@@ -64,6 +80,12 @@ public class TicTacToeScene extends Scene {
                 this.boardButtons[x][y].setText(tiles[x][y].toString());
                 this.boardButtons[x][y].repaint();
             }
+        }
+    }
+
+    public void setPlayerName(String name) {
+        if (playerNameLabel != null) {
+            playerNameLabel.setText("Jij bent: " + name);
         }
     }
 }
