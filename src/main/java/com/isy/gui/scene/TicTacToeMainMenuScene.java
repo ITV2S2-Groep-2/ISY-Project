@@ -2,10 +2,7 @@ package com.isy.gui.scene;
 
 import com.isy.game.GameServer;
 import com.isy.game.Player;
-import com.isy.game.ticTacToe.AiPlayer;
-import com.isy.game.ticTacToe.HumanPlayer;
-import com.isy.game.ticTacToe.TicTacToeGame;
-import com.isy.game.ticTacToe.Tile;
+import com.isy.game.ticTacToe.*;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
 
@@ -15,6 +12,7 @@ import java.util.UUID;
 
 public class TicTacToeMainMenuScene extends MenuScene{
     private GameServer client;
+    private String ownName;
 
     public TicTacToeMainMenuScene(Window window) {
         super("ticTacToeMainMenu", window);
@@ -47,7 +45,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
         this.getWindow().getManager().showScene("ticTacToe");
     }
 
-    private void goToJoinGameServer(ActionEvent actionEvent){
+    private void goToJoinGameServer(ActionEvent actionEvent) {
         client = new GameServer("127.0.0.1", 7789);
         new Thread(client).start();
 
@@ -56,15 +54,41 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 try { Thread.sleep(50); } catch (InterruptedException ignored) {}
             }
 
-            String ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+            ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
             client.sendCommand("login " + ownName);
 
-            // client + naam doorgeven aan JoinGameServerMenuScene
             JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
                     .getManager().getScene("joinGameServerMenuScene");
             joinScene.setClient(client, ownName);
+
+            // Clear alle listeners voor nieuwe login
+            client.getListeners().clear();
+            client.addListener(line -> {
+                if (line.startsWith("SVR GAME MATCH")) {
+                    boolean iStart = line.toLowerCase().contains(ownName);
+                    SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart));
+                }
+            });
         }).start();
 
         this.getWindow().getManager().showScene("joinGameServerMenuScene");
+    }
+
+    private void startRemoteTicTacToe(boolean iStart) {
+        HumanPlayer human = new HumanPlayer(ownName, Tile.X, client);
+        RemotePlayer remotePlayer = new RemotePlayer("Tegenstander", Tile.O, client);
+
+        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{
+                iStart ? human : remotePlayer,
+                iStart ? remotePlayer : human
+        });
+        ticTacToeGame.setClient(client);
+
+        TicTacToeScene ttts = (TicTacToeScene) this.getWindow().getManager().getScene("ticTacToe");
+        ticTacToeGame.setRenderScene(ttts);
+        ttts.setPlayerName(ownName);
+
+        new Thread(ticTacToeGame).start();
+        this.getWindow().getManager().showScene("ticTacToe");
     }
 }

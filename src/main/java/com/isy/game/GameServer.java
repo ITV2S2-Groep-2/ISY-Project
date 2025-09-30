@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.http.WebSocket;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,10 @@ public class GameServer implements Runnable {
 
     public void addListener(Consumer<String> listener) {
         listeners.add(listener);
+    }
+
+    public List<Consumer<String>> getListeners() {
+        return listeners;
     }
 
     private void notifyListeners(String message) {

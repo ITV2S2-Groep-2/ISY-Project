@@ -12,16 +12,12 @@ import java.awt.event.ActionEvent;
 public class JoinGameServerMenuScene extends MenuScene {
     private GameServer client;
     private String ownName;
+    private JButton joinButton;
+    private JLabel waitingLabel;
 
-    public void setClient(GameServer client, String ownName) {
-        this.client = client;
-        this.ownName = ownName;
-    }
     public JoinGameServerMenuScene(Window window) {
         super("joinGameServerMenuScene", window);
     }
-    private JButton joinButton;
-    private JLabel waitingLabel;
 
     @Override
     public void init() {
@@ -29,7 +25,7 @@ public class JoinGameServerMenuScene extends MenuScene {
 
         panel.add(createHeader("Join een online game"));
 
-        joinButton = createDefaultButton("Join game", null);
+        joinButton = createDefaultButton("Subscribe voor potje", null);
         panel.add(joinButton, getConstraints());
 
         waitingLabel = new JLabel("Wachten op match...");
@@ -38,11 +34,21 @@ public class JoinGameServerMenuScene extends MenuScene {
 
         panel.setBackground(Style.menuBackgroundColor);
 
-        joinButton.addActionListener(e -> {
-            joinButton.setVisible(false);
-            waitingLabel.setVisible(true);
-            startTicTacToeGame(e, waitingLabel);
-        });
+        joinButton.addActionListener(this::onJoinButtonClicked);
+    }
+
+    public void setClient(GameServer client, String ownName) {
+        this.client = client;
+        this.ownName = ownName;
+    }
+
+    private void onJoinButtonClicked(ActionEvent e) {
+        if (client == null) return;
+        client.sendCommand("subscribe tic-tac-toe");
+
+        joinButton.setVisible(false);
+        waitingLabel.setVisible(true);
+
     }
 
     public void resetJoinButton() {
@@ -51,34 +57,5 @@ public class JoinGameServerMenuScene extends MenuScene {
             waitingLabel.setVisible(false);
         });
     }
-
-    private void startTicTacToeGame(ActionEvent actionEvent, JLabel waitingLabel) {
-        client.sendCommand("subscribe tic-tac-toe");
-
-        client.addListener(line -> {
-            if (line.startsWith("SVR GAME MATCH")) {
-                boolean iStart = line.toLowerCase().contains(ownName);
-                SwingUtilities.invokeLater(() -> {
-                    HumanPlayer human = new HumanPlayer(ownName, Tile.X, client);
-                    RemotePlayer remotePlayer = new RemotePlayer("Tegenstander", Tile.O, client);
-
-                    TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{
-                            iStart ? human : remotePlayer,
-                            iStart ? remotePlayer : human
-                    });
-                    ticTacToeGame.setClient(client);
-                    TicTacToeScene ttts = (TicTacToeScene) JoinGameServerMenuScene.this.getWindow()
-                            .getManager().getScene("ticTacToe");
-                    ticTacToeGame.setRenderScene(ttts);
-                    ttts.setPlayerName(ownName);
-                    new Thread(ticTacToeGame).start();
-                    JoinGameServerMenuScene.this.getWindow().getManager().showScene("ticTacToe");
-
-                    waitingLabel.setVisible(false);
-                });
-            }
-        });
-    }
-
 }
 
