@@ -21,17 +21,17 @@ public class GameServer implements Runnable {
     private PrintWriter out;
     private boolean done;
 
-    boolean placed = false;
-
     private volatile boolean running = true;
 
     private List<Consumer<String>> listeners = new ArrayList<>();
 
-    private List<Integer> gohitthese;
-
     public GameServer(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
+    }
+
+    public boolean isConnected(){
+        return client != null && client.isConnected() && out != null && in != null;
     }
 
     @Override
@@ -94,23 +94,15 @@ public class GameServer implements Runnable {
         }
     }
 
-    public String readServerLine(){
-        try{
-            if(in != null){
-                return in.readLine();
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     /**
      * Deze methode verbreekt de verbinding met de server
      */
     public void shutdown()
     {
+        running = false;
         done = true;
+        out.println("logout");
+        System.out.println("k kap ermee");
         try {
             in.close();
             out.close();
@@ -121,18 +113,4 @@ public class GameServer implements Runnable {
             //we negeren een exception omdat we toch de verbinding verbreken
         }
     }
-
-    /**
-     * Deze methode logt in met de opgegeven gebruikersnaam parameter
-     * @param name
-     */
-    public void login(String name)
-    {
-        System.out.println("Logging in as " + name);
-        out.println("login " + name);
-    }
-
-    public static void main(String[] args) {
-    }
-
 }

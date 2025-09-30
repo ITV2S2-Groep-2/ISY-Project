@@ -50,6 +50,11 @@ public class JoinGameServerMenuScene extends MenuScene {
         GameServer client = new GameServer("127.0.0.1", 7789);
         new Thread(client).start();
 
+        // Wacht tot socket + streams klaar zijn
+        while(!client.isConnected()) {
+            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+        }
+
         String ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
         client.sendCommand("login " + ownName);
         client.sendCommand("subscribe tic-tac-toe");
@@ -66,11 +71,12 @@ public class JoinGameServerMenuScene extends MenuScene {
                             iStart ? remotePlayer : human
                     });
                     ticTacToeGame.setClient(client);
-                    TicTacToeScene ttts = (TicTacToeScene) this.getWindow().getManager().getScene("ticTacToe");
+                    TicTacToeScene ttts = (TicTacToeScene) JoinGameServerMenuScene.this.getWindow()
+                            .getManager().getScene("ticTacToe");
                     ticTacToeGame.setRenderScene(ttts);
                     ttts.setPlayerName(ownName);
                     new Thread(ticTacToeGame).start();
-                    this.getWindow().getManager().showScene("ticTacToe");
+                    JoinGameServerMenuScene.this.getWindow().getManager().showScene("ticTacToe");
 
                     waitingLabel.setVisible(false);
                 });

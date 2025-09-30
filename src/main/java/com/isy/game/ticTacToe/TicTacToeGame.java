@@ -63,15 +63,19 @@ public class TicTacToeGame extends Game implements Runnable {
 
         if (this.state == GameState.WON){
             ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName());
-            // Join game button terugzetten
-            SwingUtilities.invokeLater(() -> {
-                JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
-                joinScene.resetJoinButton();
-            });
-
         }else{
             ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody");
         }
+
+        // Join game button terugzetten
+        SwingUtilities.invokeLater(() -> {
+            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+            joinScene.resetJoinButton();
+            if(client != null){
+                client.shutdown();
+                client = null;
+            }
+        });
     }
 
     public void giveTurnOver() {
