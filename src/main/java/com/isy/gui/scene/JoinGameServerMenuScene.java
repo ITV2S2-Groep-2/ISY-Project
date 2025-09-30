@@ -14,6 +14,8 @@ public class JoinGameServerMenuScene extends MenuScene {
     public JoinGameServerMenuScene(Window window) {
         super("joinGameServerMenuScene", window);
     }
+    private JButton joinButton;
+    private JLabel waitingLabel;
 
     @Override
     public void init() {
@@ -21,10 +23,10 @@ public class JoinGameServerMenuScene extends MenuScene {
 
         panel.add(createHeader("Join een online game"));
 
-        JButton joinButton = createDefaultButton("Join game", null);
+        joinButton = createDefaultButton("Join game", null);
         panel.add(joinButton, getConstraints());
 
-        JLabel waitingLabel = new JLabel("Wachten op match...");
+        waitingLabel = new JLabel("Wachten op match...");
         waitingLabel.setVisible(false);
         panel.add(waitingLabel, getConstraints());
 
@@ -34,6 +36,13 @@ public class JoinGameServerMenuScene extends MenuScene {
             joinButton.setVisible(false);
             waitingLabel.setVisible(true);
             startTicTacToeGame(e, waitingLabel);
+        });
+    }
+
+    public void resetJoinButton() {
+        SwingUtilities.invokeLater(() -> {
+            joinButton.setVisible(true);
+            waitingLabel.setVisible(false);
         });
     }
 

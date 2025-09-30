@@ -2,16 +2,13 @@ package com.isy.game.ticTacToe;
 
 import com.isy.game.GameServer;
 import com.isy.Main;
-import com.isy.await.IWaitable;
 import com.isy.game.Player;
 import com.isy.game.Game;
-import com.isy.gui.PlayerEventManager;
+import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
 import com.isy.gui.scene.WinScene;
 
-import java.util.Arrays;
-
-import static com.isy.await.Await.await;
+import javax.swing.*;
 
 public class TicTacToeGame extends Game implements Runnable {
     private final Board board;
@@ -66,6 +63,12 @@ public class TicTacToeGame extends Game implements Runnable {
 
         if (this.state == GameState.WON){
             ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName());
+            // Join game button terugzetten
+            SwingUtilities.invokeLater(() -> {
+                JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+                joinScene.resetJoinButton();
+            });
+
         }else{
             ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody");
         }
