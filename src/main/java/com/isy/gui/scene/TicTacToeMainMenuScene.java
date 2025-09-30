@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.game.ticTacToe.AiPlayer;
 import com.isy.game.ticTacToe.HumanPlayer;
@@ -10,8 +11,11 @@ import com.isy.gui.Window;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.UUID;
 
 public class TicTacToeMainMenuScene extends MenuScene{
+    private GameServer client;
+
     public TicTacToeMainMenuScene(Window window) {
         super("ticTacToeMainMenu", window);
     }
@@ -44,6 +48,23 @@ public class TicTacToeMainMenuScene extends MenuScene{
     }
 
     private void goToJoinGameServer(ActionEvent actionEvent){
+        client = new GameServer("127.0.0.1", 7789);
+        new Thread(client).start();
+
+        new Thread(() -> {
+            while (!client.isConnected()) {
+                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+            }
+
+            String ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+            client.sendCommand("login " + ownName);
+
+            // client + naam doorgeven aan JoinGameServerMenuScene
+            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
+                    .getManager().getScene("joinGameServerMenuScene");
+            joinScene.setClient(client, ownName);
+        }).start();
+
         this.getWindow().getManager().showScene("joinGameServerMenuScene");
     }
 }

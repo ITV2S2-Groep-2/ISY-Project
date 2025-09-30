@@ -5,12 +5,18 @@ import com.isy.game.Player;
 import com.isy.game.ticTacToe.*;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
-import java.util.UUID;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class JoinGameServerMenuScene extends MenuScene {
+    private GameServer client;
+    private String ownName;
+
+    public void setClient(GameServer client, String ownName) {
+        this.client = client;
+        this.ownName = ownName;
+    }
     public JoinGameServerMenuScene(Window window) {
         super("joinGameServerMenuScene", window);
     }
@@ -47,16 +53,6 @@ public class JoinGameServerMenuScene extends MenuScene {
     }
 
     private void startTicTacToeGame(ActionEvent actionEvent, JLabel waitingLabel) {
-        GameServer client = new GameServer("127.0.0.1", 7789);
-        new Thread(client).start();
-
-        // Wacht tot socket + streams klaar zijn
-        while(!client.isConnected()) {
-            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
-        }
-
-        String ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
-        client.sendCommand("login " + ownName);
         client.sendCommand("subscribe tic-tac-toe");
 
         client.addListener(line -> {
