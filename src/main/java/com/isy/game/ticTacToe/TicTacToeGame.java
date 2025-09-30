@@ -71,10 +71,6 @@ public class TicTacToeGame extends Game implements Runnable {
         SwingUtilities.invokeLater(() -> {
             JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
             joinScene.resetJoinButton();
-            if(client != null){
-                client.shutdown();
-                client = null;
-            }
         });
     }
 
