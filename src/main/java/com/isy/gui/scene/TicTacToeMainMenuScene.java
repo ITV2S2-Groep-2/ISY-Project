@@ -24,21 +24,26 @@ public class TicTacToeMainMenuScene extends MenuScene{
         panel.add(createDefaultButton("Player VS Player(Offline)", this::startTicTacToeGameAgainstPlayer), getConstraints());
         panel.add(createDefaultButton("Player VS AI(Offline)", this::startTicTacToeGameAgainstAi), getConstraints());
         panel.add(createDefaultButton("AI VS AI(Offline)"), getConstraints());
+        panel.add(createDefaultButton("Join game server (temp)", this::goToJoinGameServer), getConstraints());
 
         panel.setBackground(Style.menuBackgroundColor);
     }
 
     private void startTicTacToeGameAgainstPlayer(ActionEvent actionEvent) {
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X), new HumanPlayer("2", Tile.O)});
+        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, null), new HumanPlayer("2", Tile.O, null)});
         ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
         new Thread(ticTacToeGame).start();
         this.getWindow().getManager().showScene("ticTacToe");
     }
 
     private void startTicTacToeGameAgainstAi(ActionEvent actionEvent) {
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X), new AiPlayer("2", Tile.O)});
+        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, null), new AiPlayer("2", Tile.O, null)});
         ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
         new Thread(ticTacToeGame).start();
         this.getWindow().getManager().showScene("ticTacToe");
+    }
+
+    private void goToJoinGameServer(ActionEvent actionEvent){
+        this.getWindow().getManager().showScene("joinGameServerMenuScene");
     }
 }

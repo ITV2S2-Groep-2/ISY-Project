@@ -1,28 +1,32 @@
 package com.isy.game.ticTacToe;
 
+import com.isy.game.GameServer;
 import com.isy.Main;
-import com.isy.await.IWaitable;
 import com.isy.game.Player;
 import com.isy.game.Game;
-import com.isy.gui.PlayerEventManager;
+import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
 import com.isy.gui.scene.WinScene;
 
-import java.util.Arrays;
-
-import static com.isy.await.Await.await;
+import javax.swing.*;
 
 public class TicTacToeGame extends Game implements Runnable {
     private final Board board;
     private final Player[] players;
     private Player activeTurnPlayer;
     private GameState state;
+    private GameServer client;
 
     public TicTacToeGame(Player[] players) {
         this.board = new Board();
         this.players = players;
         this.activeTurnPlayer = players[0];
         this.state = GameState.ONGOING;
+        this.client = null;
+    }
+
+    public void setClient(GameServer client){
+        this.client = client;
     }
 
     public void gameLoop() {
@@ -36,8 +40,6 @@ public class TicTacToeGame extends Game implements Runnable {
             move = this.activeTurnPlayer.getMove(this.getBoard());
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
             if (correctMove) {
-                System.out.println(this.board.isBoardFull());
-
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;
@@ -64,6 +66,16 @@ public class TicTacToeGame extends Game implements Runnable {
         }else{
             ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody");
         }
+
+        // Join game button terugzetten
+        SwingUtilities.invokeLater(() -> {
+            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+            joinScene.resetJoinButton();
+            if(client != null){
+                client.shutdown();
+                client = null;
+            }
+        });
     }
 
     public void giveTurnOver() {
