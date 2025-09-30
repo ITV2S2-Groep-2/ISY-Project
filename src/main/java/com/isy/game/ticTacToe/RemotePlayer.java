@@ -14,10 +14,6 @@ public class RemotePlayer extends Player{
 
         // Listener
         client.addListener(line -> {
-            if (line.startsWith("SVR GAME YOURTURN")) {
-                System.out.println("jouw beurt!");
-            }
-
             if (line.contains("SVR GAME MOVE")) {
                 int moveIndex = line.indexOf("MOVE:");
                 if (moveIndex != -1) {
