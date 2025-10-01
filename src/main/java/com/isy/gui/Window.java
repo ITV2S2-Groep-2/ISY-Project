@@ -1,6 +1,7 @@
 package com.isy.gui;
 
 import com.isy.gui.scene.JoinGameServerMenuScene;
+import com.isy.gui.scene.MainMenuScene;
 import com.isy.gui.scene.SceneManager;
 import com.isy.gui.scene.TicTacToeMainMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
@@ -17,15 +18,16 @@ public class Window {
 
         this.manager.addScene(new TicTacToeScene(this), false);
         this.manager.addScene(new WinScene(this), false);
-        this.manager.addScene(new TicTacToeMainMenuScene(this), true);
+        this.manager.addScene(new TicTacToeMainMenuScene(this), false);
         this.manager.addScene(new JoinGameServerMenuScene(this), false);
+        this.manager.addScene(new MainMenuScene(this), true);
 
         this.createAndShowGUI();
     }
 
     private void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("HelloWorldSwing");
+        JFrame frame = new JFrame("Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setLayout(new BorderLayout());
