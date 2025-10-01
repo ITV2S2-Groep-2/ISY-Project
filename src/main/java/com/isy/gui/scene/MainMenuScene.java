@@ -1,14 +1,11 @@
 package com.isy.gui.scene;
 
-import com.isy.game.GameServer;
-import com.isy.game.Player;
 import com.isy.game.ticTacToe.*;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.UUID;
 
 public class MainMenuScene extends MenuScene{
 

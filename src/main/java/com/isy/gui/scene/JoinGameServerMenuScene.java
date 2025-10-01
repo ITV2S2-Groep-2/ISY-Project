@@ -23,9 +23,13 @@ public class JoinGameServerMenuScene extends MenuScene {
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        panel.add(createHeader("Join een online game"));
+        panel.add(createHeader("Wachten op tournament...."));
+        panel.add(Box.createVerticalStrut(10));
 
-        joinButton = createDefaultButton("Subscribe voor potje", null);
+        JLabel info = new JLabel("In plaats daarvan subscriben voor een direct potje!");
+        panel.add(info);
+
+        joinButton = createDefaultButton("Subscribe!", null);
         panel.add(joinButton, getConstraints());
 
         waitingLabel = new JLabel("Wachten op match...");
