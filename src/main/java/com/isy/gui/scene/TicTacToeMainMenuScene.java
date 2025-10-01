@@ -65,7 +65,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 player1Type.equals("AI") && player2Type.equals("Player")) {
             startTicTacToeGameAgainstAi();
         } else if (player1Type.equals("AI") && player2Type.equals("AI")) {
-//            startAiVsAiGame();
+            startTicTacToeGameAIAgainstAi();
         } else if (player1Type.equals("Player") || player2Type.equals("Remote")) {
             goToJoinGameServer();
         } else {
@@ -84,6 +84,13 @@ public class TicTacToeMainMenuScene extends MenuScene{
 
     private void startTicTacToeGameAgainstAi() {
         TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, null), new AiPlayer("2", Tile.O, null)});
+        ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
+        new Thread(ticTacToeGame).start();
+        this.getWindow().getManager().showScene("ticTacToe");
+    }
+
+    private void startTicTacToeGameAIAgainstAi() {
+        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new AiPlayer("1", Tile.X, null), new AiPlayer("2", Tile.O, null)});
         ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
         new Thread(ticTacToeGame).start();
         this.getWindow().getManager().showScene("ticTacToe");
