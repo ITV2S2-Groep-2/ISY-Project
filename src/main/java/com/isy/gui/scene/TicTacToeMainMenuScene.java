@@ -2,6 +2,7 @@ package com.isy.gui.scene;
 
 import com.isy.game.GameServer;
 import com.isy.game.Player;
+import com.isy.game.PlayerType;
 import com.isy.game.ticTacToe.*;
 import com.isy.gui.Style;
 import com.isy.gui.Window;
@@ -9,10 +10,12 @@ import com.isy.gui.Window;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class TicTacToeMainMenuScene extends MenuScene{
     static JComboBox dropdown1, dropdown2;
+    static JTextField textField1, textField2;
     private GameServer client;
     private String ownName;
 
@@ -28,69 +31,75 @@ public class TicTacToeMainMenuScene extends MenuScene{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        String options[] = { "Player", "AI", "Remote" };
+        dropdown1 = new JComboBox(Arrays.stream(PlayerType.values())
+                .filter(val -> !val.equals(PlayerType.REMOTE))
+                .map(val -> val.label)
+                .toArray());
+        dropdown2 = new JComboBox(Arrays.stream(PlayerType.values())
+                .map(val -> val.label)
+                .toArray());
 
-        dropdown1 = new JComboBox(options);
-        dropdown2 = new JComboBox(options);
+        textField1 = new JTextField("Player 1");
+        textField2 = new JTextField("Player 2");
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel.add(dropdown1, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panel.add(dropdown2, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(createHeader("TicTacToe"), gbc);
 
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(dropdown1, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        panel.add(dropdown2, gbc);
+
+        gbc.gridx = 0;
         gbc.gridy = 2;
+        panel.add(textField1, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        panel.add(textField2, gbc);
+
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         panel.add(createDefaultButton("Start Game", this::startGame), gbc);
 
     }
 
     private void startGame(ActionEvent e){
-        String player1Type = (String) dropdown1.getSelectedItem();
-        String player2Type = (String) dropdown2.getSelectedItem();
+        PlayerType player1Type = PlayerType.fromLabel((String) dropdown1.getSelectedItem());
+        PlayerType player2Type = PlayerType.fromLabel((String) dropdown2.getSelectedItem());
 
-        // Basis opties nu gedaan, zoals player tegen AI, later nog bijv. AI tegen AI afvangen.
+        String player1Name = textField1.getText();
+        String player2Name = textField2.getText();
 
-        if (player1Type.equals("Player") && player2Type.equals("Player")) {
-            startTicTacToeGameAgainstPlayer();
-        } else if (player1Type.equals("Player") && player2Type.equals("AI") ||
-                player1Type.equals("AI") && player2Type.equals("Player")) {
-            startTicTacToeGameAgainstAi();
-        } else if (player1Type.equals("AI") && player2Type.equals("AI")) {
-            startTicTacToeGameAIAgainstAi();
-        } else if (player1Type.equals("Player") || player2Type.equals("Remote")) {
+        if (player1Type.equals(PlayerType.REMOTE) || player2Type.equals(PlayerType.REMOTE)) {
+            //TODO: change player name management for remote funcionality
             goToJoinGameServer();
         } else {
-            // fallback
-            JOptionPane.showMessageDialog(this.getScenePanel(),
-                    "Ongeldige combinatie gekozen!", "Error", JOptionPane.ERROR_MESSAGE);
+            Player player1 = createPlayerByType(player1Type, player1Name, Tile.X);
+            Player player2 = createPlayerByType(player2Type, player2Name, Tile.O);
+            startLocalGame(player1, player2);
         }
+
     }
 
-    private void startTicTacToeGameAgainstPlayer() {
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, null), new HumanPlayer("2", Tile.O, null)});
-        ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
-        new Thread(ticTacToeGame).start();
-        this.getWindow().getManager().showScene("ticTacToe");
+    private Player createPlayerByType(PlayerType type, String name, Tile tile) {
+        return switch (type) {
+            case PlayerType.HUMAN -> new HumanPlayer(name, tile, null);
+            case PlayerType.AI -> new AiPlayer(name, tile, null);
+            case PlayerType.REMOTE -> new RemotePlayer(name, tile, null);
+            default -> null;
+        };
     }
 
-    private void startTicTacToeGameAgainstAi() {
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new HumanPlayer("1", Tile.X, null), new AiPlayer("2", Tile.O, null)});
-        ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
-        new Thread(ticTacToeGame).start();
-        this.getWindow().getManager().showScene("ticTacToe");
-    }
-
-    private void startTicTacToeGameAIAgainstAi() {
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{new AiPlayer("1", Tile.X, null), new AiPlayer("2", Tile.O, null)});
+    private void startLocalGame(Player player1, Player player2) {
+        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{player1, player2});
         ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
         new Thread(ticTacToeGame).start();
         this.getWindow().getManager().showScene("ticTacToe");
