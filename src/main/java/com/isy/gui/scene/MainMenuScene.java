@@ -1,8 +1,8 @@
 package com.isy.gui.scene;
 
-import com.isy.game.ticTacToe.*;
-import com.isy.gui.Style;
 import com.isy.gui.Window;
+import com.isy.gui.components.Header;
+import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,10 +17,9 @@ public class MainMenuScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        panel.add(createHeader("Selecteer je spel!"));
-        panel.add(createDefaultButton("Tic-tac-toe", this::goToTicTacToeMainMenu), getConstraints());
-        panel.add(createDefaultButton("Othello"), getConstraints());
-        panel.setBackground(Style.menuBackgroundColor);
+        panel.add(Header.createHeader("Selecteer je spel!"));
+        panel.add(UIButton.createButton("Tic-tac-toe", this::goToTicTacToeMainMenu), getConstraints());
+        panel.add(UIButton.createButton("Othello"), getConstraints());
     }
 
     private void goToTicTacToeMainMenu(ActionEvent actionEvent) {

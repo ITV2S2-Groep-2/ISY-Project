@@ -4,11 +4,11 @@ import com.isy.game.Game;
 import com.isy.game.ticTacToe.TicTacToeGame;
 import com.isy.gui.PlayerTurnEventListener;
 import com.isy.game.ticTacToe.Tile;
-import com.isy.gui.Style;
 import com.isy.gui.Window;
+import com.isy.gui.components.BoardTile;
+import com.isy.gui.components.Label;
 
 import javax.swing.*;
-import javax.swing.border.StrokeBorder;
 import java.awt.*;
 
 public class TicTacToeScene extends Scene {
@@ -26,9 +26,8 @@ public class TicTacToeScene extends Scene {
         JPanel controlPanel = this.getScenePanel();
         controlPanel.setLayout(new GridBagLayout());
 
-        playerNameLabel = new JLabel("");
+        playerNameLabel = Label.createLabel("");
         playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        playerNameLabel.setForeground(Color.BLACK);
         playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -57,14 +56,7 @@ public class TicTacToeScene extends Scene {
 
         for (int y = 0; y < ticTacToeGame.getBoard().getHeight(); y++) {
             for (int x = 0; x < ticTacToeGame.getBoard().getWidth(); x++) {
-                final JButton button = new JButton(ticTacToeGame.getBoard().getTile(x, y).toString());
-                button.setBackground(Style.primaryBackgroundColor);
-                button.setBorder(new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor));
-                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                button.setFocusPainted(false);
-                button.setContentAreaFilled(false);
-                button.setOpaque(true);
-                button.setPreferredSize(new Dimension(80, 80));
+                final JButton button = BoardTile.createButton(ticTacToeGame.getBoard().getTile(x, y).toString());
 
                 button.addActionListener(new PlayerTurnEventListener(ticTacToeGame, x, y));
                 this.boardButtons[x][y] = button;

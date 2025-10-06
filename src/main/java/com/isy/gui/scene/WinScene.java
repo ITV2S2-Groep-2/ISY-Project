@@ -1,6 +1,8 @@
 package com.isy.gui.scene;
 
 import com.isy.gui.Window;
+import com.isy.gui.components.Header;
+import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,10 +18,10 @@ public class WinScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        title = createHeader("TicTacToe");
+        title = Header.createHeader("TicTacToe");
 
         panel.add(title, getConstraints());
-        panel.add(createDefaultButton("Go back to main menu", this::goBackToMainMenu), getConstraints());
+        panel.add(UIButton.createButton("Go back to main menu", this::goBackToMainMenu), getConstraints());
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {

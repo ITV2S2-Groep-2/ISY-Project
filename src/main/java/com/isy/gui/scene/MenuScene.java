@@ -33,33 +33,4 @@ public abstract class MenuScene extends Scene{
         return constraints;
     }
 
-    public JButton createDefaultButton(String text, ActionListener listener){
-        JButton button = new JButton(text);
-        button.setBackground(Style.primaryBackgroundColor);
-        button.setBorder(BorderFactory.createCompoundBorder(
-                new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setOpaque(true);
-
-        if (listener != null)
-            button.addActionListener(listener);
-
-        return button;
-    }
-
-    public JButton createDefaultButton(String text){
-        return createDefaultButton(text, null);
-    }
-
-    public JLabel createHeader(String text){
-        JLabel label = new JLabel(text);
-        label.setForeground(Style.primaryTextColor);
-        label.setFont(new Font("Arial", Font.BOLD, 24));
-
-        return label;
-    }
 }

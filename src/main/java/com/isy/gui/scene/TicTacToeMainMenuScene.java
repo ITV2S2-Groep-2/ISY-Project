@@ -4,8 +4,11 @@ import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.game.PlayerType;
 import com.isy.game.ticTacToe.*;
-import com.isy.gui.Style;
 import com.isy.gui.Window;
+import com.isy.gui.components.ComboBox;
+import com.isy.gui.components.Header;
+import com.isy.gui.components.TextField;
+import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,22 +34,22 @@ public class TicTacToeMainMenuScene extends MenuScene{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        dropdown1 = new JComboBox(Arrays.stream(PlayerType.values())
+        dropdown1 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
                 .filter(val -> !val.equals(PlayerType.REMOTE))
                 .map(val -> val.label)
                 .toArray());
-        dropdown2 = new JComboBox(Arrays.stream(PlayerType.values())
+        dropdown2 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
                 .map(val -> val.label)
                 .toArray());
 
-        textField1 = new JTextField("Player 1");
-        textField2 = new JTextField("Player 2");
+        textField1 = TextField.createTextField("Player 1");
+        textField2 = TextField.createTextField("Player 2");
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(createHeader("TicTacToe"), gbc);
+        panel.add(Header.createHeader("TicTacToe"), gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 0;
@@ -67,8 +70,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
 
         gbc.gridy = 3;
         gbc.gridwidth = 1;
-        panel.add(createDefaultButton("Start Game", this::startGame), gbc);
-
+        panel.add(UIButton.createButton("Start Game", this::startGame), gbc);
     }
 
     private void startGame(ActionEvent e){
