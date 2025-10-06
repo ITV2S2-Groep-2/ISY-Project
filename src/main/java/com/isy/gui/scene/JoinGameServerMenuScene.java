@@ -7,6 +7,7 @@ import com.isy.gui.Style;
 import com.isy.gui.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class JoinGameServerMenuScene extends MenuScene {
@@ -59,6 +60,7 @@ public class JoinGameServerMenuScene extends MenuScene {
 
     private void goLeaveServer(ActionEvent actionEvent) {
         this.getWindow().getManager().showScene("ticTacToeMainMenu");
+        this.resetJoinButton();
         client.shutdown();
     }
 
