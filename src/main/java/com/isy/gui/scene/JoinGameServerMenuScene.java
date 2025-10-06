@@ -29,6 +29,8 @@ public class JoinGameServerMenuScene extends MenuScene {
         JLabel info = new JLabel("In plaats daarvan subscriben voor een direct potje!");
         panel.add(info);
 
+        panel.add(createDefaultButton("Leave server", this::goLeaveServer), getConstraints());
+
         joinButton = createDefaultButton("Subscribe!", null);
         panel.add(joinButton, getConstraints());
 
@@ -53,6 +55,11 @@ public class JoinGameServerMenuScene extends MenuScene {
         joinButton.setVisible(false);
         waitingLabel.setVisible(true);
 
+    }
+
+    private void goLeaveServer(ActionEvent actionEvent) {
+        this.getWindow().getManager().showScene("ticTacToeMainMenu");
+        client.shutdown();
     }
 
     public void resetJoinButton() {
