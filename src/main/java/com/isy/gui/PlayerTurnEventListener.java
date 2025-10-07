@@ -1,5 +1,6 @@
 package com.isy.gui;
 
+import com.isy.game.GameServer;
 import com.isy.game.ticTacToe.TicTacToeGame;
 
 import java.awt.event.ActionEvent;
@@ -9,6 +10,7 @@ public class PlayerTurnEventListener implements ActionListener {
     private final TicTacToeGame ticTacToeGame;
     private final int x;
     private final int y;
+    private GameServer client;
 
     public PlayerTurnEventListener(TicTacToeGame ticTacToeGame, int x, int y) {
         this.ticTacToeGame = ticTacToeGame;

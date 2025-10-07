@@ -1,23 +1,32 @@
 package com.isy.game.ticTacToe;
 
+import com.isy.game.GameServer;
+import com.isy.Main;
 import com.isy.game.Player;
 import com.isy.game.Game;
-import com.isy.gui.PlayerEventManager;
+import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
+import com.isy.gui.scene.WinScene;
 
-import static com.isy.await.Await.await;
+import javax.swing.*;
 
 public class TicTacToeGame extends Game implements Runnable {
     private final Board board;
     private final Player[] players;
     private Player activeTurnPlayer;
     private GameState state;
+    private GameServer client;
 
-    public TicTacToeGame() {
+    public TicTacToeGame(Player[] players) {
         this.board = new Board();
-        this.players = new Player[]{new HumanPlayer("1", Tile.X), new AiPlayer("2", Tile.O)};
+        this.players = players;
         this.activeTurnPlayer = players[0];
         this.state = GameState.ONGOING;
+        this.client = null;
+    }
+
+    public void setClient(GameServer client){
+        this.client = client;
     }
 
     public void gameLoop() {
@@ -34,7 +43,10 @@ public class TicTacToeGame extends Game implements Runnable {
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;
+                } else if (this.board.isBoardFull()) {
+                    break;
                 }
+
                 this.giveTurnOver();
             }
         }
@@ -42,6 +54,25 @@ public class TicTacToeGame extends Game implements Runnable {
         if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
             ttts.reloadBoardValues(this);
         }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        boolean isOnline = this.client != null;
+        if (this.state == GameState.WON){
+            ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName(), isOnline);
+        }else{
+            ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody", isOnline);
+        }
+
+        // Join game button terugzetten
+        SwingUtilities.invokeLater(() -> {
+            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+            joinScene.resetJoinButton();
+        });
     }
 
     public void giveTurnOver() {

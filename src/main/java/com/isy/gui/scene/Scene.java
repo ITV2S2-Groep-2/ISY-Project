@@ -2,6 +2,7 @@ package com.isy.gui.scene;
 
 import com.isy.game.Game;
 import com.isy.gui.Window;
+import com.isy.gui.components.ScenePanel;
 
 import javax.swing.*;
 
@@ -14,7 +15,7 @@ public abstract class Scene {
     public Scene(String name, Window window){
         this.name = name;
         this.window = window;
-        this.scenePanel = new JPanel();
+        this.scenePanel = ScenePanel.createScenePanel();
         this.show = false;
 
         this.scenePanel.setVisible(this.show);
