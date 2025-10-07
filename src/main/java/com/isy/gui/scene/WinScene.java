@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 
 public class WinScene extends MenuScene{
     private JLabel title;
+    private boolean online;
 
     public WinScene(Window window) {
         super("winScene", window);
@@ -25,10 +26,15 @@ public class WinScene extends MenuScene{
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {
-        this.getWindow().getManager().showScene("ticTacToeMainMenu");
+        if(online){
+            this.getWindow().getManager().showScene("joinGameServerMenuScene");
+        } else {
+            this.getWindow().getManager().showScene("ticTacToeMainMenu");
+        }
     }
 
-    public void win(String playerName){
+    public void win(String playerName, boolean online){
+        this.online = online;
         this.getWindow().getManager().showScene(this.getName());
         title.setText(playerName + " Won!");
     }

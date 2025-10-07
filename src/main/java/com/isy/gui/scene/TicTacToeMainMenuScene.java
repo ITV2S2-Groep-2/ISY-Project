@@ -108,6 +108,10 @@ public class TicTacToeMainMenuScene extends MenuScene{
     }
 
     private void goToJoinGameServer() {
+        // client bestaat al, maak nieuwe aan en log nieuwe uit.
+        if(client != null){
+            client.shutdown();
+        }
         client = new GameServer("127.0.0.1", 7789);
         new Thread(client).start();
 
