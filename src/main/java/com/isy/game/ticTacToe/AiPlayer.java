@@ -21,7 +21,7 @@ public class AiPlayer extends Player {
         Tile[][] tiles = board.getTiles();
 
         int[] move = getBestMove(tiles);
-        
+
         if(this.client != null){
             sendServerData(move);
         }

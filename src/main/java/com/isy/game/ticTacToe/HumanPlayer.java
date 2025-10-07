@@ -1,6 +1,5 @@
 package com.isy.game.ticTacToe;
 
-import com.isy.game.Game;
 import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.gui.PlayerEventManager;
