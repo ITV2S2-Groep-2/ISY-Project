@@ -1,2 +1,6 @@
-test=Test
-tic.tac.toe=Tic Tac Toe
+select.game.header=Select your game!
+waiting.tournament.header=Waiting on a tournament to start...
+tic.tac.toe.header=Tic Tac Toe
+player.name.display=You are %s
+directly.subscribe.label=Instead directly subscribe to a game!
+waiting.match.label=Waiting for match!

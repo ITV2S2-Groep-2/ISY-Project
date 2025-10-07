@@ -23,10 +23,10 @@ public class JoinGameServerMenuScene extends MenuScene {
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        panel.add(Header.createHeader("Wachten op tournament...."));
+        panel.add(Header.createHeader("waiting.tournament.header"));
         panel.add(Box.createVerticalStrut(10));
 
-        JLabel info = Label.createLabel("In plaats daarvan subscriben voor een direct potje!");
+        JLabel info = Label.createLabel("directly.subscribe.label");
         panel.add(info);
 
         panel.add(UIButton.createButton("Leave server", this::goLeaveServer), getConstraints());
@@ -34,7 +34,7 @@ public class JoinGameServerMenuScene extends MenuScene {
         joinButton = UIButton.createButton("Subscribe!");
         panel.add(joinButton, getConstraints());
 
-        waitingLabel = Label.createLabel("Wachten op match...");
+        waitingLabel = Label.createLabel("waiting.match.label");
         waitingLabel.setVisible(false);
         panel.add(waitingLabel, getConstraints());
 

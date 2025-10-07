@@ -17,7 +17,7 @@ public class MainMenuScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        panel.add(Header.createHeader("Selecteer je spel!"));
+        panel.add(Header.createHeader("select.game.header"));
         panel.add(UIButton.createButton("Tic-tac-toe", this::goToTicTacToeMainMenu), getConstraints());
         panel.add(UIButton.createButton("Othello"), getConstraints());
     }

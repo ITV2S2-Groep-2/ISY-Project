@@ -19,7 +19,7 @@ public class WinScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        title = Header.createHeader("TicTacToe");
+        title = Header.createHeader("tic.tac.toe.header");
 
         panel.add(title, getConstraints());
         panel.add(UIButton.createButton("Go back to main menu", this::goBackToMainMenu), getConstraints());

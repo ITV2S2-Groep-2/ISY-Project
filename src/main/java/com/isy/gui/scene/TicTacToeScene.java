@@ -7,6 +7,7 @@ import com.isy.game.ticTacToe.Tile;
 import com.isy.gui.Window;
 import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
+import com.isy.gui.lang.LangHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class TicTacToeScene extends Scene {
         JPanel controlPanel = this.getScenePanel();
         controlPanel.setLayout(new GridBagLayout());
 
-        playerNameLabel = Label.createLabel("");
+        playerNameLabel = Label.createLabel();
         playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -77,7 +78,7 @@ public class TicTacToeScene extends Scene {
 
     public void setPlayerName(String name) {
         if (playerNameLabel != null) {
-            playerNameLabel.setText("Jij bent: " + name);
+            playerNameLabel.setText(LangHandler.get().translate("player.name.display", name));
         }
     }
 }

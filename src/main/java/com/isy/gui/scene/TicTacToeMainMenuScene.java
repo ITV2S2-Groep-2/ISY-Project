@@ -50,7 +50,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(Header.createHeader("TicTacToe"), gbc);
+        panel.add(Header.createHeader("tic.tac.toe.header"), gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 0;
