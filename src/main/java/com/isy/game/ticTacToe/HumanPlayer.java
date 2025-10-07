@@ -16,7 +16,7 @@ public class HumanPlayer extends Player {
     public int[] getMove(Board board) {
         int[] move = await(PlayerEventManager.get());
 
-        if(this.client != null){
+        if(this.client != null && board.getTile(move[0], move[1]) == Tile.EMPTY){
             sendServerData(move);
         }
         return move;
