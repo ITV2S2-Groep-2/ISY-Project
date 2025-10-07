@@ -29,7 +29,9 @@ public class JoinGameServerMenuScene extends MenuScene {
         JLabel info = Label.createLabel("In plaats daarvan subscriben voor een direct potje!");
         panel.add(info);
 
-        joinButton = UIButton.createButton("Subscribe!", this::goLeaveServer);
+        panel.add(UIButton.createButton("Leave server", this::goLeaveServer), getConstraints());
+
+        joinButton = UIButton.createButton("Subscribe!");
         panel.add(joinButton, getConstraints());
 
         waitingLabel = Label.createLabel("Wachten op match...");
