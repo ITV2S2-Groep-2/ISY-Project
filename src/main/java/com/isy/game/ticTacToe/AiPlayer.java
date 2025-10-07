@@ -1,7 +1,5 @@
 package com.isy.game.ticTacToe;
 
-import com.isy.await.IWaitable;
-import com.isy.game.Game;
 import com.isy.game.GameServer;
 import com.isy.game.Player;
 
@@ -15,23 +13,19 @@ public class AiPlayer extends Player {
 
     Tile symbol = getSymbol();
     Tile otherSymbol = (symbol == Tile.X) ? Tile.O : Tile.X;
-    // getMove() etc.
 
     @Override
     public int[] getMove(Board board) {
         System.out.println("AI");
         //TEMP
         Tile[][] tiles = board.getTiles();
-        return getBestMove(tiles);
 
-//        for (int r = 0; r < board.getHeight(); r++) {
-//            for (int c = 0; c < board.getWidth(); c++) {
-//                if (tiles[r][c] == Tile.EMPTY) {
-//                    return new int[] {r,c};
-//                }
-//            }
-//        }
-//        return new int[]{1,1};
+        int[] move = getBestMove(tiles);
+        
+        if(this.client != null){
+            sendServerData(move);
+        }
+        return move;
     }
 
     public int[] getBestMove(Tile[][] tiles){
