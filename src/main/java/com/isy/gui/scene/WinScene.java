@@ -47,8 +47,8 @@ public class WinScene extends MenuScene{
         title.setText(playerName + " Won!");
     }
 
-    public void lost(boolean online){
+    public void lost(String playername, boolean online){
         this.online = online;
         this.getWindow().getManager().showScene(this.getName());
-        title.setText("You lost!");
+        title.setText(playername +" Lost!");
     }}

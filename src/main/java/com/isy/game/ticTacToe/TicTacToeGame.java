@@ -72,9 +72,15 @@ public class TicTacToeGame extends Game implements Runnable {
 
         boolean isOnline = this.client != null;
         if (this.state == GameState.WON){
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName(), isOnline);
+            String playerName;
+            if(this.activeTurnPlayer.getName().equals("Tegenstander")){
+                playerName = "You";
+            } else {
+                playerName = this.activeTurnPlayer.getName();
+            }
+            ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
-            ((WinScene) Main.window.getManager().getScene("winScene")).lost(isOnline);
+            ((WinScene) Main.window.getManager().getScene("winScene")).lost("You", isOnline);
         } else {
             ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody", isOnline);
         }

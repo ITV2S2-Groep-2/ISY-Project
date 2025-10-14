@@ -82,12 +82,10 @@ public class TicTacToeMainMenuScene extends MenuScene{
         String player2Name = textField2.getText();
 
         if (player1Type.equals(PlayerType.HUMAN) && player2Type.equals(PlayerType.REMOTE)) {
-            //TODO: change player name management for remote funcionality
-            goToJoinGameServer(PlayerType.HUMAN);
+            goToJoinGameServer(PlayerType.HUMAN, player1Name);
         }
         else if(player1Type.equals(PlayerType.AI) && player2Type.equals(PlayerType.REMOTE)) {
-            //TODO: change player name management for remote funcionality
-            goToJoinGameServer(PlayerType.AI);
+            goToJoinGameServer(PlayerType.AI, player1Name);
         } else {
             Player player1 = createPlayerByType(player1Type, player1Name, Tile.X);
             Player player2 = createPlayerByType(player2Type, player2Name, Tile.O);
@@ -112,7 +110,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
         this.getWindow().getManager().showScene("ticTacToe");
     }
 
-    private void goToJoinGameServer(PlayerType playerType) {
+    private void goToJoinGameServer(PlayerType playerType, String playerName) {
         // client bestaat al, maak nieuwe aan en log nieuwe uit.
         if(client != null){
             client.shutdown();
@@ -125,7 +123,11 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 try { Thread.sleep(50); } catch (InterruptedException ignored) {}
             }
 
-            ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+            if(playerName == null || playerName.equals("")){
+                ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+            } else {
+                ownName = playerName;
+            }
             client.sendCommand("login " + ownName);
 
             JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
