@@ -24,6 +24,10 @@ public class TicTacToeGame extends Game implements Runnable {
         this.client = null;
     }
 
+    public GameServer getClient(){
+        return this.client;
+    }
+
     public void setClient(GameServer client){
         this.client = client;
     }

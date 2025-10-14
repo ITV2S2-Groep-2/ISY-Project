@@ -2,6 +2,7 @@ package com.isy.gui.scene;
 
 import com.isy.await.Await;
 import com.isy.game.Game;
+import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.game.ticTacToe.TicTacToeGame;
@@ -101,5 +102,9 @@ public class TicTacToeScene extends Scene {
     private void goForfeit(ActionEvent actionEvent) {
         this.game.setState(GameState.LOST);
         PlayerEventManager.get().stop();
+
+        if(this.game.getClient().isConnected()){
+            this.game.getClient().sendCommand("forfeit");
+        }
     }
 }

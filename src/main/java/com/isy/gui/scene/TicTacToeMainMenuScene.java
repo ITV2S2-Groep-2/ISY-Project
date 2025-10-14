@@ -159,6 +159,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 iStart ? remotePlayer : localPlayer
         });
         ticTacToeGame.setClient(client);
+        remotePlayer.setGame(ticTacToeGame);
 
         TicTacToeScene ttts = (TicTacToeScene) this.getWindow().getManager().getScene("ticTacToe");
         ticTacToeGame.setRenderScene(ttts);

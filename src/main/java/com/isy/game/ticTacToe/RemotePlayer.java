@@ -2,15 +2,18 @@ package com.isy.game.ticTacToe;
 
 import com.isy.game.GameServer;
 import com.isy.game.Player;
+import com.isy.gui.PlayerEventManager;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class RemotePlayer extends Player{
     private final BlockingQueue<Integer> moveQueue = new LinkedBlockingQueue<>();
+    private TicTacToeGame game;
 
     public RemotePlayer(String name, Tile symbol, GameServer client){
         super(name, symbol, client);
+
 
         // Listener
         client.addListener(line -> {
@@ -26,7 +29,23 @@ public class RemotePlayer extends Player{
                     }
                 }
             }
+
+            if (line.contains("SVR GAME LOSS")) {
+                this.game.setState(GameState.LOST);
+                System.out.println(moveQueue.offer(-1));
+                PlayerEventManager.get().stop();
+            }
+
+            if (line.contains("SVR GAME WIN")){
+                this.game.setState(GameState.WON);
+                System.out.println(moveQueue.offer(-1));
+                PlayerEventManager.get().stop();
+            }
         });
+    }
+
+    public void setGame(TicTacToeGame game){
+        this.game = game;
     }
 
     @Override
@@ -36,7 +55,12 @@ public class RemotePlayer extends Player{
         }
 
         try {
-            return formatServerMove(moveQueue.take());
+            int move = moveQueue.take();
+            if (move == -1) {
+                return null;
+            }
+            return formatServerMove(move);
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);

@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.Main;
+import com.isy.gui.PlayerEventManager;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
