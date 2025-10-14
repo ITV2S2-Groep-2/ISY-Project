@@ -12,7 +12,6 @@ public class PlayerEventManager implements IWaitable<int[]> {
 
     private PlayerEventManager(){
         lastClick = 0;
-        clickedButton = new int[2];
     }
 
     public static PlayerEventManager get(){
@@ -24,6 +23,10 @@ public class PlayerEventManager implements IWaitable<int[]> {
 
     public void newClick(int x, int y){
         this.lastClick = System.currentTimeMillis();
+        // Creeer nieuwe clicked button wanneer hij nog niet bestond of wanneer op null gezet door stop boolean
+        if(clickedButton == null){
+            clickedButton = new int[2];
+        }
         this.clickedButton[0] = x;
         this.clickedButton[1] = y;
     }
