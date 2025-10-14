@@ -27,9 +27,12 @@ public class TicTacToeGame extends Game implements Runnable {
     public void setClient(GameServer client){
         this.client = client;
     }
+    public void setState(GameState state){
+        this.state = state;
+    }
 
     public void gameLoop() {
-        while (this.state != GameState.WON) {
+        while (this.state == GameState.ONGOING) {
             int[] move = null;
 
             if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
@@ -37,6 +40,9 @@ public class TicTacToeGame extends Game implements Runnable {
             }
 
             move = this.activeTurnPlayer.getMove(this.getBoard());
+            if(move == null){
+                continue;
+            }
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
             if (correctMove) {
                 if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
@@ -63,6 +69,8 @@ public class TicTacToeGame extends Game implements Runnable {
         boolean isOnline = this.client != null;
         if (this.state == GameState.WON){
             ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName(), isOnline);
+        }else if(this.state == GameState.LOST){
+            ((WinScene) Main.window.getManager().getScene("winScene")).lost(isOnline);
         } else {
             ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody", isOnline);
         }
