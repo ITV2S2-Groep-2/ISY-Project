@@ -4,7 +4,6 @@ import com.isy.game.GameServer;
 import com.isy.Main;
 import com.isy.game.Player;
 import com.isy.game.Game;
-import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
 import com.isy.gui.scene.WinScene;
 
@@ -30,7 +29,7 @@ public class TicTacToeGame extends Game implements Runnable {
     }
 
     public void gameLoop() {
-        while (this.state != GameState.WON){
+        while (this.state != GameState.WON) {
             int[] move = null;
 
             if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
@@ -64,15 +63,9 @@ public class TicTacToeGame extends Game implements Runnable {
         boolean isOnline = this.client != null;
         if (this.state == GameState.WON){
             ((WinScene) Main.window.getManager().getScene("winScene")).win(this.activeTurnPlayer.getName(), isOnline);
-        }else{
+        } else {
             ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody", isOnline);
         }
-
-        // Join game button terugzetten
-        SwingUtilities.invokeLater(() -> {
-            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
-            joinScene.resetJoinButton();
-        });
     }
 
     public void giveTurnOver() {
