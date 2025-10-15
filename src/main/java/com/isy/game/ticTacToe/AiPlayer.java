@@ -27,8 +27,6 @@ public class AiPlayer extends Player {
             throw new RuntimeException(e);
         }
 
-        System.out.println("Get move");
-
         int[] move = getBestMove(tiles);
 
         if(this.client != null){

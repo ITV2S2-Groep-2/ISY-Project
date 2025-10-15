@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.Main;
 import com.isy.game.GameServer;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.PlayerEventManager;
@@ -57,10 +58,18 @@ public class JoinGameServerMenuScene extends MenuScene {
     }
 
     private void onJoinButtonClicked(ActionEvent e) {
+        SwingUtilities.invokeLater(() -> {
+            TicTacToeMainMenuScene tttmms = (TicTacToeMainMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
+            tttmms.setiStart(false);
+            System.out.println("heb m via setistart op false gezet");
+        });
         if (client == null) return;
 
         if(client != null){
             client.addListener(line -> {
+                if(line.contains("ERR Player is not in a match currently")){
+                    return;
+                }
                 if (line.contains("ERR")) {
                     errorLabel.setText(line);
                     errorLabel.show();
