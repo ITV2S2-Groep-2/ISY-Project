@@ -103,7 +103,7 @@ public class TicTacToeScene extends Scene {
         this.game.setState(GameState.LOST);
         PlayerEventManager.get().stop();
 
-        if(this.game.getClient().isConnected()){
+        if(this.game.getClient() != null){
             this.game.getClient().sendCommand("forfeit");
         }
     }
