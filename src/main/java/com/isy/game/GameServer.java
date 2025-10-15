@@ -14,8 +14,8 @@ import java.util.function.Consumer;
 
 public class GameServer implements Runnable {
 
-    private String hostName = "127.0.0.1";
-    private int portNumber = 7789;
+    private final String hostName;
+    private final int portNumber;
 
     private Socket client;
     private BufferedReader in;

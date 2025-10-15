@@ -6,6 +6,7 @@ import com.isy.gui.scene.SceneManager;
 import com.isy.gui.scene.TicTacToeMainMenuScene;
 import com.isy.gui.scene.TicTacToeScene;
 import com.isy.gui.scene.WinScene;
+import com.isy.gui.scene.SettingsScene;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,11 +15,13 @@ public class Window {
     private final SceneManager manager;
 
     public Window(){
+        GameSettings.get();
         this.manager = new SceneManager(this);
 
         this.manager.addScene(new TicTacToeScene(this), false);
         this.manager.addScene(new WinScene(this), false);
         this.manager.addScene(new TicTacToeMainMenuScene(this), false);
+        this.manager.addScene(new SettingsScene(this), false);
         this.manager.addScene(new JoinGameServerMenuScene(this), false);
         this.manager.addScene(new MainMenuScene(this), true);
 

@@ -4,6 +4,7 @@ import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.game.PlayerType;
 import com.isy.game.ticTacToe.*;
+import com.isy.gui.GameSettings;
 import com.isy.gui.Window;
 import com.isy.gui.components.ComboBox;
 import com.isy.gui.components.Header;
@@ -20,6 +21,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
     static JComboBox dropdown1, dropdown2;
     static JTextField textField1, textField2;
     private GameServer client;
+    private GameSettings settings = GameSettings.get();
     private String ownName;
     Player localPlayer;
 
@@ -115,7 +117,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
         if(client != null){
             client.shutdown();
         }
-        client = new GameServer("127.0.0.1", 7789);
+        client = new GameServer(settings.getHostName(), settings.getPortNumber());
         new Thread(client).start();
 
         new Thread(() -> {
