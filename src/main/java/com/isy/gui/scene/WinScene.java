@@ -24,7 +24,7 @@ public class WinScene extends MenuScene{
         title = Header.createHeader("tic.tac.toe.header");
 
         panel.add(title, getConstraints());
-        panel.add(UIButton.createButton("Go back to main menu", this::goBackToMainMenu), getConstraints());
+        panel.add(UIButton.createButton("win_scene.go_back_to_main_menu.button", this::goBackToMainMenu), getConstraints());
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {

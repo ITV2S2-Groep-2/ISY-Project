@@ -8,6 +8,7 @@ import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.Label;
 import com.isy.gui.components.UIButton;
+import com.isy.gui.lang.LangHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,16 +35,16 @@ public class JoinGameServerMenuScene extends MenuScene {
         JLabel info = Label.createLabel("directly.subscribe.label");
         panel.add(info);
 
-        panel.add(UIButton.createButton("Leave server", this::goLeaveServer), getConstraints());
+        panel.add(UIButton.createButton("leave.server.button", this::goLeaveServer), getConstraints());
 
-        joinButton = UIButton.createButton("Subscribe!");
+        joinButton = UIButton.createButton("subscribe.server.button");
         panel.add(joinButton, getConstraints());
 
         waitingLabel = Label.createLabel("waiting.match.label");
         waitingLabel.setVisible(false);
         panel.add(waitingLabel, getConstraints());
 
-        errorLabel = Label.createLabel("Error message placeholder");
+        errorLabel = Label.createLabel("error.message.server.label", "null");
         errorLabel.setForeground(Color.RED);
         errorLabel.hide();
         panel.add(errorLabel);
@@ -70,7 +71,7 @@ public class JoinGameServerMenuScene extends MenuScene {
                     return;
                 }
                 if (line.contains("ERR")) {
-                    errorLabel.setText(line);
+                    errorLabel.setText(LangHandler.get().translate("error.message.server.label", line));
                     errorLabel.show();
                 }
             });

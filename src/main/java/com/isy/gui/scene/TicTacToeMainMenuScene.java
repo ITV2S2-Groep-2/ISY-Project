@@ -46,8 +46,8 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 .map(val -> val.label)
                 .toArray());
 
-        textField1 = TextField.createTextField("Player 1");
-        textField2 = TextField.createTextField("Player 2");
+        textField1 = TextField.createTextField("ttt.game.player1.text_field.placeholder");
+        textField2 = TextField.createTextField("ttt.game.player2.text_field.placeholder");
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -74,7 +74,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
 
         gbc.gridy = 3;
         gbc.gridwidth = 1;
-        panel.add(UIButton.createButton("Start Game", this::startGame), gbc);
+        panel.add(UIButton.createButton("ttt.game.start_game.button", this::startGame), gbc);
     }
 
     private void startGame(ActionEvent e){

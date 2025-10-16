@@ -16,7 +16,7 @@ public class Header {
         label.setFont(new Font("Arial", Font.BOLD, 24));
 
         //bind the label
-        LangHandler.get().bind(label, langKey, params);
+        LangHandler.get().bind(label::setText, langKey, params);
 
         return label;
     }

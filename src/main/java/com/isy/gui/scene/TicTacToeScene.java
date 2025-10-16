@@ -35,7 +35,7 @@ public class TicTacToeScene extends Scene {
         JPanel controlPanel = this.getScenePanel();
         controlPanel.setLayout(new GridBagLayout());
 
-        JButton forfeitButton = UIButton.createButton("Forfeit", this::goForfeit);
+        JButton forfeitButton = UIButton.createButton("ttt.game.forfeit.button", this::goForfeit);
         forfeitButton.setPreferredSize(new Dimension(128, 32));
         GridBagConstraints forfeitConstraints = new GridBagConstraints();
         forfeitConstraints.gridx = 0;

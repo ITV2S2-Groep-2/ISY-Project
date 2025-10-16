@@ -2,16 +2,18 @@ package com.isy.gui.lang;
 
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LangHandler {
     private static final LangHandler instance = new LangHandler();
-    private final String[] langFiles = new String[]{"/en.lang"};
-    private final String[] langNames = new String[]{"English"};
+    private final String[] langFiles = new String[]{"/en.lang", "/nl.lang", "/fr.lang"};
+    private final String[] langNames = new String[]{"English", "Nederlands", "French"};
     private final Map<String, LangFile> langs;
-    private final Map<JComponent, LangBinding> bindings = new HashMap<>();
+    private final Map<ChangeText, LangBinding> bindings = new HashMap<>();
+    private final List<String> langKeys = new ArrayList<>();
     private String currentLang;
 
     private LangHandler(){
@@ -41,6 +43,8 @@ public class LangHandler {
      * @return Formatted string
      */
     public String translate(String key, @Nullable Object... params){
+        if (!this.langKeys.contains(key)) this.langKeys.add(key);
+
         return this.langs.get(currentLang).translate(key, params);
     }
 
@@ -50,18 +54,16 @@ public class LangHandler {
      * @param key The language key that the component is bound to
      * @param params Optional parameters
      */
-    public void bind(JComponent component, String key, @Nullable Object... params){
+    public void bind(ChangeText component, String key, @Nullable Object... params){
+        if (!this.langKeys.contains(key)) this.langKeys.add(key);
+
         this.bindings.put(component, new LangBinding(key, params));
     }
 
-    private void updateComponent(JComponent comp, String key, Object... params) {
+    private void updateComponent(ChangeText comp, String key, Object... params) {
         String text = this.translate(key, params);
 
-        if (comp instanceof JLabel label) {
-            label.setText(text);
-        } else if (comp instanceof AbstractButton button) {
-            button.setText(text);
-        }
+        comp.setText(text);
     }
 
     /**
@@ -74,5 +76,15 @@ public class LangHandler {
         this.bindings.forEach((component, binding) -> {
             updateComponent(component, binding.key, binding.params);
         });
+    }
+
+    public void debugPrintAllLangKeysUsed(){
+        for (String langKey : this.langKeys) {
+            System.out.println(langKey);
+        }
+    }
+
+    public String[] getAllAvailableLang() {
+        return this.langNames;
     }
 }

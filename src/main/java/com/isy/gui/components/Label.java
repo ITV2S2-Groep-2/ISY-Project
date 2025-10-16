@@ -20,7 +20,7 @@ public class Label {
         label.setForeground(Style.primaryTextColor);
 
         //bind the label
-        LangHandler.get().bind(label, langKey, params);
+        LangHandler.get().bind(label::setText, langKey, params);
 
         return label;
     }

@@ -45,6 +45,9 @@ public class LangFile {
         String[] lines = file.split("\\n");
 
         for (String line : lines) {
+            if (line.startsWith("#")) continue;
+            if (line.isBlank()) continue;
+
             String[] splits = line.split("=");
             this.lang.put(splits[0], splits[1]);
         }

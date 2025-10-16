@@ -1,6 +1,8 @@
 package com.isy.gui.components;
 
 import com.isy.gui.Style;
+import com.isy.gui.lang.LangHandler;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -33,14 +35,24 @@ public class UIButton {
         return addStyle(button);
     }
 
-    public static JButton createButton(String text) {
+    public static JButton createButton(String langKey, @Nullable Object... params) {
+        String text = LangHandler.get().translate(langKey, params);
+
         JButton button = new JButton(text);
+
+        LangHandler.get().bind(button::setText, langKey, params);
+
         return addStyle(button);
     }
 
-    public static JButton createButton(String text, ActionListener listener) {
+    public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
+        String text = LangHandler.get().translate(langKey, params);
+
         JButton button = new JButton(text);
         button.addActionListener(listener);
+
+        LangHandler.get().bind(button::setText, langKey, params);
+
         return addStyle(button);
     }
 
@@ -55,8 +67,13 @@ public class UIButton {
         return addStyle(button);
     }
 
-    public static JButton createButton(String text, Icon icon) {
+    public static JButton createButton(String langKey, Icon icon, @Nullable Object... params) {
+        String text = LangHandler.get().translate(langKey, params);
+
         JButton button = new JButton(text, icon);
+
+        LangHandler.get().bind(button::setText, langKey, params);
+
         return addStyle(button);
     }
 

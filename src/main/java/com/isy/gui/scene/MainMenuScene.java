@@ -23,8 +23,8 @@ public class MainMenuScene extends MenuScene{
         gbc.insets = new Insets(10, 10, 10, 10);
 
         panel.add(Header.createHeader("select.game.header"));
-        panel.add(UIButton.createButton("Tic-tac-toe", this::goToTicTacToeMainMenu), getConstraints());
-        panel.add(UIButton.createButton("Othello"), getConstraints());
+        panel.add(UIButton.createButton("tic.tac.toe.game.button", this::goToTicTacToeMainMenu), getConstraints());
+        panel.add(UIButton.createButton("othello.game.button"), getConstraints());
         JButton settingsButton = UIButton.createButton(this::goToSettings);
         settingsButton.setPreferredSize(new Dimension(48, 48));
         gbc.gridy = 3;
@@ -34,7 +34,7 @@ public class MainMenuScene extends MenuScene{
             Image scaledImg = img.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
             settingsButton.setIcon(new ImageIcon(scaledImg));
         } catch(Exception ex){
-            settingsButton.setText("Settings");
+            settingsButton.setText("settings.menu.button");
             System.out.println(ex);
         }
         panel.add(settingsButton, gbc);

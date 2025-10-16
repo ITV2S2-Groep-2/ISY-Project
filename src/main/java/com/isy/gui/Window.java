@@ -1,12 +1,7 @@
 package com.isy.gui;
 
-import com.isy.gui.scene.JoinGameServerMenuScene;
-import com.isy.gui.scene.MainMenuScene;
-import com.isy.gui.scene.SceneManager;
-import com.isy.gui.scene.TicTacToeMainMenuScene;
-import com.isy.gui.scene.TicTacToeScene;
-import com.isy.gui.scene.WinScene;
-import com.isy.gui.scene.SettingsScene;
+import com.isy.gui.lang.LangHandler;
+import com.isy.gui.scene.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +18,7 @@ public class Window {
         this.manager.addScene(new TicTacToeMainMenuScene(this), false);
         this.manager.addScene(new SettingsScene(this), false);
         this.manager.addScene(new JoinGameServerMenuScene(this), false);
+        this.manager.addScene(new LangSwitchScene(this), false);
         this.manager.addScene(new MainMenuScene(this), true);
 
         this.createAndShowGUI();
@@ -40,6 +36,8 @@ public class Window {
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+//        LangHandler.get().debugPrintAllLangKeysUsed();
     }
 
     public SceneManager getManager() {
