@@ -153,6 +153,9 @@ public class TicTacToeMainMenuScene extends MenuScene{
             if (matcher.find()){
                 String playerToMove = matcher.group(1);
                 iStart = Objects.equals(playerToMove, ownName);
+
+                if (iStart)
+                    await(new Promise("^(SVR GAME YOURTURN).*"));
             }
 
             SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));

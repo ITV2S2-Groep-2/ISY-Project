@@ -37,7 +37,8 @@ public abstract class Player {
 
         System.out.println("move " + formatClientMove(move));
 
-        await(new Promise().setCommand("move " + formatClientMove(move)));
+        String response = await(new Promise("^(OK|ERR).*").setCommand("move " + formatClientMove(move)));
+        System.out.println("MOVE RESPONSE: " + response);
     }
 
     /**

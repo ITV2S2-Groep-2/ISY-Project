@@ -59,6 +59,7 @@ public class Promise{
 
         while ((line = in.readLine()) != null) {
             matcher = accept.matcher(line);
+            System.out.println(line + "_" + matcher.matches());
 
             if (matcher.matches()){
                 break;
