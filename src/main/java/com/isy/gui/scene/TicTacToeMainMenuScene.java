@@ -4,6 +4,7 @@ import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.game.PlayerType;
 import com.isy.game.ticTacToe.*;
+import com.isy.gui.GameSettings;
 import com.isy.gui.Window;
 import com.isy.gui.components.ComboBox;
 import com.isy.gui.components.Header;
@@ -20,7 +21,9 @@ public class TicTacToeMainMenuScene extends MenuScene{
     static JComboBox dropdown1, dropdown2;
     static JTextField textField1, textField2;
     private GameServer client;
+    private GameSettings settings = GameSettings.get();
     private String ownName;
+    private volatile boolean iStart;
     Player localPlayer;
 
     public TicTacToeMainMenuScene(Window window) {
@@ -82,18 +85,20 @@ public class TicTacToeMainMenuScene extends MenuScene{
         String player2Name = textField2.getText();
 
         if (player1Type.equals(PlayerType.HUMAN) && player2Type.equals(PlayerType.REMOTE)) {
-            //TODO: change player name management for remote funcionality
-            goToJoinGameServer(PlayerType.HUMAN);
+            goToJoinGameServer(PlayerType.HUMAN, player1Name);
         }
         else if(player1Type.equals(PlayerType.AI) && player2Type.equals(PlayerType.REMOTE)) {
-            //TODO: change player name management for remote funcionality
-            goToJoinGameServer(PlayerType.AI);
+            goToJoinGameServer(PlayerType.AI, player1Name);
         } else {
             Player player1 = createPlayerByType(player1Type, player1Name, Tile.X);
             Player player2 = createPlayerByType(player2Type, player2Name, Tile.O);
             startLocalGame(player1, player2);
         }
 
+    }
+
+    public void setiStart(boolean input){
+        this.iStart = input;
     }
 
     private Player createPlayerByType(PlayerType type, String name, Tile tile) {
@@ -112,12 +117,12 @@ public class TicTacToeMainMenuScene extends MenuScene{
         this.getWindow().getManager().showScene("ticTacToe");
     }
 
-    private void goToJoinGameServer(PlayerType playerType) {
+    private void goToJoinGameServer(PlayerType playerType, String playerName) {
         // client bestaat al, maak nieuwe aan en log nieuwe uit.
         if(client != null){
             client.shutdown();
         }
-        client = new GameServer("127.0.0.1", 7789);
+        client = new GameServer(settings.getHostName(), settings.getPortNumber());
         new Thread(client).start();
 
         new Thread(() -> {
@@ -125,7 +130,11 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 try { Thread.sleep(50); } catch (InterruptedException ignored) {}
             }
 
-            ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+            if(playerName == null || playerName.equals("")){
+                ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+            } else {
+                ownName = playerName;
+            }
             client.sendCommand("login " + ownName);
 
             JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
@@ -135,9 +144,20 @@ public class TicTacToeMainMenuScene extends MenuScene{
             // Clear alle listeners voor nieuwe login
             client.getListeners().clear();
             client.addListener(line -> {
-                if (line.startsWith("SVR GAME MATCH")) {
-                    boolean iStart = line.toLowerCase().contains(ownName);
-                    SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
+                    new Thread(() -> {
+                        if (line.startsWith("SVR GAME MATCH")) {
+                            // Geef de server een klein momentje om iStart eventueel op true te zetten wanneer YOURTURN gegeven is.
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
+                        }
+                    }).start();
+
+                if (line.startsWith("SVR GAME YOURTURN")) {
+                    iStart = true;
                 }
             });
         }).start();
@@ -159,6 +179,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
                 iStart ? remotePlayer : localPlayer
         });
         ticTacToeGame.setClient(client);
+        remotePlayer.setGame(ticTacToeGame);
 
         TicTacToeScene ttts = (TicTacToeScene) this.getWindow().getManager().getScene("ticTacToe");
         ticTacToeGame.setRenderScene(ttts);

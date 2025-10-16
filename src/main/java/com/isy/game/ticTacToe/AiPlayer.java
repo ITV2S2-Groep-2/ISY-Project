@@ -20,6 +20,13 @@ public class AiPlayer extends Player {
         //TEMP
         Tile[][] tiles = board.getTiles();
 
+        // Simuleer wachttijd omdat anders AI soms sneller zet dan de server je in de lobby kan zetten.
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         int[] move = getBestMove(tiles);
 
         if(this.client != null){

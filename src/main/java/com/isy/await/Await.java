@@ -11,7 +11,6 @@ public class Await {
                 throw new RuntimeException(e);
             }
         }
-
         return waitable.getData();
     }
 }

@@ -1,12 +1,16 @@
 package com.isy.gui.scene;
 
+import com.isy.Main;
 import com.isy.game.GameServer;
+import com.isy.game.ticTacToe.GameState;
+import com.isy.gui.PlayerEventManager;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.Label;
 import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class JoinGameServerMenuScene extends MenuScene {
@@ -14,6 +18,7 @@ public class JoinGameServerMenuScene extends MenuScene {
     private String ownName;
     private JButton joinButton;
     private JLabel waitingLabel;
+    private JLabel errorLabel;
 
     public JoinGameServerMenuScene(Window window) {
         super("joinGameServerMenuScene", window);
@@ -38,6 +43,11 @@ public class JoinGameServerMenuScene extends MenuScene {
         waitingLabel.setVisible(false);
         panel.add(waitingLabel, getConstraints());
 
+        errorLabel = Label.createLabel("Error message placeholder");
+        errorLabel.setForeground(Color.RED);
+        errorLabel.hide();
+        panel.add(errorLabel);
+
         joinButton.addActionListener(this::onJoinButtonClicked);
     }
 
@@ -47,7 +57,24 @@ public class JoinGameServerMenuScene extends MenuScene {
     }
 
     private void onJoinButtonClicked(ActionEvent e) {
+        SwingUtilities.invokeLater(() -> {
+            TicTacToeMainMenuScene tttmms = (TicTacToeMainMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
+            tttmms.setiStart(false);
+            System.out.println("heb m via setistart op false gezet");
+        });
         if (client == null) return;
+
+        if(client != null){
+            client.addListener(line -> {
+                if(line.contains("ERR Player is not in a match currently")){
+                    return;
+                }
+                if (line.contains("ERR")) {
+                    errorLabel.setText(line);
+                    errorLabel.show();
+                }
+            });
+        }
         client.sendCommand("subscribe tic-tac-toe");
 
         joinButton.setVisible(false);
@@ -57,6 +84,7 @@ public class JoinGameServerMenuScene extends MenuScene {
 
     private void goLeaveServer(ActionEvent actionEvent) {
         this.getWindow().getManager().showScene("ticTacToeMainMenu");
+        errorLabel.hide();
         this.resetJoinButton();
         client.shutdown();
     }

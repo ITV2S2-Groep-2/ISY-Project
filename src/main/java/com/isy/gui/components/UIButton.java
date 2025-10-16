@@ -44,6 +44,12 @@ public class UIButton {
         return addStyle(button);
     }
 
+    public static JButton createButton(ActionListener listener) {
+        JButton button = new JButton();
+        button.addActionListener(listener);
+        return addStyle(button);
+    }
+
     public static JButton createButton(Icon icon) {
         JButton button = new JButton(icon);
         return addStyle(button);

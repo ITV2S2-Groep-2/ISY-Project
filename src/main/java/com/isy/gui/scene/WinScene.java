@@ -1,5 +1,7 @@
 package com.isy.gui.scene;
 
+import com.isy.Main;
+import com.isy.gui.PlayerEventManager;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
@@ -26,6 +28,12 @@ public class WinScene extends MenuScene{
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {
+        // Join game button terugzetten
+        SwingUtilities.invokeLater(() -> {
+            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+            joinScene.resetJoinButton();
+        });
+
         if(online){
             this.getWindow().getManager().showScene("joinGameServerMenuScene");
         } else {
@@ -38,4 +46,9 @@ public class WinScene extends MenuScene{
         this.getWindow().getManager().showScene(this.getName());
         title.setText(playerName + " Won!");
     }
-}
+
+    public void lost(String playername, boolean online){
+        this.online = online;
+        this.getWindow().getManager().showScene(this.getName());
+        title.setText(playername +" Lost!");
+    }}
