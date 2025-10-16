@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.Main;
+import com.isy.await.Promise;
 import com.isy.game.GameServer;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.PlayerEventManager;
@@ -13,6 +14,8 @@ import com.isy.gui.lang.LangHandler;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+
+import static com.isy.await.Await.await;
 
 public class JoinGameServerMenuScene extends MenuScene {
     private GameServer client;
@@ -65,18 +68,21 @@ public class JoinGameServerMenuScene extends MenuScene {
         });
         if (client == null) return;
 
-        if(client != null){
-            client.addListener(line -> {
-                if(line.contains("ERR Player is not in a match currently")){
-                    return;
-                }
-                if (line.contains("ERR")) {
-                    errorLabel.setText(LangHandler.get().translate("error.message.server.label", line));
-                    errorLabel.show();
-                }
-            });
-        }
-        client.sendCommand("subscribe tic-tac-toe");
+//        if(client != null){
+//            client.addListener(line -> {
+//                if(line.contains("ERR Player is not in a match currently")){
+//                    return;
+//                }
+//                if (line.contains("ERR")) {
+//                    errorLabel.setText(LangHandler.get().translate("error.message.server.label", line));
+//                    errorLabel.show();
+//                }
+//            });
+//        }
+
+        await(new Promise().setCommand("subscribe tic-tac-toe"));
+
+//        client.sendCommand("subscribe tic-tac-toe");
 
         joinButton.setVisible(false);
         waitingLabel.setVisible(true);

@@ -1,5 +1,7 @@
 package com.isy.game;
 
+import com.isy.await.Promise;
+
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +12,11 @@ import java.net.http.WebSocket;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
+
+import static com.isy.await.Await.await;
 
 public class GameServer implements Runnable {
 
@@ -29,6 +35,15 @@ public class GameServer implements Runnable {
     public GameServer(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
+
+        try {
+            client = new Socket(hostName, portNumber);
+            out = new PrintWriter(client.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            Promise.bindServer(client);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean isConnected(){
@@ -40,42 +55,40 @@ public class GameServer implements Runnable {
     {
         System.out.print("starting game");
 
-        try {
-            client = new Socket(hostName, portNumber);
-            out = new PrintWriter(client.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-            String inputMessage; // we maken een input message aan
-
-            // Start een aparte thread om server-berichten te lezen
-            new Thread(() -> {
-                try {
-                    String line;
-                    while (running && (line = in.readLine()) != null) {
-                        System.out.println("[SERVER] " + line);
-                        notifyListeners(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        } catch (IOException e) {
-            //TODO handle
-        }
+//        try {
+//
+//
+//            String inputMessage; // we maken een input message aan
+//
+//            // Start een aparte thread om server-berichten te lezen
+//            new Thread(() -> {
+//                try {
+//                    String line;
+//                    while (running && (line = in.readLine()) != null) {
+//                        System.out.println("[SERVER] " + line);
+//                        notifyListeners(line);
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
+//        } catch (IOException e) {
+//            //TODO handle
+//        }
 
         // Thread om console-input te lezen
-        new Thread(() -> {
-            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-            String line;
-            try {
-                while (running && (line = consoleReader.readLine()) != null) {
-                    if (line.trim().isEmpty()) continue;
-                    sendCommand(line);  // stuurt naar server
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+//        new Thread(() -> {
+//            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+//            String line;
+//            try {
+//                while (running && (line = consoleReader.readLine()) != null) {
+//                    if (line.trim().isEmpty()) continue;
+//                    sendCommand(line);  // stuurt naar server
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
 
     }
 

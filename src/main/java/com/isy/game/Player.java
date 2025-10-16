@@ -1,6 +1,9 @@
 package com.isy.game;
+import com.isy.await.Promise;
 import com.isy.game.ticTacToe.Board;
 import com.isy.game.ticTacToe.Tile;
+
+import static com.isy.await.Await.await;
 
 public abstract class Player {
     private final String name;
@@ -28,9 +31,13 @@ public abstract class Player {
     public abstract int[] getMove(Board board);
 
     public void sendServerData(int[] move){
-        if(client != null){
-            client.sendCommand("move " + formatClientMove(move));
-        }
+//        if(client != null){
+//            client.sendCommand("move " + formatClientMove(move));
+//        }
+
+        System.out.println("move " + formatClientMove(move));
+
+        await(new Promise().setCommand("move " + formatClientMove(move)));
     }
 
     /**

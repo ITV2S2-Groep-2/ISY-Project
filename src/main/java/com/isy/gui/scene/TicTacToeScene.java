@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.await.Await;
+import com.isy.await.Promise;
 import com.isy.game.Game;
 import com.isy.game.GameServer;
 import com.isy.game.Player;
@@ -18,6 +19,8 @@ import com.isy.gui.components.UIButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+
+import static com.isy.await.Await.await;
 
 public class TicTacToeScene extends Scene {
     private final JButton[][] boardButtons;
@@ -104,8 +107,9 @@ public class TicTacToeScene extends Scene {
         this.game.setState(GameState.LOST);
         PlayerEventManager.get().stop();
 
-        if(this.game.getClient() != null){
-            this.game.getClient().sendCommand("forfeit");
-        }
+        await(new Promise().setCommand("forfeit"));
+//        if(this.game.getClient() != null){
+//            this.game.getClient().sendCommand("forfeit");
+//        }
     }
 }

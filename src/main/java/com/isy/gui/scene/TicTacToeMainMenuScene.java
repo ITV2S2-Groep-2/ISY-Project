@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.await.Promise;
 import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.game.PlayerType;
@@ -15,7 +16,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.isy.await.Await.asyncAwait;
+import static com.isy.await.Await.await;
 
 public class TicTacToeMainMenuScene extends MenuScene{
     static JComboBox dropdown1, dropdown2;
@@ -123,44 +130,73 @@ public class TicTacToeMainMenuScene extends MenuScene{
             client.shutdown();
         }
         client = new GameServer(settings.getHostName(), settings.getPortNumber());
-        new Thread(client).start();
+        ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
 
-        new Thread(() -> {
-            while (!client.isConnected()) {
-                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+        String accept = await(new Promise("^(OK|ERR).*").setCommand("login " + ownName));
+
+        if (accept.toLowerCase().contains("err"))
+            throw new RuntimeException("Uncaught exception: " + accept);
+
+        JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
+                .getManager().getScene("joinGameServerMenuScene");
+        joinScene.setClient(client, ownName);
+
+        Pattern playerToMovePattern = Pattern.compile("PLAYERTOMOVE:\\s*\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
+
+        asyncAwait(new Promise("^(SVR GAME MATCH|ERR).*"), (result) -> {
+            Matcher matcher = playerToMovePattern.matcher(result);
+
+            if (result.toLowerCase().contains("err")){
+                throw new RuntimeException("AAAAAAAAAAAAAAAAAAAAAAAA");
             }
 
-            if(playerName == null || playerName.equals("")){
-                ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
-            } else {
-                ownName = playerName;
+            if (matcher.find()){
+                String playerToMove = matcher.group(1);
+                iStart = Objects.equals(playerToMove, ownName);
             }
-            client.sendCommand("login " + ownName);
 
-            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
-                    .getManager().getScene("joinGameServerMenuScene");
-            joinScene.setClient(client, ownName);
+            SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
+        });
 
-            // Clear alle listeners voor nieuwe login
-            client.getListeners().clear();
-            client.addListener(line -> {
-                    new Thread(() -> {
-                        if (line.startsWith("SVR GAME MATCH")) {
-                            // Geef de server een klein momentje om iStart eventueel op true te zetten wanneer YOURTURN gegeven is.
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                            SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
-                        }
-                    }).start();
 
-                if (line.startsWith("SVR GAME YOURTURN")) {
-                    iStart = true;
-                }
-            });
-        }).start();
+//        new Thread(client).start();
+//
+//        new Thread(() -> {
+//            while (!client.isConnected()) {
+//                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+//            }
+//
+//            if(playerName == null || playerName.equals("")){
+//                ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+//            } else {
+//                ownName = playerName;
+//            }
+//            client.sendCommand("login " + ownName);
+//
+//            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
+//                    .getManager().getScene("joinGameServerMenuScene");
+//            joinScene.setClient(client, ownName);
+//
+//            // Clear alle listeners voor nieuwe login
+//            client.getListeners().clear();
+//            client.addListener(line -> {
+//                    new Thread(() -> {
+//                        if (line.startsWith("SVR GAME MATCH")) {
+//                            // Geef de server een klein momentje om iStart eventueel op true te zetten wanneer YOURTURN gegeven is.
+//                            try {
+//                                Thread.sleep(100);
+//                            } catch (InterruptedException e) {
+//                                throw new RuntimeException(e);
+//                            }
+//                            SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
+//                        }
+//                    }).start();
+//
+//                if (line.startsWith("SVR GAME YOURTURN")) {
+//                    iStart = true;
+//                }
+//            });
+//        }).start();
 
         this.getWindow().getManager().showScene("joinGameServerMenuScene");
     }
