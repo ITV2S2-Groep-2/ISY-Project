@@ -15,7 +15,7 @@ public class Promise{
     private String command = null;
     private BufferedReader in;
     private PrintWriter out;
-    private static Socket socket;
+    private static Socket socket = null;
 
     public Promise(){
         this((Pattern) null);
@@ -43,13 +43,13 @@ public class Promise{
     }
 
     public String getData() throws IOException {
+        if (socket == null) return "";
+
         out = new PrintWriter(socket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         if (command != null)
             out.println(this.command);
-
-        System.out.println("Command: " + this.command);
 
         String line;
         Matcher matcher = null;
@@ -59,7 +59,6 @@ public class Promise{
 
         while ((line = in.readLine()) != null) {
             matcher = accept.matcher(line);
-            System.out.println(line + "_" + matcher.matches());
 
             if (matcher.matches()){
                 break;
@@ -68,6 +67,9 @@ public class Promise{
 
         if (line == null)
             return "err";
+
+        out.close();
+        in.close();
 
         return matcher.group();
     }

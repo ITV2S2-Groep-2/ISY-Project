@@ -31,14 +31,7 @@ public abstract class Player {
     public abstract int[] getMove(Board board);
 
     public void sendServerData(int[] move){
-//        if(client != null){
-//            client.sendCommand("move " + formatClientMove(move));
-//        }
-
-        System.out.println("move " + formatClientMove(move));
-
         String response = await(new Promise("^(OK|ERR).*").setCommand("move " + formatClientMove(move)));
-        System.out.println("MOVE RESPONSE: " + response);
     }
 
     /**

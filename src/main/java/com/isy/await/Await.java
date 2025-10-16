@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 public class Await {
-    public static final int waitTime = 100;
+    public static final int waitTime = 10;
 
     public static <T> T await(IWaitable<T> waitable){
         while (!waitable.hasData()){
@@ -19,10 +19,7 @@ public class Await {
 
     public static String await(Promise promise){
         try {
-            String s = promise.getData();
-            System.out.println("RESPONSE: " + s);
-
-            return s;
+            return promise.getData();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

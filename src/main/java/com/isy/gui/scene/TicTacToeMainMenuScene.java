@@ -162,45 +162,6 @@ public class TicTacToeMainMenuScene extends MenuScene{
         });
 
 
-//        new Thread(client).start();
-//
-//        new Thread(() -> {
-//            while (!client.isConnected()) {
-//                try { Thread.sleep(50); } catch (InterruptedException ignored) {}
-//            }
-//
-//            if(playerName == null || playerName.equals("")){
-//                ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
-//            } else {
-//                ownName = playerName;
-//            }
-//            client.sendCommand("login " + ownName);
-//
-//            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) this.getWindow()
-//                    .getManager().getScene("joinGameServerMenuScene");
-//            joinScene.setClient(client, ownName);
-//
-//            // Clear alle listeners voor nieuwe login
-//            client.getListeners().clear();
-//            client.addListener(line -> {
-//                    new Thread(() -> {
-//                        if (line.startsWith("SVR GAME MATCH")) {
-//                            // Geef de server een klein momentje om iStart eventueel op true te zetten wanneer YOURTURN gegeven is.
-//                            try {
-//                                Thread.sleep(100);
-//                            } catch (InterruptedException e) {
-//                                throw new RuntimeException(e);
-//                            }
-//                            SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
-//                        }
-//                    }).start();
-//
-//                if (line.startsWith("SVR GAME YOURTURN")) {
-//                    iStart = true;
-//                }
-//            });
-//        }).start();
-
         this.getWindow().getManager().showScene("joinGameServerMenuScene");
     }
 
