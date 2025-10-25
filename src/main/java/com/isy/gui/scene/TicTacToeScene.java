@@ -43,6 +43,24 @@ public class TicTacToeScene extends Scene {
         forfeitConstraints.insets = new Insets(5, 5, 5, 5);
         controlPanel.add(forfeitButton, forfeitConstraints);
 
+        JTextField messageText = new JTextField();
+        messageText.setPreferredSize(new Dimension(200, 32));
+        GridBagConstraints messageTextConstraints = new GridBagConstraints();
+        messageTextConstraints.gridx = 5;
+        messageTextConstraints.gridy = 0;
+        messageTextConstraints.anchor = GridBagConstraints.LINE_START;
+        messageTextConstraints.insets = new Insets(5, 5, 5, 5);
+        controlPanel.add(messageText, messageTextConstraints);
+
+        JButton sendButton = UIButton.createButton("Send", actionEvent -> sendMessage(actionEvent, messageText.getText()));
+        sendButton.setPreferredSize(new Dimension(128, 32));
+        GridBagConstraints sendConstraints = new GridBagConstraints();
+        sendConstraints.gridx = 5;
+        sendConstraints.gridy = 1;
+        sendConstraints.anchor = GridBagConstraints.LINE_START;
+        sendConstraints.insets = new Insets(5, 5, 5, 5);
+        controlPanel.add(sendButton, sendConstraints);
+        
         playerNameLabel = Label.createLabel("");
         playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -105,6 +123,11 @@ public class TicTacToeScene extends Scene {
 
         if(this.game.getClient() != null){
             this.game.getClient().sendCommand("forfeit");
+        }
+    }
+    private void sendMessage(ActionEvent actionEvent, String message) {
+        if(this.game.getClient() != null){
+            this.game.getClient().sendCommand("message " + message);
         }
     }
 }
