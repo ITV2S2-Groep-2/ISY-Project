@@ -28,6 +28,10 @@ public class WinScene extends MenuScene{
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {
+        SwingUtilities.invokeLater(() -> {
+            TicTacToeMainMenuScene tttmms = (TicTacToeMainMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
+            tttmms.setiStart(false);
+        });
         // Join game button terugzetten
         SwingUtilities.invokeLater(() -> {
             JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");

@@ -61,7 +61,6 @@ public class JoinGameServerMenuScene extends MenuScene {
         SwingUtilities.invokeLater(() -> {
             TicTacToeMainMenuScene tttmms = (TicTacToeMainMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
             tttmms.setiStart(false);
-            System.out.println("heb m via setistart op false gezet");
         });
         if (client == null) return;
 
