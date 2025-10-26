@@ -22,6 +22,10 @@ public class SceneManager {
     }
 
     public void addScene(Scene scene, boolean autoShow){
+        Scene existingScene = this.getScene(scene.getName());
+        if (existingScene != null) {
+            this.scenes.remove(existingScene);
+        }
         this.scenes.add(scene);
         if (this.scenePresenter != null) {
             this.scenePresenter.add(scene.getScenePanel(), scene.getName());

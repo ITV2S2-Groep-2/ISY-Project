@@ -37,7 +37,7 @@ public class WinScene extends MenuScene{
         if(online){
             this.getWindow().getManager().showScene("joinGameServerMenuScene");
         } else {
-            this.getWindow().getManager().showScene("ticTacToeMainMenu");
+            this.getWindow().getManager().showScene("gameMenu");
         }
     }
 

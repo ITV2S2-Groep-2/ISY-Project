@@ -33,7 +33,7 @@ public class GameMenuScene extends MenuScene{
     Player localPlayer;
 
     public GameMenuScene(Window window) {
-        super("GameMenu", window);
+        super("gameMenu", window);
     }
 
     @Override
