@@ -59,8 +59,8 @@ public class JoinGameServerMenuScene extends MenuScene {
 
     private void onJoinButtonClicked(ActionEvent e) {
         SwingUtilities.invokeLater(() -> {
-            GameMenuScene tttmms = (GameMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
-            tttmms.setiStart(false);
+            GameMenuScene gms = (GameMenuScene) Main.window.getManager().getScene("gameMenu");
+            gms.setiStart(false);
             System.out.println("heb m via setistart op false gezet");
         });
         if (client == null) return;
@@ -76,7 +76,7 @@ public class JoinGameServerMenuScene extends MenuScene {
 //                }
 //            });
 //        }
-
+        // TODO: based on gametype label
         await(new Promise().setCommand("subscribe tic-tac-toe"));
 
 //        client.sendCommand("subscribe tic-tac-toe");
@@ -87,7 +87,7 @@ public class JoinGameServerMenuScene extends MenuScene {
     }
 
     private void goLeaveServer(ActionEvent actionEvent) {
-        this.getWindow().getManager().showScene("ticTacToeMainMenu");
+        this.getWindow().getManager().showScene("gameMenu");
         errorLabel.hide();
         this.resetJoinButton();
         client.shutdown();
