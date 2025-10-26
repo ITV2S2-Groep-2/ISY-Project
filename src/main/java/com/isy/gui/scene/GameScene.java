@@ -9,6 +9,7 @@ import com.isy.game.ticTacToe.Tile;
 import com.isy.gui.Window;
 import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
+import com.isy.gui.components.TextField;
 import com.isy.gui.lang.LangHandler;
 import com.isy.gui.components.UIButton;
 
@@ -46,8 +47,7 @@ public class GameScene extends Scene {
         forfeitConstraints.insets = new Insets(5, 5, 5, 5);
         controlPanel.add(forfeitButton, forfeitConstraints);
 
-        JTextField messageText = new JTextField();
-        messageText.setPreferredSize(new Dimension(200, 32));
+        JTextField messageText = TextField.createTextField();
         GridBagConstraints messageTextConstraints = new GridBagConstraints();
         messageTextConstraints.gridx = 5;
         messageTextConstraints.gridy = 0;
@@ -129,9 +129,8 @@ public class GameScene extends Scene {
 //            this.game.getClient().sendCommand("forfeit");
 //        }
     }
+
     private void sendMessage(ActionEvent actionEvent, String message) {
-        if(this.game.getClient() != null){
-            this.game.getClient().sendCommand("message " + message);
-        }
+        await(new Promise().setCommand("message " + message));
     }
 }
