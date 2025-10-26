@@ -136,7 +136,7 @@ public class GameMenuScene extends MenuScene{
             client.shutdown();
         }
         client = new GameServer(settings.getHostName(), settings.getPortNumber());
-        ownName = "speler" + UUID.randomUUID().toString().substring(0, 8);
+        ownName = playerName;
 
         String accept = await(new Promise("^(OK|ERR).*").setCommand("login " + ownName));
 
