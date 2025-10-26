@@ -13,8 +13,8 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 public class Promise{
     private Pattern accept;
     private String command = null;
-    private BufferedReader in;
-    private PrintWriter out;
+    private static BufferedReader in;
+    private static PrintWriter out;
     private static Socket socket = null;
 
     public Promise(){
@@ -40,13 +40,22 @@ public class Promise{
 
     public static void bindServer(Socket socket){
         Promise.socket = socket;
+        if (socket != null) {
+            try {
+                Promise.out = new PrintWriter(socket.getOutputStream(), true);
+                Promise.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            } catch (Exception e) {
+                throw new RuntimeException("can not get input or output stream from socket", e);
+            }
+        } else {
+            Promise.in = null;
+            Promise.out = null;
+        }
     }
 
     public String getData() throws IOException {
         if (socket == null) return "";
 
-        out = new PrintWriter(socket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         if (command != null)
             out.println(this.command);
@@ -68,8 +77,6 @@ public class Promise{
         if (line == null)
             return "err";
 
-        out.close();
-        in.close();
 
         return matcher.group();
     }
