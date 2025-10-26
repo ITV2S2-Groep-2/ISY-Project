@@ -8,6 +8,8 @@ import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class WinScene extends MenuScene{
     private JLabel title;
@@ -21,10 +23,25 @@ public class WinScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
+        panel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                onSceneShown();
+            }
+        });
+
         title = Header.createHeader("tic.tac.toe.header");
 
         panel.add(title, getConstraints());
         panel.add(UIButton.createButton("win_scene.go_back_to_main_menu.button", this::goBackToMainMenu), getConstraints());
+
+    }
+
+    private void onSceneShown() {
+        SwingUtilities.invokeLater(() -> {
+            GameMenuScene gms = (GameMenuScene) Main.window.getManager().getScene("gameMenu");
+            gms.setiStart(false);
+        });
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {
