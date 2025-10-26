@@ -58,11 +58,6 @@ public class JoinGameServerMenuScene extends MenuScene {
     }
 
     private void onJoinButtonClicked(ActionEvent e) {
-        SwingUtilities.invokeLater(() -> {
-            GameMenuScene gms = (GameMenuScene) Main.window.getManager().getScene("gameMenu");
-            gms.setiStart(false);
-            System.out.println("heb m via setistart op false gezet");
-        });
         if (client == null) return;
 
 //        if(client != null){

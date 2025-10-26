@@ -34,6 +34,11 @@ public class WinScene extends MenuScene{
             joinScene.resetJoinButton();
         });
 
+        SwingUtilities.invokeLater(() -> {
+            GameMenuScene gms = (GameMenuScene) Main.window.getManager().getScene("gameMenu");
+            gms.setiStart(false);
+        });
+
         if(online){
             this.getWindow().getManager().showScene("joinGameServerMenuScene");
         } else {
