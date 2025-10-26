@@ -1,6 +1,5 @@
 package com.isy.game;
 import com.isy.await.Promise;
-import com.isy.game.ticTacToe.Board;
 import com.isy.game.ticTacToe.Tile;
 
 import static com.isy.await.Await.await;

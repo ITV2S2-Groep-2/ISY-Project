@@ -1,9 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.await.Promise;
-import com.isy.game.GameServer;
-import com.isy.game.Player;
-import com.isy.game.PlayerType;
+import com.isy.game.*;
 import com.isy.game.ticTacToe.*;
 import com.isy.gui.GameSettings;
 import com.isy.gui.Window;
@@ -15,6 +13,7 @@ import com.isy.gui.components.UIButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
@@ -24,7 +23,7 @@ import java.util.regex.Pattern;
 import static com.isy.await.Await.asyncAwait;
 import static com.isy.await.Await.await;
 
-public class TicTacToeMainMenuScene extends MenuScene{
+public class GameMenuScene extends MenuScene{
     static JComboBox dropdown1, dropdown2;
     static JTextField textField1, textField2;
     private GameServer client;
@@ -33,18 +32,18 @@ public class TicTacToeMainMenuScene extends MenuScene{
     private volatile boolean iStart;
     Player localPlayer;
 
-    public TicTacToeMainMenuScene(Window window) {
-        super("ticTacToeMainMenu", window);
+    public GameMenuScene(Window window) {
+        super("GameMenu", window);
     }
 
     @Override
     public void init() {
         JPanel panel = this.getScenePanel();
-
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        //TODO: make combobox translated
         dropdown1 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
                 .filter(val -> !val.equals(PlayerType.REMOTE))
                 .map(val -> val.label)
@@ -91,11 +90,8 @@ public class TicTacToeMainMenuScene extends MenuScene{
         String player1Name = textField1.getText();
         String player2Name = textField2.getText();
 
-        if (player1Type.equals(PlayerType.HUMAN) && player2Type.equals(PlayerType.REMOTE)) {
-            goToJoinGameServer(PlayerType.HUMAN, player1Name);
-        }
-        else if(player1Type.equals(PlayerType.AI) && player2Type.equals(PlayerType.REMOTE)) {
-            goToJoinGameServer(PlayerType.AI, player1Name);
+        if (player2Type.equals(PlayerType.REMOTE)) {
+            goToJoinGameServer(player1Type, player1Name);
         } else {
             Player player1 = createPlayerByType(player1Type, player1Name, Tile.X);
             Player player2 = createPlayerByType(player2Type, player2Name, Tile.O);
@@ -118,10 +114,20 @@ public class TicTacToeMainMenuScene extends MenuScene{
     }
 
     private void startLocalGame(Player player1, Player player2) {
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{player1, player2});
-        ticTacToeGame.setRenderScene(this.getWindow().getManager().getScene("ticTacToe"));
-        new Thread(ticTacToeGame).start();
-        this.getWindow().getManager().showScene("ticTacToe");
+        GameType gameType = this.getWindow().getManager().getCurrentGameType();
+        Class<? extends Game> gameClass = GameType.getClass(gameType);
+        Game game;
+        try {
+            game = gameClass.getDeclaredConstructor(Player[].class).newInstance((Object)new Player[]{player1, player2});
+        } catch (Exception e) {
+            throw new RuntimeException("invalid game constructor", e);
+        }
+
+        this.getWindow().getManager().addScene(new GameScene(this.getWindow()), true);
+
+        game.setRenderScene(this.getWindow().getManager().getScene("game"));
+        new Thread(game).start();
+        this.getWindow().getManager().showScene("game");
     }
 
     private void goToJoinGameServer(PlayerType playerType, String playerName) {
@@ -158,14 +164,14 @@ public class TicTacToeMainMenuScene extends MenuScene{
                     await(new Promise("^(SVR GAME YOURTURN).*"));
             }
 
-            SwingUtilities.invokeLater(() -> startRemoteTicTacToe(iStart, playerType));
+            SwingUtilities.invokeLater(() -> startRemoteGame(iStart, playerType));
         });
 
 
         this.getWindow().getManager().showScene("joinGameServerMenuScene");
     }
 
-    private void startRemoteTicTacToe(boolean iStart, PlayerType playerType) {
+    private void startRemoteGame(boolean iStart, PlayerType playerType) {
         if(playerType == PlayerType.HUMAN){
             localPlayer = new HumanPlayer(ownName, Tile.X, client);
         } else if (playerType == PlayerType.AI) {
@@ -174,18 +180,26 @@ public class TicTacToeMainMenuScene extends MenuScene{
         
         RemotePlayer remotePlayer = new RemotePlayer("Tegenstander", Tile.O, client);
 
-        TicTacToeGame ticTacToeGame = new TicTacToeGame(new Player[]{
-                iStart ? localPlayer : remotePlayer,
-                iStart ? remotePlayer : localPlayer
-        });
-        ticTacToeGame.setClient(client);
-        remotePlayer.setGame(ticTacToeGame);
+        GameType gameType = this.getWindow().getManager().getCurrentGameType();
+        Class<? extends Game> gameClass = GameType.getClass(gameType);
+        Game game;
+        try {
+            game = gameClass.getDeclaredConstructor(Player[].class)
+                    .newInstance((Object)new Player[]{iStart ? localPlayer : remotePlayer,
+                    iStart ? remotePlayer : localPlayer});
+        } catch (Exception e) {
+            throw new RuntimeException("invalid game constructor", e);
+        }
 
-        TicTacToeScene ttts = (TicTacToeScene) this.getWindow().getManager().getScene("ticTacToe");
-        ticTacToeGame.setRenderScene(ttts);
-        ttts.setPlayerName(ownName);
+        game.setClient(client);
+        remotePlayer.setGame(game);
 
-        new Thread(ticTacToeGame).start();
-        this.getWindow().getManager().showScene("ticTacToe");
+        this.getWindow().getManager().addScene(new GameScene(this.getWindow()), true);
+        GameScene gs = (GameScene) this.getWindow().getManager().getScene("game");
+        game.setRenderScene(gs);
+        gs.setPlayerName(ownName);
+
+        new Thread(game).start();
+        this.getWindow().getManager().showScene("game");
     }
 }

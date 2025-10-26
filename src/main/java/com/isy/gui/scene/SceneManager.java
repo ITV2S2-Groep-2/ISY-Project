@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.game.GameType;
 import com.isy.gui.Window;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,6 +13,8 @@ public class SceneManager {
     private final List<Scene> scenes;
     private Scene currentScene = null;
     private final Window window;
+    private GameType currentGameType = null;
+    private JPanel scenePresenter;
 
     public SceneManager(Window window){
         this.window = window;
@@ -20,6 +23,11 @@ public class SceneManager {
 
     public void addScene(Scene scene, boolean autoShow){
         this.scenes.add(scene);
+        if (this.scenePresenter != null) {
+            this.scenePresenter.add(scene.getScenePanel(), scene.getName());
+            CardLayout cl = (CardLayout) this.scenePresenter.getLayout();
+            cl.show(this.scenePresenter, scene.getName());
+        }
 
         if (autoShow){
             if (currentScene != null)
@@ -28,7 +36,6 @@ public class SceneManager {
             scene.show();
             currentScene = scene;
         }
-
         scene.init();
     }
 
@@ -66,6 +73,15 @@ public class SceneManager {
 
         ((CardLayout) panel.getLayout()).show(panel, currentScene.getName());
 
+        this.scenePresenter = panel;
         return panel;
+    }
+
+    public GameType getCurrentGameType() {
+        return currentGameType;
+    }
+
+    public void setCurrentGameType(GameType currentGameType) {
+        this.currentGameType = currentGameType;
     }
 }

@@ -1,14 +1,18 @@
-package com.isy.game.ticTacToe;
+package com.isy.game;
 
-import com.isy.game.Player;
+import com.isy.game.ticTacToe.Tile;
 
 import java.util.Arrays;
 
-public class Board {
-    private final Tile[][] tiles;
+public abstract class Board {
+    protected final Tile[][] tiles;
+    private final int height;
+    private final int width;
 
-    public Board(){
-        this.tiles = new Tile[3][3];
+    public Board(int height, int width){
+        this.height = height;
+        this.width = width;
+        this.tiles = new Tile[height][width];
 
         this.resetBoard();
     }
@@ -39,54 +43,7 @@ public class Board {
         return true;
     }
 
-    public boolean checkWin(int x, int y, Player p) {
-        Tile symbol = p.getSymbol();
-
-        boolean rowWin = true;
-        for (int i = 0; i < 3; i++) {
-            if (this.tiles[i][y] != symbol) {
-                rowWin = false;
-                break;
-            }
-        }
-        if (rowWin) return true;
-
-
-        boolean colWin = true;
-        for (int i = 0; i < 3; i++) {
-            if (this.tiles[x][i] != symbol) {
-                colWin = false;
-                break;
-            }
-        }
-        if (colWin) return true;
-
-
-        if (x == y) {
-            boolean diagWin = true;
-            for (int i = 0; i < 3; i++) {
-                if (this.tiles[i][i] != symbol) {
-                    diagWin = false;
-                    break;
-                }
-            }
-            if (diagWin) return true;
-        }
-
-
-        if (x + y == 2) {
-            boolean antiDiagWin = true;
-            for (int i = 0; i < 3; i++) {
-                if (this.tiles[i][2 - i] != symbol) {
-                    antiDiagWin = false;
-                    break;
-                }
-            }
-            return antiDiagWin;
-        }
-
-        return false;
-    }
+    public abstract boolean checkWin(int x, int y, Player p);
 
     public boolean isBoardFull(){
         boolean isFull = true;
@@ -136,13 +93,11 @@ public class Board {
         return stringBuilder.toString();
     }
 
-    //TODO:MAKE THIS DYNAMIC
     public int getHeight() {
-        return 3;
+        return this.height ;
     }
 
-    //TODO:MAKE THIS DYNAMIC
     public int getWidth() {
-        return 3;
+        return this.width ;
     }
 }

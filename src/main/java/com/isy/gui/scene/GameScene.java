@@ -1,12 +1,8 @@
 package com.isy.gui.scene;
 
-import com.isy.await.Await;
 import com.isy.await.Promise;
 import com.isy.game.Game;
-import com.isy.game.GameServer;
-import com.isy.game.Player;
 import com.isy.game.ticTacToe.GameState;
-import com.isy.game.ticTacToe.TicTacToeGame;
 import com.isy.gui.PlayerEventManager;
 import com.isy.gui.PlayerTurnEventListener;
 import com.isy.game.ticTacToe.Tile;
@@ -19,18 +15,21 @@ import com.isy.gui.components.UIButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.isy.await.Await.await;
 
-public class TicTacToeScene extends Scene {
-    private final JButton[][] boardButtons;
+public class GameScene extends Scene {
+    private final List<List<JButton>> boardButtons;
+
     private JPanel gridPanel;
     private JLabel playerNameLabel;
-    private TicTacToeGame game;
+    private Game game;
 
-    public TicTacToeScene(Window window) {
-        super("ticTacToe", window);
-        this.boardButtons = new JButton[][]{new JButton[]{null,null,null}, new JButton[]{null,null,null}, new JButton[]{null,null,null}};
+    public GameScene(Window window) {
+        super("game", window);
+        this.boardButtons = new ArrayList<>();
     }
 
     @Override
@@ -62,37 +61,37 @@ public class TicTacToeScene extends Scene {
         controlPanel.add(playerNameLabel, labelConstraints);
 
         gridPanel = new JPanel();
-        GridLayout layout = new GridLayout(3, 3);
-        gridPanel.setSize(300, 300);
-        gridPanel.setLayout(layout);
-
         controlPanel.add(gridPanel, new GridBagConstraints());
     }
 
     @Override
     public void initGame(Game game){
-        TicTacToeGame ticTacToeGame = (TicTacToeGame) game;
-        this.game = (TicTacToeGame) game;
+        this.game = game;
+
+        GridLayout layout = new GridLayout(this.game.getBoard().getHeight(), this.game.getBoard().getWidth());
+        gridPanel.setSize(this.game.getBoard().getHeight() * 100, this.game.getBoard().getWidth() * 100);
+        gridPanel.setLayout(layout);
 
         gridPanel.removeAll();
 
-        for (int y = 0; y < ticTacToeGame.getBoard().getHeight(); y++) {
-            for (int x = 0; x < ticTacToeGame.getBoard().getWidth(); x++) {
-                final JButton button = BoardTile.createButton(ticTacToeGame.getBoard().getTile(x, y).toString());
+        for (int x = 0; x < game.getBoard().getHeight(); x++) {
+            this.boardButtons.add(new ArrayList<>());
+            for (int y = 0; y < game.getBoard().getWidth(); y++) {
+                final JButton button = BoardTile.createButton(game.getBoard().getTile(x, y).toString());
 
-                button.addActionListener(new PlayerTurnEventListener(ticTacToeGame, x, y));
-                this.boardButtons[x][y] = button;
+                button.addActionListener(new PlayerTurnEventListener(game, x, y));
+                this.boardButtons.get(x).add(button);
                 gridPanel.add(button);
             }
         }
     }
 
-    public void reloadBoardValues(TicTacToeGame ticTacToeGame) {
-        Tile[][] tiles = ticTacToeGame.getBoard().getTiles();
-        for (int y = 0; y < ticTacToeGame.getBoard().getHeight(); y++) {
-            for (int x = 0; x < ticTacToeGame.getBoard().getWidth(); x++) {
-                this.boardButtons[x][y].setText(tiles[x][y].toString());
-                this.boardButtons[x][y].repaint();
+    public void reloadBoardValues(Game game) {
+        Tile[][] tiles = game.getBoard().getTiles();
+        for (int y = 0; y < game.getBoard().getHeight(); y++) {
+            for (int x = 0; x < game.getBoard().getWidth(); x++) {
+                this.boardButtons.get(x).get(y).setText(tiles[x][y].toString());
+                this.boardButtons.get(x).get(y).repaint();
             }
         }
     }

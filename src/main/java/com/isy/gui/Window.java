@@ -1,6 +1,5 @@
 package com.isy.gui;
 
-import com.isy.gui.lang.LangHandler;
 import com.isy.gui.scene.*;
 
 import javax.swing.*;
@@ -13,10 +12,8 @@ public class Window {
         GameSettings.get();
         this.manager = new SceneManager(this);
 
-        this.manager.addScene(new TicTacToeScene(this), false);
-        this.manager.addScene(new WinScene(this), false);
-        this.manager.addScene(new TicTacToeMainMenuScene(this), false);
         this.manager.addScene(new SettingsScene(this), false);
+        this.manager.addScene(new WinScene(this), false);
         this.manager.addScene(new JoinGameServerMenuScene(this), false);
         this.manager.addScene(new LangSwitchScene(this), false);
         this.manager.addScene(new MainMenuScene(this), true);

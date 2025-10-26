@@ -1,6 +1,8 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.await.Promise;
+import com.isy.game.Board;
+import com.isy.game.Game;
 import com.isy.game.GameServer;
 import com.isy.game.Player;
 import com.isy.gui.PlayerEventManager;
@@ -12,7 +14,7 @@ import static com.isy.await.Await.await;
 
 public class RemotePlayer extends Player{
     private final BlockingQueue<Integer> moveQueue = new LinkedBlockingQueue<>();
-    private TicTacToeGame game;
+    private Game game;
 
     public RemotePlayer(String name, Tile symbol, GameServer client){
         super(name, symbol, client);
@@ -20,7 +22,7 @@ public class RemotePlayer extends Player{
 
     }
 
-    public void setGame(TicTacToeGame game){
+    public void setGame(Game game){
         this.game = game;
     }
 

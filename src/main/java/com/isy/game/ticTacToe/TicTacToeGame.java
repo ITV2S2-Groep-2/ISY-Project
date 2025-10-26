@@ -1,46 +1,23 @@
 package com.isy.game.ticTacToe;
 
-import com.isy.game.GameServer;
 import com.isy.Main;
 import com.isy.game.Player;
 import com.isy.game.Game;
-import com.isy.gui.scene.TicTacToeScene;
+import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.WinScene;
 
-import javax.swing.*;
-
-public class TicTacToeGame extends Game implements Runnable {
-    private final Board board;
-    private final Player[] players;
-    private Player activeTurnPlayer;
-    private GameState state;
-    private GameServer client;
+public class TicTacToeGame extends Game {
 
     public TicTacToeGame(Player[] players) {
-        this.board = new Board();
-        this.players = players;
-        this.activeTurnPlayer = players[0];
-        this.state = GameState.ONGOING;
-        this.client = null;
-    }
-
-    public GameServer getClient(){
-        return this.client;
-    }
-
-    public void setClient(GameServer client){
-        this.client = client;
-    }
-    public void setState(GameState state){
-        this.state = state;
+        super(new TicTacToeBoard(), players);
     }
 
     public void gameLoop() {
         while (this.state == GameState.ONGOING) {
             int[] move = null;
 
-            if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
-                ttts.reloadBoardValues(this);
+            if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+                gs.reloadBoardValues(this);
             }
 
             move = this.activeTurnPlayer.getMove(this.getBoard());
@@ -60,8 +37,8 @@ public class TicTacToeGame extends Game implements Runnable {
             }
         }
 
-        if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
-            ttts.reloadBoardValues(this);
+        if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+            gs.reloadBoardValues(this);
         }
 
         try {
@@ -86,20 +63,4 @@ public class TicTacToeGame extends Game implements Runnable {
         }
     }
 
-    public void giveTurnOver() {
-        if (this.activeTurnPlayer.equals(this.players[0])) {
-            this.activeTurnPlayer = this.players[1];
-        } else {
-            this.activeTurnPlayer = this.players[0];
-        }
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    @Override
-    public void run() {
-        gameLoop();
-    }
 }

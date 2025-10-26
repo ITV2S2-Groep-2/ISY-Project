@@ -3,13 +3,10 @@ package com.isy.gui.scene;
 import com.isy.Main;
 import com.isy.await.Promise;
 import com.isy.game.GameServer;
-import com.isy.game.ticTacToe.GameState;
-import com.isy.gui.PlayerEventManager;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.Label;
 import com.isy.gui.components.UIButton;
-import com.isy.gui.lang.LangHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,7 +59,7 @@ public class JoinGameServerMenuScene extends MenuScene {
 
     private void onJoinButtonClicked(ActionEvent e) {
         SwingUtilities.invokeLater(() -> {
-            TicTacToeMainMenuScene tttmms = (TicTacToeMainMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
+            GameMenuScene tttmms = (GameMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
             tttmms.setiStart(false);
             System.out.println("heb m via setistart op false gezet");
         });

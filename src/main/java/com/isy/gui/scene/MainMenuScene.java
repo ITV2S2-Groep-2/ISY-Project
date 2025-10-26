@@ -1,5 +1,7 @@
 package com.isy.gui.scene;
 
+import com.isy.Main;
+import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
@@ -23,8 +25,9 @@ public class MainMenuScene extends MenuScene{
         gbc.insets = new Insets(10, 10, 10, 10);
 
         panel.add(Header.createHeader("select.game.header"));
-        panel.add(UIButton.createButton("tic.tac.toe.game.button", this::goToTicTacToeMainMenu), getConstraints());
-        panel.add(UIButton.createButton("othello.game.button"), getConstraints());
+        panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), getConstraints());
+        panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), getConstraints());
+
         JButton settingsButton = UIButton.createButton(this::goToSettings);
         settingsButton.setPreferredSize(new Dimension(48, 48));
         gbc.gridy = 3;
@@ -40,8 +43,10 @@ public class MainMenuScene extends MenuScene{
         panel.add(settingsButton, gbc);
     }
 
-    private void goToTicTacToeMainMenu(ActionEvent actionEvent) {
-        this.getWindow().getManager().showScene("ticTacToeMainMenu");
+    private void goToGameMenuSceneWithSelectedGame(GameType game) {
+        System.out.println("selected game: " + game.label);
+        this.getWindow().getManager().setCurrentGameType(game);
+        this.getWindow().getManager().addScene(new GameMenuScene(this.getWindow()), true);
     }
 
     private void goToSettings(ActionEvent actionEvent) {
