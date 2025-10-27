@@ -19,6 +19,7 @@ public class UIButton {
                 new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor),
                 new EmptyBorder(10, 10, 10, 10)
         ));
+        //button.setBorder(new RoundedBorder(15));
 
         button.setPreferredSize(new Dimension(256, 64));
 
@@ -33,6 +34,14 @@ public class UIButton {
     public static JButton createButton() {
         JButton button = new JButton();
         return addStyle(button);
+    }
+
+    public static JButton createButton(String text) {
+        return new RoundedButton(
+                text,
+                Style.primaryComponentBackgroundColor,
+                Style.primaryTextColor
+        );
     }
 
     public static JButton createButton(String langKey, @Nullable Object... params) {
