@@ -22,7 +22,7 @@ public class AiPlayer extends Player {
 
         // Simuleer wachttijd omdat anders AI soms sneller zet dan de server je in de lobby kan zetten.
         try {
-            Thread.sleep(750);
+            Thread.sleep(250);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
