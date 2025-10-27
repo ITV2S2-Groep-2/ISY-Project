@@ -52,8 +52,8 @@ public class GameMenuScene extends MenuScene{
                 .map(val -> val.label)
                 .toArray());
 
-        textField1 = TextField.createTextField("ttt.game.player1.text_field.placeholder");
-        textField2 = TextField.createTextField("ttt.game.player2.text_field.placeholder");
+        textField1 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
+        textField2 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
 
         gbc.gridx = 0;
         gbc.gridy = 0;
