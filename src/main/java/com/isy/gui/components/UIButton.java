@@ -38,43 +38,38 @@ public class UIButton {
     public static JButton createButton(String langKey, @Nullable Object... params) {
         String text = LangHandler.get().translate(langKey, params);
 
-        JButton button = new JButton(text);
+        JButton button = createButton();
+        button.setText(text);
 
         LangHandler.get().bind(button::setText, langKey, params);
 
-        return addStyle(button);
+        return button;
     }
 
     public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
-        String text = LangHandler.get().translate(langKey, params);
-
-        JButton button = new JButton(text);
+        JButton button = createButton(langKey, params);
         button.addActionListener(listener);
 
-        LangHandler.get().bind(button::setText, langKey, params);
-
-        return addStyle(button);
+        return button;
     }
 
     public static JButton createButton(ActionListener listener) {
-        JButton button = new JButton();
+        JButton button = createButton();
         button.addActionListener(listener);
-        return addStyle(button);
+        return button;
     }
 
     public static JButton createButton(Icon icon) {
-        JButton button = new JButton(icon);
-        return addStyle(button);
+        JButton button = createButton();
+        button.setIcon(icon);
+        return button;
     }
 
     public static JButton createButton(String langKey, Icon icon, @Nullable Object... params) {
-        String text = LangHandler.get().translate(langKey, params);
+        JButton button = createButton(langKey, params);
+        button.setIcon(icon);
 
-        JButton button = new JButton(text, icon);
-
-        LangHandler.get().bind(button::setText, langKey, params);
-
-        return addStyle(button);
+        return button;
     }
 
 }

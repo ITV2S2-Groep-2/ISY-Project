@@ -2,6 +2,7 @@ package com.isy.game;
 
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.Scene;
+import com.isy.server.Server;
 
 public abstract class Game implements Runnable {
     private Scene renderScene;
@@ -9,23 +10,16 @@ public abstract class Game implements Runnable {
     protected final Player[] players;
     protected Player activeTurnPlayer;
     protected GameState state;
-    protected GameServer client;
+    protected Server client;
 
     public Game(Board board, Player[] players) {
         this.board = board;
         this.players = players;
         this.activeTurnPlayer = players[0];
         this.state = GameState.ONGOING;
-        this.client = null;
+        this.client = Server.getInstance();
     }
 
-    public GameServer getClient(){
-        return this.client;
-    }
-
-    public void setClient(GameServer client){
-        this.client = client;
-    }
     public void setState(GameState state){
         this.state = state;
     }

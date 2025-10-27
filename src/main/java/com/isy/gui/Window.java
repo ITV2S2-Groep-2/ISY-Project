@@ -10,12 +10,13 @@ public class Window {
 
     public Window(){
         GameSettings.get();
-        this.manager = new SceneManager(this);
+        this.manager = new SceneManager();
 
-        this.manager.addScene(new SettingsScene(this), false);
-        this.manager.addScene(new WinScene(this), false);
-        this.manager.addScene(new JoinGameServerMenuScene(this), false);
-        this.manager.addScene(new LangSwitchScene(this), false);
+        this.manager.addScene(new SettingsScene(this));
+        this.manager.addScene(new WinScene(this));
+        this.manager.addScene(new JoinGameServerMenuScene(this));
+        this.manager.addScene(new LangSwitchScene(this));
+        this.manager.addScene(new GameMenuScene(this));
         this.manager.addScene(new MainMenuScene(this), true);
 
         this.createAndShowGUI();
@@ -33,8 +34,6 @@ public class Window {
         frame.setSize(800, 800);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
-//        LangHandler.get().debugPrintAllLangKeysUsed();
     }
 
     public SceneManager getManager() {

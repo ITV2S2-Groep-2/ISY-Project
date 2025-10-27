@@ -1,4 +1,4 @@
-package com.isy.await;
+package com.isy.server.await;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,13 +60,13 @@ public class Promise{
         if (command != null)
             out.println(this.command);
 
-        String line;
+        String line = null;
         Matcher matcher = null;
 
         if (accept == null)
             return null;
 
-        while ((line = in.readLine()) != null) {
+        while (in != null && (line = in.readLine()) != null) {
             matcher = accept.matcher(line);
 
             if (matcher.matches()){

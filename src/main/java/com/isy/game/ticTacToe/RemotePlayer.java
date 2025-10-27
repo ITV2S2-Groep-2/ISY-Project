@@ -1,22 +1,21 @@
 package com.isy.game.ticTacToe;
 
-import com.isy.await.Promise;
+import com.isy.server.await.Promise;
 import com.isy.game.Board;
 import com.isy.game.Game;
-import com.isy.game.GameServer;
+import com.isy.server.Server;
 import com.isy.game.Player;
 import com.isy.gui.PlayerEventManager;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static com.isy.await.Await.await;
+import static com.isy.server.await.Await.await;
 
 public class RemotePlayer extends Player{
-    private final BlockingQueue<Integer> moveQueue = new LinkedBlockingQueue<>();
     private Game game;
 
-    public RemotePlayer(String name, Tile symbol, GameServer client){
+    public RemotePlayer(String name, Tile symbol, Server client){
         super(name, symbol, client);
 
 

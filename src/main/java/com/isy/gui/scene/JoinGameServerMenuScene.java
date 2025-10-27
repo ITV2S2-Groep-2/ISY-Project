@@ -1,21 +1,24 @@
 package com.isy.gui.scene;
 
-import com.isy.Main;
-import com.isy.await.Promise;
-import com.isy.game.GameServer;
+import com.isy.server.await.Promise;
+import com.isy.server.Server;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.Label;
 import com.isy.gui.components.UIButton;
+import com.isy.util.GameCreator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Objects;
+import java.util.regex.Matcher;
 
-import static com.isy.await.Await.await;
+import static com.isy.server.ServerUtils.playerToMovePattern;
+import static com.isy.server.await.Await.asyncAwait;
+import static com.isy.server.await.Await.await;
 
 public class JoinGameServerMenuScene extends MenuScene {
-    private GameServer client;
     private String ownName;
     private JButton joinButton;
     private JLabel waitingLabel;
@@ -52,29 +55,37 @@ public class JoinGameServerMenuScene extends MenuScene {
         joinButton.addActionListener(this::onJoinButtonClicked);
     }
 
-    public void setClient(GameServer client, String ownName) {
-        this.client = client;
-        this.ownName = ownName;
+    public void setGameCreator(GameCreator creator) {
+        this.ownName = creator.getPlayer1Name();
+
+        asyncAwait(new Promise("^(SVR GAME MATCH|ERR).*"), (result) -> {
+            boolean iStart;
+
+            Matcher matcher = playerToMovePattern.matcher(result);
+
+            if (result.toLowerCase().contains("err")){
+                throw new RuntimeException("AAAAAAAAAAAAAAAAAAAAAAAA");
+            }
+
+            if (matcher.find()){
+                String playerToMove = matcher.group(1);
+                iStart = Objects.equals(playerToMove, ownName);
+
+                if (iStart)
+                    await(new Promise("^(SVR GAME YOURTURN).*"));
+            } else {
+                iStart = false;
+            }
+
+            SwingUtilities.invokeLater(() -> creator.startRemoteGame(iStart));
+        });
     }
 
     private void onJoinButtonClicked(ActionEvent e) {
-        if (client == null) return;
+        if (Server.getInstance() == null) return;
 
-//        if(client != null){
-//            client.addListener(line -> {
-//                if(line.contains("ERR Player is not in a match currently")){
-//                    return;
-//                }
-//                if (line.contains("ERR")) {
-//                    errorLabel.setText(LangHandler.get().translate("error.message.server.label", line));
-//                    errorLabel.show();
-//                }
-//            });
-//        }
         // TODO: based on gametype label
         await(new Promise().setCommand("subscribe tic-tac-toe"));
-
-//        client.sendCommand("subscribe tic-tac-toe");
 
         joinButton.setVisible(false);
         waitingLabel.setVisible(true);
@@ -85,10 +96,12 @@ public class JoinGameServerMenuScene extends MenuScene {
         this.getWindow().getManager().showScene("gameMenu");
         errorLabel.hide();
         this.resetJoinButton();
-        client.shutdown();
+        Server.getInstance().shutdown();
     }
 
     public void resetJoinButton() {
+        setGameCreator(GameCreator.getCurrentInstance());
+
         SwingUtilities.invokeLater(() -> {
             joinButton.setVisible(true);
             waitingLabel.setVisible(false);

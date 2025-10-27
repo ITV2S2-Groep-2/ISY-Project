@@ -5,6 +5,7 @@ import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
+import com.isy.util.GameCreator;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -44,9 +45,8 @@ public class MainMenuScene extends MenuScene{
     }
 
     private void goToGameMenuSceneWithSelectedGame(GameType game) {
-        System.out.println("selected game: " + game.label);
-        this.getWindow().getManager().setCurrentGameType(game);
-        this.getWindow().getManager().addScene(new GameMenuScene(this.getWindow()), true);
+        GameCreator.createNewInstance(game);
+        this.getWindow().getManager().showScene("gameMenu");
     }
 
     private void goToSettings(ActionEvent actionEvent) {

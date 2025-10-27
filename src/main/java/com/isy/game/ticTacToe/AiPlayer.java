@@ -1,11 +1,11 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.game.Board;
-import com.isy.game.GameServer;
+import com.isy.server.Server;
 import com.isy.game.Player;
 
 public class AiPlayer extends Player {
-    public AiPlayer(String name, Tile symbol, GameServer client){
+    public AiPlayer(String name, Tile symbol, Server client){
         super(name, symbol, client);
     }
 

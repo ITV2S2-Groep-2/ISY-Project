@@ -1,21 +1,22 @@
 package com.isy.game;
-import com.isy.await.Promise;
+import com.isy.server.Server;
+import com.isy.server.await.Promise;
 import com.isy.game.ticTacToe.Tile;
 
-import static com.isy.await.Await.await;
+import static com.isy.server.await.Await.await;
 
 public abstract class Player {
     private final String name;
     private final Tile symbol;
-    protected GameServer client;
+    protected Server client;
 
-    public Player(String name, Tile symbol, GameServer client){
+    public Player(String name, Tile symbol, Server client){
         this.name = name;
         this.symbol = symbol;
         this.client = client;
     }
 
-    public void setPlayerClient(GameServer client){
+    public void setPlayerClient(Server client){
         this.client = client;
     }
 

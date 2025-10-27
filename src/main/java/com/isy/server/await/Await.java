@@ -1,4 +1,4 @@
-package com.isy.await;
+package com.isy.server.await;
 
 import java.io.IOException;
 import java.util.function.Consumer;

@@ -1,15 +1,12 @@
 package com.isy.gui.scene;
 
 import com.isy.Main;
-import com.isy.gui.PlayerEventManager;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class WinScene extends MenuScene{
     private JLabel title;
@@ -23,13 +20,6 @@ public class WinScene extends MenuScene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        panel.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentShown(ComponentEvent e) {
-                onSceneShown();
-            }
-        });
-
         title = Header.createHeader("tic.tac.toe.header");
 
         panel.add(title, getConstraints());
@@ -37,26 +27,14 @@ public class WinScene extends MenuScene{
 
     }
 
-    private void onSceneShown() {
-        SwingUtilities.invokeLater(() -> {
-            GameMenuScene gms = (GameMenuScene) Main.window.getManager().getScene("gameMenu");
-            gms.setiStart(false);
-        });
-    }
-
     private void goBackToMainMenu(ActionEvent actionEvent) {
-        // Join game button terugzetten
-        SwingUtilities.invokeLater(() -> {
-            JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
-            joinScene.resetJoinButton();
-        });
-
-        SwingUtilities.invokeLater(() -> {
-            GameMenuScene gms = (GameMenuScene) Main.window.getManager().getScene("gameMenu");
-            gms.setiStart(false);
-        });
-
         if(online){
+            // Join game button terugzetten
+            SwingUtilities.invokeLater(() -> {
+                JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+                joinScene.resetJoinButton();
+            });
+
             this.getWindow().getManager().showScene("joinGameServerMenuScene");
         } else {
             this.getWindow().getManager().showScene("gameMenu");

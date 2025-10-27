@@ -1,6 +1,6 @@
 package com.isy.gui.scene;
 
-import com.isy.await.Promise;
+import com.isy.server.await.Promise;
 import com.isy.game.Game;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.PlayerEventManager;
@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.isy.await.Await.await;
+import static com.isy.server.await.Await.await;
 
 public class GameScene extends Scene {
     private final List<List<JButton>> boardButtons;
@@ -125,9 +125,6 @@ public class GameScene extends Scene {
         PlayerEventManager.get().stop();
 
         await(new Promise().setCommand("forfeit"));
-//        if(this.game.getClient() != null){
-//            this.game.getClient().sendCommand("forfeit");
-//        }
     }
 
     private void sendMessage(ActionEvent actionEvent, String message) {

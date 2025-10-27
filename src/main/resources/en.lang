@@ -24,4 +24,4 @@ tic.tac.toe.game.button=Tic Tac Toe
 othello.game.button=Othello
 
 #text field placeholders
-ttt.game.player.text_field.placeholder=Player %d
+ttt.game.player.text_field.placeholder=Player%d
