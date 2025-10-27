@@ -1,7 +1,8 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.game.Board;
-import com.isy.game.Player;
+import com.isy.game.Tile;
+import com.isy.game.player.Player;
 
 public class TicTacToeBoard extends Board {
 

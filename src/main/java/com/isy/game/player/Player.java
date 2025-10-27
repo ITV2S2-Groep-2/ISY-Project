@@ -1,9 +1,10 @@
-package com.isy.game;
+package com.isy.game.player;
+import com.isy.game.Board;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
-import com.isy.game.ticTacToe.Tile;
+import com.isy.game.Tile;
 
-import static com.isy.server.await.Await.await;
+import static com.isy.server.ServerUtils.await;
 
 public abstract class Player {
     private final String name;

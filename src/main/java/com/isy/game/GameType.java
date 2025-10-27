@@ -7,7 +7,7 @@ public enum GameType {
 
     public final String label;
 
-    private GameType(String label) {
+    GameType(String label) {
         this.label = label;
     }
 

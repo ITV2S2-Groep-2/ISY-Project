@@ -53,7 +53,7 @@ public class Promise{
         }
     }
 
-    public String getData() throws IOException {
+    public String getData(){
         if (socket == null) return "";
 
 
@@ -66,16 +66,21 @@ public class Promise{
         if (accept == null)
             return null;
 
-        while (in != null && (line = in.readLine()) != null) {
-            matcher = accept.matcher(line);
+        try {
+            while (in != null && (line = in.readLine()) != null) {
+                matcher = accept.matcher(line);
 
-            if (matcher.matches()){
-                break;
+                if (matcher.matches()){
+                    break;
+                }
             }
+        }catch (IOException e){
+            return "err connection closed";
         }
 
+
         if (line == null)
-            return "err";
+            return "err no match found";
 
 
         return matcher.group();

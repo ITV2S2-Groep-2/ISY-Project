@@ -3,20 +3,19 @@ package com.isy.util;
 import com.isy.Main;
 import com.isy.game.Game;
 import com.isy.game.GameType;
-import com.isy.game.Player;
+import com.isy.game.player.Player;
 import com.isy.game.PlayerType;
-import com.isy.game.ticTacToe.AiPlayer;
-import com.isy.game.ticTacToe.HumanPlayer;
-import com.isy.game.ticTacToe.RemotePlayer;
-import com.isy.game.ticTacToe.Tile;
-import com.isy.gui.GameSettings;
+import com.isy.game.player.AiPlayer;
+import com.isy.game.player.HumanPlayer;
+import com.isy.game.player.RemotePlayer;
+import com.isy.game.Tile;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 
 import static com.isy.gui.scene.GameMenuScene.joinError;
-import static com.isy.server.await.Await.await;
+import static com.isy.server.ServerUtils.await;
 
 public class GameCreator {
     private PlayerType player1, player2;
@@ -65,6 +64,14 @@ public class GameCreator {
         return gameType;
     }
 
+    public void setPlayer1Name(String player1Name) {
+        this.player1Name = player1Name;
+    }
+
+    public void setPlayer2Name(String player2Name) {
+        this.player2Name = player2Name;
+    }
+
     public void startLocalGame() {
         Player player1 = createPlayerByType(getPlayer1(), player1Name, Tile.X);
         Player player2 = createPlayerByType(getPlayer2(), player2Name, Tile.O);
@@ -111,7 +118,7 @@ public class GameCreator {
         Main.window.getManager().addScene(new GameScene(Main.window), true);
         GameScene gs = (GameScene) Main.window.getManager().getScene("game");
         game.setRenderScene(gs);
-        gs.setPlayerName(player1Name, iStart);
+        gs.setPlayerNames(player1Name, player2Name, iStart);
 
         new Thread(game).start();
         Main.window.getManager().showScene("game");

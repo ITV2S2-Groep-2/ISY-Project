@@ -1,6 +1,6 @@
 package com.isy.gui.scene;
 
-import com.isy.gui.GameSettings;
+import com.isy.util.GameSettings;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.TextField;
@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class SettingsScene extends MenuScene{
+public class SettingsScene extends Scene{
     static JTextField portTextField, hostNameTextField;
 
     public SettingsScene(Window window) {

@@ -1,4 +1,4 @@
-package com.isy.gui;
+package com.isy.util;
 
 public class GameSettings {
     private static GameSettings instance;

@@ -1,4 +1,4 @@
-package com.isy.gui;
+package com.isy.util;
 
 import com.isy.game.Game;
 import com.isy.server.Server;

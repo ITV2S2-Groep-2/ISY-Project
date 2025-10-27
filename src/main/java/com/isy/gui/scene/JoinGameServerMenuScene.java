@@ -14,18 +14,23 @@ import java.awt.event.ActionEvent;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
+import static com.isy.server.ServerUtils.opponentPattern;
 import static com.isy.server.ServerUtils.playerToMovePattern;
-import static com.isy.server.await.Await.asyncAwait;
-import static com.isy.server.await.Await.await;
+import static com.isy.server.ServerUtils.asyncAwait;
+import static com.isy.server.ServerUtils.await;
 
-public class JoinGameServerMenuScene extends MenuScene {
+public class JoinGameServerMenuScene extends Scene {
     private String ownName;
     private JButton joinButton;
     private JLabel waitingLabel;
     private JLabel errorLabel;
 
+    private final GridBagConstraints constraints;
+
     public JoinGameServerMenuScene(Window window) {
         super("joinGameServerMenuScene", window);
+        this.constraints = generateConstrains();
+        this.getScenePanel().setLayout(new GridBagLayout());
     }
 
     @Override
@@ -62,6 +67,10 @@ public class JoinGameServerMenuScene extends MenuScene {
             boolean iStart;
 
             Matcher matcher = playerToMovePattern.matcher(result);
+            Matcher playerRemoteName = opponentPattern.matcher(result);
+
+            if (playerRemoteName.find())
+                creator.setPlayer2Name(playerRemoteName.group(1));
 
             if (result.toLowerCase().contains("err")){
                 throw new RuntimeException(result);
@@ -89,7 +98,6 @@ public class JoinGameServerMenuScene extends MenuScene {
 
         joinButton.setVisible(false);
         waitingLabel.setVisible(true);
-
     }
 
     private void goLeaveServer(ActionEvent actionEvent) {
@@ -100,12 +108,25 @@ public class JoinGameServerMenuScene extends MenuScene {
     }
 
     public void resetJoinButton() {
-        setGameCreator(GameCreator.getCurrentInstance());
-
         SwingUtilities.invokeLater(() -> {
             joinButton.setVisible(true);
             waitingLabel.setVisible(false);
         });
     }
+
+    public GridBagConstraints generateConstrains(){
+        GridBagConstraints gd = new GridBagConstraints();
+        gd.gridx = 0;
+        gd.fill = GridBagConstraints.NONE;
+        gd.anchor = GridBagConstraints.CENTER;
+        gd.insets = new Insets(5, 0, 5, 0);
+
+        return gd;
+    }
+
+    public GridBagConstraints getConstraints() {
+        return constraints;
+    }
+
 }
 

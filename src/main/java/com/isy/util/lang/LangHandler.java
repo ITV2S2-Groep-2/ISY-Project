@@ -1,4 +1,4 @@
-package com.isy.gui.lang;
+package com.isy.util.lang;
 
 import org.jetbrains.annotations.Nullable;
 

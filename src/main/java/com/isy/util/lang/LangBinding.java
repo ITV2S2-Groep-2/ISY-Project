@@ -1,4 +1,4 @@
-package com.isy.gui.lang;
+package com.isy.util.lang;
 
 public class LangBinding {
     final String key;

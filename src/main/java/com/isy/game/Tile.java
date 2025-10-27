@@ -1,4 +1,4 @@
-package com.isy.game.ticTacToe;
+package com.isy.game;
 
 public enum Tile {
     EMPTY, X, O;

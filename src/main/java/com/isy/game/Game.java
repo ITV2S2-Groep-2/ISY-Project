@@ -1,5 +1,6 @@
 package com.isy.game;
 
+import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.Scene;
 import com.isy.server.Server;

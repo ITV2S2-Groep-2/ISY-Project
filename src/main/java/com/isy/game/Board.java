@@ -1,6 +1,6 @@
 package com.isy.game;
 
-import com.isy.game.ticTacToe.Tile;
+import com.isy.game.player.Player;
 
 import java.util.Arrays;
 
@@ -69,28 +69,6 @@ public abstract class Board {
 
     public Tile[][] getTiles() {
         return tiles;
-    }
-
-    /**
-     * Converts board to String, usefully for debugging
-     * @return A string containing an ascii layout of the board
-     */
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 3; x++) {
-                stringBuilder.append(getTile(x, y).toString());
-                if(x < 2)
-                    stringBuilder.append("|");
-            }
-
-            if(y < 2)
-                stringBuilder.append("\n-+-+-\n");
-        }
-
-        return stringBuilder.toString();
     }
 
     public int getHeight() {

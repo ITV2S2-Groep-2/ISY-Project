@@ -3,12 +3,12 @@ package com.isy.gui.scene;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
-import com.isy.gui.lang.LangHandler;
+import com.isy.util.lang.LangHandler;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class LangSwitchScene extends MenuScene{
+public class LangSwitchScene extends Scene{
     public LangSwitchScene(Window window) {
         super("langSwitchScene", window);
     }

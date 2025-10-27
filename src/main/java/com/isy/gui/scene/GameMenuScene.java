@@ -1,12 +1,7 @@
 package com.isy.gui.scene;
 
-import com.isy.Main;
-import com.isy.gui.lang.LangHandler;
-import com.isy.server.Server;
-import com.isy.server.await.Promise;
+import com.isy.util.lang.LangHandler;
 import com.isy.game.*;
-import com.isy.game.ticTacToe.*;
-import com.isy.gui.GameSettings;
 import com.isy.gui.Window;
 import com.isy.gui.components.ComboBox;
 import com.isy.gui.components.Header;
@@ -19,9 +14,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 
-import static com.isy.server.await.Await.*;
+import static com.isy.gui.GridBagConstrainsUtil.*;
 
-public class GameMenuScene extends MenuScene{
+public class GameMenuScene extends Scene{
     static JComboBox dropdown1, dropdown2;
     static JTextField textField1, textField2;
     static JTextField error;
@@ -36,6 +31,7 @@ public class GameMenuScene extends MenuScene{
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
 
         error = TextField.createTextField();
         error.hide();
@@ -52,38 +48,22 @@ public class GameMenuScene extends MenuScene{
         textField1 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
         textField2 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(error, gbc);
+        initConstraints(gbc, 2);
+        panel.add(error, next(gbc));
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(Header.createHeader("tic.tac.toe.header"), gbc);
+        row(gbc,2);
+        panel.add(Header.createHeader("tic.tac.toe.header"), next(gbc));
 
-        gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        panel.add(dropdown1, gbc);
+        row(gbc,1);
+        panel.add(dropdown1, next(gbc));
+        panel.add(dropdown2, next(gbc));
 
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        panel.add(dropdown2, gbc);
+        row(gbc,1);
+        panel.add(textField1, next(gbc));
+        panel.add(textField2, next(gbc));
 
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panel.add(textField1, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        panel.add(textField2, gbc);
-
-        gbc.gridy = 4;
-        gbc.gridwidth = 1;
-        panel.add(UIButton.createButton("ttt.game.start_game.button", this::startGame), gbc);
+        row(gbc,1);
+        panel.add(UIButton.createButton("ttt.game.start_game.button", this::startGame), next(next(gbc)));
     }
 
     private void startGame(ActionEvent e){

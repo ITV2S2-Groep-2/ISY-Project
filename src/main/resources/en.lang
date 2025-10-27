@@ -5,7 +5,7 @@ tic.tac.toe.header=Tic Tac Toe
 settings.menu.header=Settings
 
 #displays
-player.name.display=You are %s(%s)
+player.name.display=[%s] %s(You) VS [%s] %s(Opponent)
 
 #labels
 directly.subscribe.label=Instead directly subscribe to a game!

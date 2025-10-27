@@ -5,7 +5,7 @@ import com.isy.server.await.Promise;
 import java.io.IOException;
 import java.net.Socket;
 
-import static com.isy.server.await.Await.await;
+import static com.isy.server.ServerUtils.await;
 
 public class Server {
     private static Server instance;

@@ -1,10 +1,12 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.Main;
-import com.isy.game.Player;
+import com.isy.game.player.Player;
 import com.isy.game.Game;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.WinScene;
+
+import static com.isy.server.ServerUtils.await;
 
 public class TicTacToeGame extends Game {
 
@@ -12,6 +14,7 @@ public class TicTacToeGame extends Game {
         super(new TicTacToeBoard(), players);
     }
 
+    //TODO: ADD A CHECK OUTSIDE REMOTE PLAYER FOR SERVER FORFEITS(THIS IS NOT WORKING AS INTENDED AT THE MOMENT!
     public void gameLoop() {
         while (this.state == GameState.ONGOING) {
             int[] move = null;

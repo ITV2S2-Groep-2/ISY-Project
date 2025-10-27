@@ -1,13 +1,13 @@
-package com.isy.game.ticTacToe;
+package com.isy.game.player;
 
 import com.isy.game.Board;
+import com.isy.game.Tile;
 import com.isy.server.Server;
-import com.isy.game.Player;
-import com.isy.gui.PlayerEventManager;
+import com.isy.util.PlayerEventManager;
 
 import java.util.Arrays;
 
-import static com.isy.server.await.Await.await;
+import static com.isy.server.ServerUtils.await;
 
 public class HumanPlayer extends Player {
 

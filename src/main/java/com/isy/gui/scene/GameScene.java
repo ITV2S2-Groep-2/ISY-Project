@@ -3,14 +3,13 @@ package com.isy.gui.scene;
 import com.isy.server.await.Promise;
 import com.isy.game.Game;
 import com.isy.game.ticTacToe.GameState;
-import com.isy.gui.PlayerEventManager;
-import com.isy.gui.PlayerTurnEventListener;
-import com.isy.game.ticTacToe.Tile;
+import com.isy.util.PlayerEventManager;
+import com.isy.util.PlayerTurnEventListener;
+import com.isy.game.Tile;
 import com.isy.gui.Window;
 import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
-import com.isy.gui.components.TextField;
-import com.isy.gui.lang.LangHandler;
+import com.isy.util.lang.LangHandler;
 import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
@@ -19,7 +18,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.isy.server.await.Await.await;
+import static com.isy.server.ServerUtils.await;
 
 public class GameScene extends Scene {
     private final List<List<JButton>> boardButtons;
@@ -42,7 +41,7 @@ public class GameScene extends Scene {
         forfeitButton.setPreferredSize(new Dimension(128, 32));
         GridBagConstraints forfeitConstraints = new GridBagConstraints();
         forfeitConstraints.gridx = 0;
-        forfeitConstraints.gridy = 0;
+        forfeitConstraints.gridy = 1;
         forfeitConstraints.anchor = GridBagConstraints.LINE_START;
         forfeitConstraints.insets = new Insets(5, 5, 5, 5);
         controlPanel.add(forfeitButton, forfeitConstraints);
@@ -70,7 +69,7 @@ public class GameScene extends Scene {
 
         GridBagConstraints labelConstraints = new GridBagConstraints();
         labelConstraints.gridx = 0;
-        labelConstraints.gridy = 1;
+        labelConstraints.gridy = 0;
         labelConstraints.gridwidth = GridBagConstraints.REMAINDER;
         labelConstraints.insets = new Insets(0, 0, 10, 0);
         labelConstraints.anchor = GridBagConstraints.CENTER;
@@ -78,8 +77,10 @@ public class GameScene extends Scene {
 
         controlPanel.add(playerNameLabel, labelConstraints);
 
+        GridBagConstraints gridPanelConstrains = new GridBagConstraints();
+        gridPanelConstrains.gridy = 2;
         gridPanel = new JPanel();
-        controlPanel.add(gridPanel, new GridBagConstraints());
+        controlPanel.add(gridPanel, gridPanelConstrains);
     }
 
     @Override
@@ -114,9 +115,9 @@ public class GameScene extends Scene {
         }
     }
 
-    public void setPlayerName(String name, boolean iStart) {
+    public void setPlayerNames(String player1Name, String player2Name, boolean iStart) {
         if (playerNameLabel != null) {
-            playerNameLabel.setText(LangHandler.get().translate("player.name.display", name, iStart ? "x" : "o"));
+            playerNameLabel.setText(LangHandler.get().translate("player.name.display", iStart ? "X" : "O", player1Name, !iStart ? "X" : "O", player2Name));
         }
     }
 

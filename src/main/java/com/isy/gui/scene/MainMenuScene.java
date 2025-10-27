@@ -12,7 +12,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class MainMenuScene extends MenuScene{
+import static com.isy.gui.GridBagConstrainsUtil.*;
+
+public class MainMenuScene extends Scene{
 
     public MainMenuScene(Window window) {
         super("mainMenuScene", window);
@@ -25,14 +27,14 @@ public class MainMenuScene extends MenuScene{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        panel.add(Header.createHeader("select.game.header"));
-        panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), getConstraints());
-        panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), getConstraints());
+        initConstraints(gbc, 1);
+
+        panel.add(Header.createHeader("select.game.header"), next(gbc));
+        panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), next(row(gbc)));
+        panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), next(row(gbc)));
 
         JButton settingsButton = UIButton.createButton(this::goToSettings);
         settingsButton.setPreferredSize(new Dimension(48, 48));
-        gbc.gridy = 3;
-        gbc.gridx = 0;
         try{
             Image img = ImageIO.read(getClass().getResource("/settings.png"));
             Image scaledImg = img.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
@@ -41,7 +43,7 @@ public class MainMenuScene extends MenuScene{
             settingsButton.setText("settings.menu.button");
             System.out.println(ex);
         }
-        panel.add(settingsButton, gbc);
+        panel.add(settingsButton, next(row(gbc)));
     }
 
     private void goToGameMenuSceneWithSelectedGame(GameType game) {

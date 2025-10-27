@@ -1,7 +1,7 @@
 package com.isy.gui.components;
 
 import com.isy.gui.Style;
-import com.isy.gui.lang.LangHandler;
+import com.isy.util.lang.LangHandler;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

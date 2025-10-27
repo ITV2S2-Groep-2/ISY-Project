@@ -4,18 +4,24 @@ import com.isy.Main;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.UIButton;
-import com.isy.gui.lang.LangHandler;
+import com.isy.util.lang.LangHandler;
+import com.isy.util.GameCreator;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class WinScene extends MenuScene{
+public class WinScene extends Scene{
     private JLabel title;
     private JButton backButton;
     private boolean online;
 
+    private final GridBagConstraints constraints;
+
     public WinScene(Window window) {
         super("winScene", window);
+        this.constraints = generateConstrains();
+        this.getScenePanel().setLayout(new GridBagLayout());
     }
 
     @Override
@@ -35,6 +41,7 @@ public class WinScene extends MenuScene{
             // Join game button terugzetten
             SwingUtilities.invokeLater(() -> {
                 JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");
+                joinScene.setGameCreator(GameCreator.getCurrentInstance());
                 joinScene.resetJoinButton();
             });
 
@@ -73,5 +80,19 @@ public class WinScene extends MenuScene{
         this.online = online;
         this.getWindow().getManager().showScene(this.getName());
         title.setText(playername +" Lost!");
+    }
+
+    public GridBagConstraints generateConstrains(){
+        GridBagConstraints gd = new GridBagConstraints();
+        gd.gridx = 0;
+        gd.fill = GridBagConstraints.NONE;
+        gd.anchor = GridBagConstraints.CENTER;
+        gd.insets = new Insets(5, 0, 5, 0);
+
+        return gd;
+    }
+
+    public GridBagConstraints getConstraints() {
+        return constraints;
     }
 }
