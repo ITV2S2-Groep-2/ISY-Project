@@ -8,6 +8,8 @@ import com.isy.gui.components.UIButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class WinScene extends MenuScene{
     private JLabel title;
@@ -23,15 +25,27 @@ public class WinScene extends MenuScene{
 
         title = Header.createHeader("TicTacToe");
 
+        panel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                onSceneShown();
+            }
+        });
+
         panel.add(title, getConstraints());
         panel.add(UIButton.createButton("Go back to main menu", this::goBackToMainMenu), getConstraints());
     }
 
-    private void goBackToMainMenu(ActionEvent actionEvent) {
+    private void onSceneShown() {
         SwingUtilities.invokeLater(() -> {
             TicTacToeMainMenuScene tttmms = (TicTacToeMainMenuScene) Main.window.getManager().getScene("ticTacToeMainMenu");
+            System.out.println("heb hem op false gezet in winscene");
             tttmms.setiStart(false);
         });
+    }
+
+    private void goBackToMainMenu(ActionEvent actionEvent) {
+
         // Join game button terugzetten
         SwingUtilities.invokeLater(() -> {
             JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window.getManager().getScene("joinGameServerMenuScene");

@@ -119,6 +119,7 @@ public class TicTacToeMainMenuScene extends MenuScene{
 
     private void goToJoinGameServer(PlayerType playerType, String playerName) {
         // client bestaat al, maak nieuwe aan en log nieuwe uit.
+        setiStart(false);
         if(client != null){
             client.shutdown();
         }
