@@ -8,14 +8,16 @@ import javax.swing.*;
 
 public abstract class Scene {
     private final String name;
-    private final JPanel scenePanel;
+    private final ScenePanel scenePanel;
     private final Window window;
     private boolean show = false;
 
     public Scene(String name, Window window){
         this.name = name;
         this.window = window;
-        this.scenePanel = ScenePanel.createScenePanel();
+        this.scenePanel = new ScenePanel();
+        //dit is te gebruiken als je alle scenes dezelfde background wil geven
+        //scenePanel.setBackgroundImage("/back2.jpg");
         this.show = false;
 
         this.scenePanel.setVisible(this.show);
@@ -26,7 +28,7 @@ public abstract class Scene {
         return this.name;
     }
 
-    public JPanel getScenePanel() {
+    public ScenePanel getScenePanel() {
         return scenePanel;
     }
 
