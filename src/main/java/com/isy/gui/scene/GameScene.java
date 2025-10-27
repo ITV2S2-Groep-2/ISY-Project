@@ -47,22 +47,22 @@ public class GameScene extends Scene {
         forfeitConstraints.insets = new Insets(5, 5, 5, 5);
         controlPanel.add(forfeitButton, forfeitConstraints);
 
-        JTextField messageText = TextField.createTextField();
-        GridBagConstraints messageTextConstraints = new GridBagConstraints();
-        messageTextConstraints.gridx = 5;
-        messageTextConstraints.gridy = 0;
-        messageTextConstraints.anchor = GridBagConstraints.LINE_START;
-        messageTextConstraints.insets = new Insets(5, 5, 5, 5);
-        controlPanel.add(messageText, messageTextConstraints);
-
-        JButton sendButton = UIButton.createButton("Send", actionEvent -> sendMessage(actionEvent, messageText.getText()));
-        sendButton.setPreferredSize(new Dimension(128, 32));
-        GridBagConstraints sendConstraints = new GridBagConstraints();
-        sendConstraints.gridx = 5;
-        sendConstraints.gridy = 1;
-        sendConstraints.anchor = GridBagConstraints.LINE_START;
-        sendConstraints.insets = new Insets(5, 5, 5, 5);
-        controlPanel.add(sendButton, sendConstraints);
+//        JTextField messageText = TextField.createTextField();
+//        GridBagConstraints messageTextConstraints = new GridBagConstraints();
+//        messageTextConstraints.gridx = 5;
+//        messageTextConstraints.gridy = 0;
+//        messageTextConstraints.anchor = GridBagConstraints.LINE_START;
+//        messageTextConstraints.insets = new Insets(5, 5, 5, 5);
+//        controlPanel.add(messageText, messageTextConstraints);
+//
+//        JButton sendButton = UIButton.createButton("Send", actionEvent -> sendMessage(actionEvent, messageText.getText()));
+//        sendButton.setPreferredSize(new Dimension(128, 32));
+//        GridBagConstraints sendConstraints = new GridBagConstraints();
+//        sendConstraints.gridx = 5;
+//        sendConstraints.gridy = 1;
+//        sendConstraints.anchor = GridBagConstraints.LINE_START;
+//        sendConstraints.insets = new Insets(5, 5, 5, 5);
+//        controlPanel.add(sendButton, sendConstraints);
 
         playerNameLabel = Label.createLabel("");
         playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -114,9 +114,9 @@ public class GameScene extends Scene {
         }
     }
 
-    public void setPlayerName(String name) {
+    public void setPlayerName(String name, boolean iStart) {
         if (playerNameLabel != null) {
-            playerNameLabel.setText(LangHandler.get().translate("player.name.display", name));
+            playerNameLabel.setText(LangHandler.get().translate("player.name.display", name, iStart ? "x" : "o"));
         }
     }
 

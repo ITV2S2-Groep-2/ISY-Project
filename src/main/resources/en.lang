@@ -5,7 +5,7 @@ tic.tac.toe.header=Tic Tac Toe
 settings.menu.header=Settings
 
 #displays
-player.name.display=You are %s
+player.name.display=You are %s(%s)
 
 #labels
 directly.subscribe.label=Instead directly subscribe to a game!
@@ -14,7 +14,7 @@ error.message.server.label=Error: %s
 
 #buttons
 ttt.game.forfeit.button=Forfeit
-win_scene.go_back_to_main_menu.button=Back
+win_scene.go_back_to_main_menu.button=Back(Automatic in %d)
 ttt.game.start_game.button=Start
 settings.back.button=Back
 settings.save.button=Save
@@ -25,3 +25,7 @@ othello.game.button=Othello
 
 #text field placeholders
 ttt.game.player.text_field.placeholder=Player%d
+
+#errors
+error.incorrect_name=Player name can't have special characters and needs to be between 1 and 16 long!
+error.used_name=A player with this name is already logged in!

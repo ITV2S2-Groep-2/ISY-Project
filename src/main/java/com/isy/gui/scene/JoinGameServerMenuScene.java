@@ -64,7 +64,7 @@ public class JoinGameServerMenuScene extends MenuScene {
             Matcher matcher = playerToMovePattern.matcher(result);
 
             if (result.toLowerCase().contains("err")){
-                throw new RuntimeException("AAAAAAAAAAAAAAAAAAAAAAAA");
+                throw new RuntimeException(result);
             }
 
             if (matcher.find()){

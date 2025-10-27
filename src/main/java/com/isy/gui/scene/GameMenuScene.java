@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.Main;
+import com.isy.gui.lang.LangHandler;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.game.*;
@@ -92,9 +93,8 @@ public class GameMenuScene extends MenuScene{
         String player1Name = textField1.getText();
         String player2Name = textField2.getText();
 
-        if (player1Name.contains(" ")){
-            error.show();
-            error.setText("Name's can't have spaces");
+        if (!player1Name.matches("^[A-Za-z0-9]{1,16}$")){
+            joinError("error.incorrect_name");
             return;
         }
 
@@ -108,8 +108,14 @@ public class GameMenuScene extends MenuScene{
         }
     }
 
-    public static void joinError(String msg){
+    @Override
+    public void show() {
+        super.show();
+        error.hide();
+    }
+
+    public static void joinError(String errorKey){
         error.show();
-        error.setText(msg);
+        error.setText(LangHandler.get().translate(errorKey));
     }
 }

@@ -15,6 +15,7 @@ import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 
+import static com.isy.gui.scene.GameMenuScene.joinError;
 import static com.isy.server.await.Await.await;
 
 public class GameCreator {
@@ -88,12 +89,12 @@ public class GameCreator {
         Player localPlayer;
 
         if(player1 == PlayerType.HUMAN){
-            localPlayer = new HumanPlayer(player1Name, Tile.X, Server.getInstance());
+            localPlayer = new HumanPlayer(player1Name, iStart ? Tile.X : Tile.O, Server.getInstance());
         } else if (player1 == PlayerType.AI) {
-            localPlayer = new AiPlayer(player1Name, Tile.X, Server.getInstance());
+            localPlayer = new AiPlayer(player1Name, iStart ? Tile.X : Tile.O, Server.getInstance());
         }else localPlayer = null;
 
-        RemotePlayer remotePlayer = new RemotePlayer(player2Name, Tile.O, Server.getInstance());
+        RemotePlayer remotePlayer = new RemotePlayer(player2Name, iStart ? Tile.O : Tile.X, Server.getInstance());
 
         Class<? extends Game> gameClass = GameType.getClass(gameType);
         Game game;
@@ -110,7 +111,7 @@ public class GameCreator {
         Main.window.getManager().addScene(new GameScene(Main.window), true);
         GameScene gs = (GameScene) Main.window.getManager().getScene("game");
         game.setRenderScene(gs);
-        gs.setPlayerName(player1Name);
+        gs.setPlayerName(player1Name, iStart);
 
         new Thread(game).start();
         Main.window.getManager().showScene("game");
@@ -124,8 +125,10 @@ public class GameCreator {
 
         String accept = await(new Promise("^(OK|ERR).*").setCommand("login " + this.getPlayer1Name()));
 
-        if (accept.toLowerCase().contains("err"))
-            throw new RuntimeException("Uncaught exception: " + accept);
+        if (accept.toLowerCase().contains("err")){
+            joinError("error.used_name");
+            return;
+        }
 
         JoinGameServerMenuScene joinScene = (JoinGameServerMenuScene) Main.window
                 .getManager().getScene("joinGameServerMenuScene");
@@ -139,7 +142,6 @@ public class GameCreator {
             case PlayerType.HUMAN -> new HumanPlayer(name, tile, null);
             case PlayerType.AI -> new AiPlayer(name, tile, null);
             case PlayerType.REMOTE -> new RemotePlayer(name, tile, null);
-            default -> null;
         };
     }
 }
