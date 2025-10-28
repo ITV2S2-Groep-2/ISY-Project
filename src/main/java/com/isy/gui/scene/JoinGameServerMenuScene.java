@@ -73,7 +73,8 @@ public class JoinGameServerMenuScene extends Scene {
                 creator.setPlayer2Name(playerRemoteName.group(1));
 
             if (result.toLowerCase().contains("err")){
-                throw new RuntimeException(result);
+//                throw new RuntimeException(result);
+                return;
             }
 
             if (matcher.find()){
