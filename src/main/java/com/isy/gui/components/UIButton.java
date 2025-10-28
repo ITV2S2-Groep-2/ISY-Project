@@ -19,7 +19,6 @@ public class UIButton {
                 new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor),
                 new EmptyBorder(10, 10, 10, 10)
         ));
-        //button.setBorder(new RoundedBorder(15));
 
         button.setPreferredSize(new Dimension(256, 64));
 
@@ -54,15 +53,26 @@ public class UIButton {
         return addStyle(button);
     }
 
+//    public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
+//        String text = LangHandler.get().translate(langKey, params);
+//
+//        JButton button = new JButton(text);
+//        button.addActionListener(listener);
+//
+//        LangHandler.get().bind(button::setText, langKey, params);
+//
+//        return addStyle(button);
+//    }
     public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
         String text = LangHandler.get().translate(langKey, params);
-
-        JButton button = new JButton(text);
-        button.addActionListener(listener);
-
-        LangHandler.get().bind(button::setText, langKey, params);
-
-        return addStyle(button);
+        return new RoundedButton(
+                text,
+                langKey,
+                Style.primaryComponentBackgroundColor,
+                Style.primaryTextColor,
+                listener,
+                params
+        );
     }
 
     public static JButton createButton(ActionListener listener) {

@@ -1,7 +1,11 @@
 package com.isy.gui.components;
 
+import com.isy.gui.lang.LangHandler;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class RoundedButton extends JButton {
     private int radius = 15;
@@ -18,6 +22,20 @@ public class RoundedButton extends JButton {
         setOpaque(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setPreferredSize(new Dimension(256, 64));
+    }
+    public RoundedButton(String text, String langKey, Color backgroundColor, Color textColor, ActionListener actionListener, @Nullable Object... params) {
+        super(text);
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
+        setFocusPainted(false);
+        setBorderPainted(false);
+        setContentAreaFilled(false);
+        setOpaque(false);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        setPreferredSize(new Dimension(256, 64));
+
+        LangHandler.get().bind(this::setText, langKey, params);
+        this.addActionListener(actionListener);
     }
 
     @Override
