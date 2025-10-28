@@ -1,0 +1,24 @@
+TODO:
+    -Make Promise in/out streams non static
+        -Try making a global reader and use a linked list like data type for capturing
+        -Possible bug: two promises reading at the same time and removing needed data for one another
+    -Fix forfeit button
+        -Current bug: forfeit only works when the current player is remote
+        -Fix: move win/lose server logic outside the remote player
+        -Also: add a custom message for awaits that automatically cancels them when a game is won/lost(removing unnecessary listeners)
+    -Fix name input appearing for remote player
+        -Is no longer needed since this will be set by the server
+        -Fix: hide text button when remote player
+    -Migrate all scenes over to GridBagConstrainsUtil, is intended to replace MenuScene
+    -Fix other languages not having the correct styling and keys(look at en.lang for reference)
+    -Move all ui elements to components(there are a few missing)
+    -Fix chat system
+        -Maybe an async await that continuously listens to chat messages
+        -Fix: styling
+    -Move logic from game creator to game(AKA starting a game(local/remote))
+        -Also: set the global game reference for easy access
+    -Allow for custom sprites based on tile
+        -We will probably need this for othello
+    -Allow for backgrounds on scenes
+    -Allow for rounded buttons(since people seem to really want this feature)
+    -Make one person responsible for merging, this will probably make it that merger conflicts will be easier to resolve and allows for greater code quality
