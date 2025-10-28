@@ -11,6 +11,7 @@ import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
 import com.isy.util.lang.LangHandler;
 import com.isy.gui.components.UIButton;
+import com.isy.gui.components.TextField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,22 +47,22 @@ public class GameScene extends Scene {
         forfeitConstraints.insets = new Insets(5, 5, 5, 5);
         controlPanel.add(forfeitButton, forfeitConstraints);
 
-//        JTextField messageText = TextField.createTextField();
-//        GridBagConstraints messageTextConstraints = new GridBagConstraints();
-//        messageTextConstraints.gridx = 5;
-//        messageTextConstraints.gridy = 0;
-//        messageTextConstraints.anchor = GridBagConstraints.LINE_START;
-//        messageTextConstraints.insets = new Insets(5, 5, 5, 5);
-//        controlPanel.add(messageText, messageTextConstraints);
-//
-//        JButton sendButton = UIButton.createButton("Send", actionEvent -> sendMessage(actionEvent, messageText.getText()));
-//        sendButton.setPreferredSize(new Dimension(128, 32));
-//        GridBagConstraints sendConstraints = new GridBagConstraints();
-//        sendConstraints.gridx = 5;
-//        sendConstraints.gridy = 1;
-//        sendConstraints.anchor = GridBagConstraints.LINE_START;
-//        sendConstraints.insets = new Insets(5, 5, 5, 5);
-//        controlPanel.add(sendButton, sendConstraints);
+        JTextField messageText = TextField.createTextField();
+        GridBagConstraints messageTextConstraints = new GridBagConstraints();
+        messageTextConstraints.gridx = 2;
+        messageTextConstraints.gridy = 15;
+        messageTextConstraints.anchor = GridBagConstraints.LINE_START;
+        messageTextConstraints.insets = new Insets(5, 5, 5, 5);
+        controlPanel.add(messageText, messageTextConstraints);
+
+        JButton sendButton = UIButton.createButton("Send", actionEvent -> sendMessage(actionEvent, messageText.getText()));
+        sendButton.setPreferredSize(new Dimension(128, 32));
+        GridBagConstraints sendConstraints = new GridBagConstraints();
+        sendConstraints.gridx = 2;
+        sendConstraints.gridy = 16;
+        sendConstraints.anchor = GridBagConstraints.LINE_START;
+        sendConstraints.insets = new Insets(5, 5, 5, 5);
+        controlPanel.add(sendButton, sendConstraints);
 
         playerNameLabel = Label.createLabel("");
         playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));

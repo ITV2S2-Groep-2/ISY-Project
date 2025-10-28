@@ -3,7 +3,7 @@ package com.isy.util;
 public class GameSettings {
     private static GameSettings instance;
     private final String defaultHostName = "127.0.0.1";
-    private static int defaultPortNumber = 7789;
+    private final static int defaultPortNumber = 7789;
     private String hostName;
     private int portNumber;
     public GameSettings(){
