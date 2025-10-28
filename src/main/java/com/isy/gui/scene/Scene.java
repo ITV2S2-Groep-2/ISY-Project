@@ -17,7 +17,6 @@ public abstract class Scene {
         this.window = window;
         this.scenePanel = new ScenePanel();
         scenePanel.setBackgroundImage("/back2.jpg"); //dit is te gebruiken als je alle scenes dezelfde background wil geven
-        this.show = false;
 
         this.scenePanel.setName(this.name);
     }
