@@ -35,6 +35,14 @@ public class UIButton {
         return addStyle(button);
     }
 
+    public static JButton createButton(String text) {
+        return new RoundedButton(
+                text,
+                Style.primaryComponentBackgroundColor,
+                Style.primaryTextColor
+        );
+    }
+
     public static JButton createButton(String langKey, @Nullable Object... params) {
         String text = LangHandler.get().translate(langKey, params);
 
@@ -46,11 +54,30 @@ public class UIButton {
         return button;
     }
 
+//    public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
+//        String text = LangHandler.get().translate(langKey, params);
+//
+//        JButton button = new JButton(text);
+//        button.addActionListener(listener);
+//
+//        LangHandler.get().bind(button::setText, langKey, params);
+//
+//        return addStyle(button);
+//    }
     public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
         JButton button = createButton(langKey, params);
         button.addActionListener(listener);
 
         return button;
+        String text = LangHandler.get().translate(langKey, params);
+        return new RoundedButton(
+                text,
+                langKey,
+                Style.primaryComponentBackgroundColor,
+                Style.primaryTextColor,
+                listener,
+                params
+        );
     }
 
     public static JButton createButton(ActionListener listener) {

@@ -1,11 +1,12 @@
 package com.isy.gui.scene;
 
-import com.isy.Main;
 import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
+import com.isy.gui.components.ScenePanel;
 import com.isy.gui.components.UIButton;
 import com.isy.util.GameCreator;
+import com.isy.gui.components.RoundedButton;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,7 +23,8 @@ public class MainMenuScene extends Scene{
 
     @Override
     public void init() {
-        JPanel panel = this.getScenePanel();
+        ScenePanel panel = this.getScenePanel();
+        panel.setBackgroundImage("/back2.jpg"); // dit zorgt ervoor dat alleen deze scene deze background heeft
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -32,6 +34,7 @@ public class MainMenuScene extends Scene{
         panel.add(Header.createHeader("select.game.header"), next(gbc));
         panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), next(row(gbc)));
         panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), next(row(gbc)));
+
 
         JButton settingsButton = UIButton.createButton(this::goToSettings);
         settingsButton.setPreferredSize(new Dimension(48, 48));
