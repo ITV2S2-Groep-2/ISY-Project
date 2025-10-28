@@ -5,7 +5,11 @@ import com.isy.game.player.Player;
 import com.isy.game.Game;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.WinScene;
+import com.isy.server.Server;
+import com.isy.server.await.Promise;
+import com.isy.util.PlayerEventManager;
 
+import static com.isy.server.ServerUtils.asyncAwait;
 import static com.isy.server.ServerUtils.await;
 
 public class TicTacToeGame extends Game {
@@ -16,6 +20,26 @@ public class TicTacToeGame extends Game {
 
     //TODO: ADD A CHECK OUTSIDE REMOTE PLAYER FOR SERVER FORFEITS(THIS IS NOT WORKING AS INTENDED AT THE MOMENT!
     public void gameLoop() {
+        boolean isOnline = this.client != null;
+
+        if (isOnline){
+            asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
+                System.out.println(result);
+
+                if(result.toUpperCase().contains("ERR")){
+
+                }else if(result.toUpperCase().contains("WIN")){
+                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
+                    this.setState(GameState.WON);
+                    PlayerEventManager.get().stop();
+                }else if(result.toUpperCase().contains("LOSS")) {
+                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
+                    this.setState(GameState.LOST);
+                    PlayerEventManager.get().stop();
+                }
+            });
+        }
+
         while (this.state == GameState.ONGOING) {
             int[] move = null;
 
@@ -50,14 +74,8 @@ public class TicTacToeGame extends Game {
             throw new RuntimeException(e);
         }
 
-        boolean isOnline = this.client != null;
         if (this.state == GameState.WON){
-            String playerName;
-            if(this.activeTurnPlayer.getName().equals("Tegenstander")){
-                playerName = "You";
-            } else {
-                playerName = this.activeTurnPlayer.getName();
-            }
+            String playerName = this.activeTurnPlayer.getName();
             ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
             ((WinScene) Main.window.getManager().getScene("winScene")).lost("You", isOnline);

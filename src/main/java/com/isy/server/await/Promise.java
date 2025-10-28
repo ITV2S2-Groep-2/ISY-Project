@@ -1,5 +1,9 @@
 package com.isy.server.await;
 
+import com.isy.server.Server;
+import com.isy.server.ServerResponse;
+import com.isy.server.ServerUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,25 +15,16 @@ import java.util.regex.Pattern;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 public class Promise{
-    private Pattern accept;
+    private String accept;
     private String command = null;
-    private static BufferedReader in;
     private static PrintWriter out;
     private static Socket socket = null;
 
     public Promise(){
-        this((Pattern) null);
+        this(null);
     }
 
-    public Promise(String pattern){
-        this(pattern, true);
-    }
-
-    public Promise(String pattern, boolean checkCase){
-        this(Pattern.compile(pattern, checkCase ? CASE_INSENSITIVE : 0));
-    }
-
-    public Promise(Pattern accept){
+    public Promise(String accept){
         this.accept = accept;
     }
 
@@ -43,46 +38,48 @@ public class Promise{
         if (socket != null) {
             try {
                 Promise.out = new PrintWriter(socket.getOutputStream(), true);
-                Promise.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             } catch (Exception e) {
                 throw new RuntimeException("can not get input or output stream from socket", e);
             }
         } else {
-            Promise.in = null;
             Promise.out = null;
         }
     }
 
     public String getData(){
-        if (socket == null) return "";
-
+        if (socket == null) return "err socket closed";
 
         if (command != null)
             out.println(this.command);
 
-        String line = null;
-        Matcher matcher = null;
+        ServerResponse current = Server.getInstance().getCurrent();
 
         if (accept == null)
             return null;
 
         try {
-            while (in != null && (line = in.readLine()) != null) {
-                matcher = accept.matcher(line);
+            while (current.getMessage() != null) {
+//                System.out.println("PROMISE: " + accept.pattern() + ", " + current.getMessage());
 
-                if (matcher.matches()){
+                if (current.getMessage().matches(accept) && current.isStillValid()){
                     break;
                 }
+
+                while (current.getNext() == null){
+                    Thread.sleep(ServerUtils.waitTime);
+                }
+
+                current = current.getNext();
             }
-        }catch (IOException e){
+        }catch (InterruptedException e){
             return "err connection closed";
         }
 
+        if (current.getMessage() == null){
+            return "err connection closed";
+        }
 
-        if (line == null)
-            return "err no match found";
-
-
-        return matcher.group();
+        current.setHandled();
+        return current.getMessage();
     }
 }

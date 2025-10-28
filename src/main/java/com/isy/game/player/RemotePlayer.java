@@ -29,18 +29,12 @@ public class RemotePlayer extends Player{
             throw new IllegalStateException("RemotePlayer needs a server client");
         }
 
-        String serverMove = await(new Promise("^(?:ERR|SVR GAME (?:WIN|MOVE|LOSS)).*"));
+        String serverMove = await(new Promise("^(?:ERR|SVR GAME MOVE).*"));
 
         System.out.println("REMOTE MOVE: " + serverMove);
 
         if(serverMove.toUpperCase().contains("ERR")){
-            throw new RuntimeException(serverMove);
-        }else if(serverMove.toUpperCase().contains("WIN")){
-            this.game.setState(GameState.WON);
-            PlayerEventManager.get().stop();
-        }else if(serverMove.toUpperCase().contains("LOSS")){
-            this.game.setState(GameState.LOST);
-            PlayerEventManager.get().stop();
+            return null;
         }else if(serverMove.toUpperCase().contains("MOVE")){
             int moveIndex = serverMove.indexOf("MOVE:");
             if (moveIndex != -1) {

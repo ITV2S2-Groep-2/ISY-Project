@@ -63,7 +63,7 @@ public class JoinGameServerMenuScene extends Scene {
     public void setGameCreator(GameCreator creator) {
         this.ownName = creator.getPlayer1Name();
 
-        asyncAwait(new Promise("^(SVR GAME MATCH|ERR).*"), (result) -> {
+        asyncAwait(new Promise("^(SVR GAME MATCH).*"), (result) -> {
             boolean iStart;
 
             Matcher matcher = playerToMovePattern.matcher(result);
@@ -73,7 +73,6 @@ public class JoinGameServerMenuScene extends Scene {
                 creator.setPlayer2Name(playerRemoteName.group(1));
 
             if (result.toLowerCase().contains("err")){
-//                throw new RuntimeException(result);
                 return;
             }
 

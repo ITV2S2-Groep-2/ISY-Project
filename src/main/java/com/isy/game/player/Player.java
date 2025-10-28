@@ -32,7 +32,7 @@ public abstract class Player {
     public abstract int[] getMove(Board board);
 
     public void sendServerData(int[] move){
-        String response = await(new Promise("^(OK|ERR).*").setCommand("move " + formatClientMove(move)));
+        await(new Promise().setCommand("move " + formatClientMove(move)));
     }
 
     /**
