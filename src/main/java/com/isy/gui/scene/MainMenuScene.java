@@ -29,7 +29,7 @@ public class MainMenuScene extends MenuScene{
         panel.add(Header.createHeader("select.game.header"));
         panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), getConstraints());
         panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), getConstraints());
-        panel.add(UIButton.createButton("Select Game"));
+
 
         JButton settingsButton = UIButton.createButton(this::goToSettings);
         settingsButton.setPreferredSize(new Dimension(48, 48));
