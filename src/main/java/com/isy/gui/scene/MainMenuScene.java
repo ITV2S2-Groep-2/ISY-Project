@@ -21,7 +21,7 @@ public class MainMenuScene extends MenuScene{
     @Override
     public void init() {
         ScenePanel panel = this.getScenePanel();
-        //panel.setBackgroundImage("/back2.jpg"); // dit zorgt ervoor dat alleen deze scene deze background heeft
+        panel.setBackgroundImage("/back2.jpg"); // dit zorgt ervoor dat alleen deze scene deze background heeft
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
