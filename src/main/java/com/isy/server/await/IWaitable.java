@@ -1,4 +1,4 @@
-package com.isy.await;
+package com.isy.server.await;
 
 public interface IWaitable<T> {
     boolean hasData();

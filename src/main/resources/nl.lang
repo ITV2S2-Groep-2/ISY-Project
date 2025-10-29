@@ -1,0 +1,28 @@
+#headers
+select.game.header=Selecteer je spel!
+waiting.tournament.header=Wachten tot een toernooi begint...
+tic.tac.toe.header=Boter, kaas en eieren
+settings.menu.header=Instellingen
+
+#displays
+player.name.display=Jij bent %s
+
+#labels
+directly.subscribe.label=Abonneer je in plaats daarvan direct op een spel!
+waiting.match.label=Wachten op een wedstrijd!
+error.message.server.label=Fout: %s
+
+#buttons
+ttt.game.forfeit.button=Opgeven
+win_scene.go_back_to_main_menu.button=Terug
+ttt.game.start_game.button=Start
+settings.back.button=Terug
+settings.save.button=Opslaan
+leave.server.button=Verlaten
+subscribe.server.button=Abonneren
+tic.tac.toe.game.button=Boter, kaas en eieren
+othello.game.button=Othello
+
+#text field placeholders
+ttt.game.player1.text_field.placeholder=Speler 1
+ttt.game.player2.text_field.placeholder=Speler 2

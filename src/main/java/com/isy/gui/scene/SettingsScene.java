@@ -1,6 +1,6 @@
 package com.isy.gui.scene;
 
-import com.isy.gui.GameSettings;
+import com.isy.util.GameSettings;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.TextField;
@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class SettingsScene extends MenuScene{
+public class SettingsScene extends Scene{
     static JTextField portTextField, hostNameTextField;
 
     public SettingsScene(Window window) {
@@ -28,7 +28,7 @@ public class SettingsScene extends MenuScene{
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(Header.createHeader("Settings"), gbc);
+        panel.add(Header.createHeader("settings.menu.header"), gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 0;
@@ -46,18 +46,29 @@ public class SettingsScene extends MenuScene{
 
         // temp back button
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
-        JButton backButton = UIButton.createButton("<-", this::goMainMenu);
+        JButton backButton = UIButton.createButton("settings.back.button", this::goMainMenu);
         backButton.setPreferredSize(new Dimension(128,64));
         panel.add(backButton, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
-        JButton saveButton = UIButton.createButton("Opslaan", this::saveSettings);
+        JButton saveButton = UIButton.createButton("settings.save.button", this::saveSettings);
         saveButton.setPreferredSize(new Dimension(128,64));
         panel.add(saveButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        JButton langButton = UIButton.createButton("settings.lang.button", this::langSettings);
+        langButton.setPreferredSize(new Dimension(128,64));
+        panel.add(langButton, gbc);
+    }
+
+    private void langSettings(ActionEvent actionEvent) {
+        this.getWindow().getManager().showScene("langSwitchScene");
     }
 
 

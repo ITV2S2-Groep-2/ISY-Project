@@ -1,46 +1,50 @@
 package com.isy.game.ticTacToe;
 
-import com.isy.game.GameServer;
 import com.isy.Main;
-import com.isy.game.Player;
+import com.isy.game.player.Player;
 import com.isy.game.Game;
-import com.isy.gui.scene.TicTacToeScene;
+import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.WinScene;
+import com.isy.server.Server;
+import com.isy.server.await.Promise;
+import com.isy.util.PlayerEventManager;
 
-import javax.swing.*;
+import static com.isy.server.ServerUtils.asyncAwait;
+import static com.isy.server.ServerUtils.await;
 
-public class TicTacToeGame extends Game implements Runnable {
-    private final Board board;
-    private final Player[] players;
-    private Player activeTurnPlayer;
-    private GameState state;
-    private GameServer client;
+public class TicTacToeGame extends Game {
 
     public TicTacToeGame(Player[] players) {
-        this.board = new Board();
-        this.players = players;
-        this.activeTurnPlayer = players[0];
-        this.state = GameState.ONGOING;
-        this.client = null;
+        super(new TicTacToeBoard(), players);
     }
 
-    public GameServer getClient(){
-        return this.client;
-    }
-
-    public void setClient(GameServer client){
-        this.client = client;
-    }
-    public void setState(GameState state){
-        this.state = state;
-    }
-
+    //TODO: ADD A CHECK OUTSIDE REMOTE PLAYER FOR SERVER FORFEITS(THIS IS NOT WORKING AS INTENDED AT THE MOMENT!
     public void gameLoop() {
+        boolean isOnline = this.client != null;
+
+        if (isOnline){
+            asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
+                System.out.println(result);
+
+                if(result.toUpperCase().contains("ERR")){
+
+                }else if(result.toUpperCase().contains("WIN")){
+                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
+                    this.setState(GameState.WON);
+                    PlayerEventManager.get().stop();
+                }else if(result.toUpperCase().contains("LOSS")) {
+                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
+                    this.setState(GameState.LOST);
+                    PlayerEventManager.get().stop();
+                }
+            });
+        }
+
         while (this.state == GameState.ONGOING) {
             int[] move = null;
 
-            if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
-                ttts.reloadBoardValues(this);
+            if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+                gs.reloadBoardValues(this);
             }
 
             move = this.activeTurnPlayer.getMove(this.getBoard());
@@ -60,8 +64,8 @@ public class TicTacToeGame extends Game implements Runnable {
             }
         }
 
-        if (this.getRenderScene() != null && this.getRenderScene() instanceof TicTacToeScene ttts) {
-            ttts.reloadBoardValues(this);
+        if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+            gs.reloadBoardValues(this);
         }
 
         try {
@@ -70,14 +74,8 @@ public class TicTacToeGame extends Game implements Runnable {
             throw new RuntimeException(e);
         }
 
-        boolean isOnline = this.client != null;
         if (this.state == GameState.WON){
-            String playerName;
-            if(this.activeTurnPlayer.getName().equals("Tegenstander")){
-                playerName = "You";
-            } else {
-                playerName = this.activeTurnPlayer.getName();
-            }
+            String playerName = this.activeTurnPlayer.getName();
             ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
             ((WinScene) Main.window.getManager().getScene("winScene")).lost("You", isOnline);
@@ -86,20 +84,4 @@ public class TicTacToeGame extends Game implements Runnable {
         }
     }
 
-    public void giveTurnOver() {
-        if (this.activeTurnPlayer.equals(this.players[0])) {
-            this.activeTurnPlayer = this.players[1];
-        } else {
-            this.activeTurnPlayer = this.players[0];
-        }
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    @Override
-    public void run() {
-        gameLoop();
-    }
 }

@@ -1,15 +1,21 @@
 package com.isy.gui.scene;
 
+import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
+import com.isy.gui.components.ScenePanel;
 import com.isy.gui.components.UIButton;
+import com.isy.util.GameCreator;
+import com.isy.gui.components.RoundedButton;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class MainMenuScene extends MenuScene{
+import static com.isy.gui.GridBagConstrainsUtil.*;
+
+public class MainMenuScene extends Scene{
 
     public MainMenuScene(Window window) {
         super("mainMenuScene", window);
@@ -17,31 +23,35 @@ public class MainMenuScene extends MenuScene{
 
     @Override
     public void init() {
-        JPanel panel = this.getScenePanel();
+        ScenePanel panel = this.getScenePanel();
+        panel.setBackgroundImage("/back2.jpg"); // dit zorgt ervoor dat alleen deze scene deze background heeft
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        panel.add(Header.createHeader("Selecteer je spel!"));
-        panel.add(UIButton.createButton("Tic-tac-toe", this::goToTicTacToeMainMenu), getConstraints());
-        panel.add(UIButton.createButton("Othello"), getConstraints());
+        initConstraints(gbc, 1);
+
+        panel.add(Header.createHeader("select.game.header"), next(gbc));
+        panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), next(row(gbc)));
+        panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), next(row(gbc)));
+
+
         JButton settingsButton = UIButton.createButton(this::goToSettings);
         settingsButton.setPreferredSize(new Dimension(48, 48));
-        gbc.gridy = 3;
-        gbc.gridx = 0;
         try{
             Image img = ImageIO.read(getClass().getResource("/settings.png"));
             Image scaledImg = img.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
             settingsButton.setIcon(new ImageIcon(scaledImg));
         } catch(Exception ex){
-            settingsButton.setText("Settings");
+            settingsButton.setText("settings.menu.button");
             System.out.println(ex);
         }
-        panel.add(settingsButton, gbc);
+        panel.add(settingsButton, next(row(gbc)));
     }
 
-    private void goToTicTacToeMainMenu(ActionEvent actionEvent) {
-        this.getWindow().getManager().showScene("ticTacToeMainMenu");
+    private void goToGameMenuSceneWithSelectedGame(GameType game) {
+        GameCreator.createNewInstance(game);
+        this.getWindow().getManager().showScene("gameMenu");
     }
 
     private void goToSettings(ActionEvent actionEvent) {

@@ -1,8 +1,8 @@
-package com.isy.gui;
+package com.isy.util;
 
-import com.isy.await.IWaitable;
+import com.isy.server.await.IWaitable;
 
-import static com.isy.await.Await.waitTime;
+import static com.isy.server.ServerUtils.waitTime;
 
 public class PlayerEventManager implements IWaitable<int[]> {
     private static PlayerEventManager instance;
