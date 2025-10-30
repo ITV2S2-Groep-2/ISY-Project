@@ -11,8 +11,8 @@ player.name.display=You are %s
 #labels
 directly.subscribe.label=Instead directly subscribe to a game!
 waiting.match.label=Waiting for match!
-win_scene.win_label=Won!
-win_scene.lose_label=Lost!
+win_scene.win_label=%s Won!
+win_scene.lose_label=%s Lost!
 win_scene.person.you=You
 win_scene.person.nobody=Nobody
 error.message.server.label=Error: %s
@@ -31,5 +31,4 @@ othello.game.button=Othello
 settings.lang.button=Settings
 
 #text field placeholders
-ttt.game.player1.text_field.placeholder=Player1
-ttt.game.player2.text_field.placeholder=Player2
+ttt.game.player.text_field.placeholder=Player%d
