@@ -46,11 +46,6 @@ public class RoundedButton extends JButton {
         int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
         g2.drawString(getText(), x, y);
 
-        if(this.getIcon() != null)
-            this.getIcon().paintIcon(this, g2,
-                    (this.getWidth() - this.getIcon().getIconWidth()) / 2,
-                    (this.getHeight() - this.getIcon().getIconHeight()) / 2);
-
         g2.dispose();
     }
 }
