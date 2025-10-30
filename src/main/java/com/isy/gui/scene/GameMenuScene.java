@@ -63,7 +63,8 @@ public class GameMenuScene extends Scene{
         panel.add(textField2, next(gbc));
 
         row(gbc,1);
-        panel.add(UIButton.createButton("ttt.game.start_game.button", this::startGame), next(next(gbc)));
+        panel.add(UIButton.createButton("settings.back.button", this::goMainMenu), next(gbc));
+        panel.add(UIButton.createButton("ttt.game.start_game.button", this::startGame), next(gbc));
     }
 
     private void startGame(ActionEvent e){
@@ -97,5 +98,9 @@ public class GameMenuScene extends Scene{
     public static void joinError(String errorKey){
         error.show();
         error.setText(LangHandler.get().translate(errorKey));
+    }
+
+    private void goMainMenu(ActionEvent actionEvent) {
+        this.getWindow().getManager().showScene("mainMenuScene");
     }
 }
