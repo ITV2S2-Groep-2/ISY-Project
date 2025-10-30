@@ -1,0 +1,28 @@
+#headers
+select.game.header=Select your game!
+waiting.tournament.header=Waiting on a tournament to start...
+tic.tac.toe.header=Tic Tac Toe
+settings.menu.header=Settings
+
+#displays
+player.name.display=You are %s
+
+#labels
+directly.subscribe.label=Instead directly subscribe to a game!
+waiting.match.label=Waiting for match!
+error.message.server.label=Error: %s
+
+#buttons
+ttt.game.forfeit.button=Forfeit
+win_scene.go_back_to_main_menu.button=Back
+ttt.game.start_game.button=Start
+settings.back.button=Back
+settings.save.button=Save
+leave.server.button=Leave
+subscribe.server.button=Subscribe
+tic.tac.toe.game.button=Tic Tac Toe
+othello.game.button=Othello
+
+#text field placeholders
+ttt.game.player1.text_field.placeholder=Player 1
+ttt.game.player2.text_field.placeholder=Player 2

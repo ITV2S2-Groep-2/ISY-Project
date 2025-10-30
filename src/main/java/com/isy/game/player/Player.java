@@ -1,19 +1,23 @@
-package com.isy.game;
-import com.isy.game.ticTacToe.Board;
-import com.isy.game.ticTacToe.Tile;
+package com.isy.game.player;
+import com.isy.game.Board;
+import com.isy.server.Server;
+import com.isy.server.await.Promise;
+import com.isy.game.Tile;
+
+import static com.isy.server.ServerUtils.await;
 
 public abstract class Player {
     private final String name;
     private final Tile symbol;
-    protected GameServer client;
+    protected Server client;
 
-    public Player(String name, Tile symbol, GameServer client){
+    public Player(String name, Tile symbol, Server client){
         this.name = name;
         this.symbol = symbol;
         this.client = client;
     }
 
-    public void setPlayerClient(GameServer client){
+    public void setPlayerClient(Server client){
         this.client = client;
     }
 
@@ -28,9 +32,7 @@ public abstract class Player {
     public abstract int[] getMove(Board board);
 
     public void sendServerData(int[] move){
-        if(client != null){
-            client.sendCommand("move " + formatClientMove(move));
-        }
+        await(new Promise().setCommand("move " + formatClientMove(move)));
     }
 
     /**

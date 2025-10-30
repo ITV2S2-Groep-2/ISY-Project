@@ -5,20 +5,19 @@ import com.isy.gui.Window;
 import com.isy.gui.components.ScenePanel;
 
 import javax.swing.*;
+import java.awt.*;
 
 public abstract class Scene {
     private final String name;
-    private final JPanel scenePanel;
+    private final ScenePanel scenePanel;
     private final Window window;
-    private boolean show = false;
 
     public Scene(String name, Window window){
         this.name = name;
         this.window = window;
-        this.scenePanel = ScenePanel.createScenePanel();
-        this.show = false;
+        this.scenePanel = new ScenePanel();
+        scenePanel.setBackgroundImage("/back2.jpg"); //dit is te gebruiken als je alle scenes dezelfde background wil geven
 
-        this.scenePanel.setVisible(this.show);
         this.scenePanel.setName(this.name);
     }
 
@@ -26,7 +25,7 @@ public abstract class Scene {
         return this.name;
     }
 
-    public JPanel getScenePanel() {
+    public ScenePanel getScenePanel() {
         return scenePanel;
     }
 
@@ -34,21 +33,11 @@ public abstract class Scene {
         return window;
     }
 
-    public void show(){
-        this.show = true;
-        this.scenePanel.setVisible(this.show);
-    }
-
-    public void hide(){
-        this.show = false;
-        this.scenePanel.setVisible(this.show);
-    }
-
-    public boolean isHidden(){
-        return this.show;
-    }
-
     public void initGame(Game game){}
 
     public abstract void init();
+
+    public void show() {
+
+    }
 }
