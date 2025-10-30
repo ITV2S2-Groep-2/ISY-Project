@@ -73,13 +73,13 @@ public class WinScene extends Scene{
     public void win(String playerName, boolean online){
         this.online = online;
         this.getWindow().getManager().showScene(this.getName());
-        title.setText(playerName + " Won!");
+        title.setText(LangHandler.get().translate("win_scene.win_label", playerName));
     }
 
-    public void lost(String playername, boolean online){
+    public void lost(String playerName, boolean online){
         this.online = online;
         this.getWindow().getManager().showScene(this.getName());
-        title.setText(playername +" Lost!");
+        title.setText(LangHandler.get().translate("win_scene.lose_label", playerName));
     }
 
     public GridBagConstraints generateConstrains(){

@@ -10,6 +10,10 @@ player.name.display=[%s] %s(You) VS [%s] %s(Opponent)
 #labels
 directly.subscribe.label=Instead directly subscribe to a game!
 waiting.match.label=Waiting for match!
+win_scene.win_label=%s Won!
+win_scene.lose_label=%s Lost!
+win_scene.person.you=You
+win_scene.person.nobody=Nobody
 error.message.server.label=Error: %s
 
 #buttons
@@ -21,7 +25,10 @@ settings.save.button=Save
 leave.server.button=Leave
 subscribe.server.button=Subscribe
 tic.tac.toe.game.button=Tic Tac Toe
+game.scene.button=Send
 othello.game.button=Othello
+settings.lang.button=Settings
+settings.lang.menu.header=Settings
 
 #text field placeholders
 ttt.game.player.text_field.placeholder=Player%d

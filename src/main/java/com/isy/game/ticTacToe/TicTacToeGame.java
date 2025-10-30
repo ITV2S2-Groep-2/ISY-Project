@@ -8,6 +8,7 @@ import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
+import com.isy.util.lang.LangHandler;
 
 import static com.isy.server.ServerUtils.asyncAwait;
 import static com.isy.server.ServerUtils.await;
@@ -78,9 +79,9 @@ public class TicTacToeGame extends Game {
             String playerName = this.activeTurnPlayer.getName();
             ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
-            ((WinScene) Main.window.getManager().getScene("winScene")).lost("You", isOnline);
+            ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
         } else {
-            ((WinScene) Main.window.getManager().getScene("winScene")).win("Nobody", isOnline);
+            ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
     }
 

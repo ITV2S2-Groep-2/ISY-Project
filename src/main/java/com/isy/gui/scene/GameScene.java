@@ -55,7 +55,7 @@ public class GameScene extends Scene {
         messageTextConstraints.insets = new Insets(5, 5, 5, 5);
         controlPanel.add(messageText, messageTextConstraints);
 
-        JButton sendButton = UIButton.createButton("Send", actionEvent -> sendMessage(actionEvent, messageText.getText()));
+        JButton sendButton = UIButton.createButton("game.scene.button", actionEvent -> sendMessage(actionEvent, messageText.getText()));
         sendButton.setPreferredSize(new Dimension(128, 32));
         GridBagConstraints sendConstraints = new GridBagConstraints();
         sendConstraints.gridx = 2;

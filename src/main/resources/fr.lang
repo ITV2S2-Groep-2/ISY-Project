@@ -3,6 +3,7 @@ select.game.header=Select your game!
 waiting.tournament.header=Waiting on a tournament to start...
 tic.tac.toe.header=Tic Tac Toe
 settings.menu.header=Settings
+settings.lang.menu.header=Settings
 
 #displays
 player.name.display=You are %s
@@ -10,6 +11,10 @@ player.name.display=You are %s
 #labels
 directly.subscribe.label=Instead directly subscribe to a game!
 waiting.match.label=Waiting for match!
+win_scene.win_label=Won!
+win_scene.lose_label=Lost!
+win_scene.person.you=You
+win_scene.person.nobody=Nobody
 error.message.server.label=Error: %s
 
 #buttons
@@ -21,8 +26,10 @@ settings.save.button=Save
 leave.server.button=Leave
 subscribe.server.button=Subscribe
 tic.tac.toe.game.button=Tic Tac Toe
+game.scene.button=Send
 othello.game.button=Othello
+settings.lang.button=Settings
 
 #text field placeholders
-ttt.game.player1.text_field.placeholder=Player 1
-ttt.game.player2.text_field.placeholder=Player 2
+ttt.game.player1.text_field.placeholder=Player1
+ttt.game.player2.text_field.placeholder=Player2
