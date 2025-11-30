@@ -1,5 +1,6 @@
 package com.isy.game;
 
+import com.isy.game.othello.OthelloGame;
 import com.isy.game.ticTacToe.TicTacToeGame;
 
 public enum GameType {
@@ -27,8 +28,7 @@ public enum GameType {
             case TICTACTOE:
                 return TicTacToeGame.class;
             case OTHELLO:
-                //TODO: update
-                return TicTacToeGame.class;
+                return OthelloGame.class;
             default:
                 return null;
         }
