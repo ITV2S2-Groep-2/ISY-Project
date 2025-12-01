@@ -3,6 +3,7 @@ package com.isy.game.ticTacToe;
 import com.isy.Main;
 import com.isy.game.player.Player;
 import com.isy.game.Game;
+import com.isy.gui.components.SoundUtils;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
@@ -77,10 +78,13 @@ public class TicTacToeGame extends Game {
 
         if (this.state == GameState.WON){
             String playerName = this.activeTurnPlayer.getName();
+            //SoundUtils.playSoundEffect("WinSound.wav");
             ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
+            //SoundUtils.playSoundEffect("LosingSound.wav");
             ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
         } else {
+            //SoundUtils.playSoundEffect("WinSound.wav");
             ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
     }
