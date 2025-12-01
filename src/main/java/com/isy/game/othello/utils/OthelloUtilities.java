@@ -104,6 +104,7 @@ public class OthelloUtilities {
                     /*
                         diagonal
                      */
+                    // up right
                     foundOpponentSymbol = false;
                     for (int horizontal = row + 1, vertical = col + 1; horizontal < board.getWidth() && vertical < board.getHeight(); horizontal++, vertical++) {
                         if (tiles[horizontal][vertical] == playerSymbol) {
@@ -120,8 +121,43 @@ public class OthelloUtilities {
                         }
                     }
 
+                    // up left
+                    foundOpponentSymbol = false;
+                    for (int horizontal = row - 1, vertical = col + 1; horizontal >= 0 && vertical < board.getHeight(); horizontal--, vertical++) {
+                        if (tiles[horizontal][vertical] == playerSymbol) {
+                            break;
+                        }
+                        if (tiles[horizontal][vertical] == opponentSymbol) {
+                            foundOpponentSymbol = true;
+                        }
+                        if (tiles[horizontal][vertical] == Tile.EMPTY) {
+                            if (foundOpponentSymbol) {
+                                addUniqueCoords(availableMoves, new int[]{horizontal, vertical});
+                            }
+                            break;
+                        }
+                    }
+
+                    // down left
                     foundOpponentSymbol = false;
                     for (int horizontal = row - 1, vertical = col - 1; horizontal >= 0 && vertical >= 0; horizontal--, vertical--) {
+                        if (tiles[horizontal][vertical] == playerSymbol) {
+                            break;
+                        }
+                        if (tiles[horizontal][vertical] == opponentSymbol) {
+                            foundOpponentSymbol = true;
+                        }
+                        if (tiles[horizontal][vertical] == Tile.EMPTY) {
+                            if (foundOpponentSymbol) {
+                                addUniqueCoords(availableMoves, new int[]{horizontal, vertical});
+                            }
+                            break;
+                        }
+                    }
+
+                    // down right
+                    foundOpponentSymbol = false;
+                    for (int horizontal = row + 1, vertical = col - 1; horizontal < board.getWidth() && vertical >= 0; horizontal++, vertical--) {
                         if (tiles[horizontal][vertical] == playerSymbol) {
                             break;
                         }
