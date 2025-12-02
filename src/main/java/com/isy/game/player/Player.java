@@ -1,12 +1,13 @@
 package com.isy.game.player;
 import com.isy.game.Board;
+import com.isy.game.ITile;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.game.ticTacToe.TicTacToeTile;
 
 import static com.isy.server.ServerUtils.await;
 
-public abstract class Player<T extends Enum<T>> {
+public abstract class Player<T extends Enum<T> & ITile> {
     private final String name;
     private final TicTacToeTile symbol;
     protected Server client;

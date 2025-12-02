@@ -1,6 +1,10 @@
 package com.isy.game.ticTacToe;
 
-public enum TicTacToeTile {
+import com.isy.game.ITile;
+
+import javax.swing.*;
+
+public enum TicTacToeTile implements ITile {
     EMPTY, X, O;
 
     @Override
@@ -9,6 +13,11 @@ public enum TicTacToeTile {
             return " ";
 
         return this.name();
+    }
+
+    @Override
+    public void updateOnBoard(JButton jButton) {
+        jButton.setText(this.toString());
     }
 
     public static TicTacToeTile[][] createBoard(int width, int height){

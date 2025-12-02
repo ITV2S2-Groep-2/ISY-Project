@@ -11,27 +11,21 @@ public enum GameType {
         this.label = label;
     }
 
-    static public GameType fromLabel(String label) {
-        switch (label) {
-            case "tic-tac-toe":
-                return GameType.TICTACTOE;
-            case "othello":
-                return GameType.OTHELLO;
-            default:
-                return null;
-        }
+    public static GameType fromLabel(String label) {
+        return switch (label) {
+            case "tic-tac-toe" -> GameType.TICTACTOE;
+            case "othello" -> GameType.OTHELLO;
+            default -> null;
+        };
     }
 
-    static public Class<? extends Game> getClass(GameType type) {
-        switch (type) {
-            case TICTACTOE:
-                return TicTacToeGame.class;
-            case OTHELLO:
+    public static Class<? extends Game<?>> getClass(GameType type) {
+        return switch (type) {
+            case TICTACTOE -> TicTacToeGame.class;
+            case OTHELLO ->
                 //TODO: update
-                return TicTacToeGame.class;
-            default:
-                return null;
-        }
+                    TicTacToeGame.class;
+        };
     }
 
 }

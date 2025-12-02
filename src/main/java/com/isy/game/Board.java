@@ -2,7 +2,7 @@ package com.isy.game;
 
 import java.util.Arrays;
 
-public class Board<T extends Enum<T>> {
+public class Board<T extends Enum<T> & ITile> {
     private final T[][] tiles;
     private final T emptyTile;
     private final int height;

@@ -5,7 +5,7 @@ import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.Scene;
 import com.isy.server.Server;
 
-public abstract class Game<T extends Enum<T>> implements Runnable {
+public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
     private Scene renderScene;
     protected final Board<T> board;
     protected final Player<T>[] players;
