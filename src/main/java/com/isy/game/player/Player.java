@@ -2,16 +2,16 @@ package com.isy.game.player;
 import com.isy.game.Board;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
-import com.isy.game.Tile;
+import com.isy.game.ticTacToe.TicTacToeTile;
 
 import static com.isy.server.ServerUtils.await;
 
-public abstract class Player {
+public abstract class Player<T extends Enum<T>> {
     private final String name;
-    private final Tile symbol;
+    private final TicTacToeTile symbol;
     protected Server client;
 
-    public Player(String name, Tile symbol, Server client){
+    public Player(String name, TicTacToeTile symbol, Server client){
         this.name = name;
         this.symbol = symbol;
         this.client = client;
@@ -25,11 +25,11 @@ public abstract class Player {
         return name;
     }
 
-    public Tile getSymbol(){
+    public TicTacToeTile getSymbol(){
         return symbol;
     }
 
-    public abstract int[] getMove(Board board);
+    public abstract int[] getMove(Board<T> board);
 
     public void sendServerData(int[] move){
         await(new Promise().setCommand("move " + formatClientMove(move)));

@@ -1,6 +1,7 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.Main;
+import com.isy.game.Board;
 import com.isy.game.player.Player;
 import com.isy.game.Game;
 import com.isy.gui.scene.GameScene;
@@ -11,12 +12,11 @@ import com.isy.util.PlayerEventManager;
 import com.isy.util.lang.LangHandler;
 
 import static com.isy.server.ServerUtils.asyncAwait;
-import static com.isy.server.ServerUtils.await;
 
-public class TicTacToeGame extends Game {
+public class TicTacToeGame extends Game<TicTacToeTile> {
 
-    public TicTacToeGame(Player[] players) {
-        super(new TicTacToeBoard(), players);
+    public TicTacToeGame(Player<TicTacToeTile>[] players) {
+        super(new Board<>(3, 3, TicTacToeTile.EMPTY, TicTacToeTile::createBoard), players);
     }
 
     //TODO: ADD A CHECK OUTSIDE REMOTE PLAYER FOR SERVER FORFEITS(THIS IS NOT WORKING AS INTENDED AT THE MOMENT!
@@ -54,7 +54,7 @@ public class TicTacToeGame extends Game {
             }
             boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
             if (correctMove) {
-                if(this.board.checkWin(move[0], move[1], this.activeTurnPlayer)){
+                if(this.checkWin(move[0], move[1], this.activeTurnPlayer)){
                     this.state = GameState.WON;
                     continue;
                 } else if (this.board.isBoardFull()) {
@@ -85,4 +85,53 @@ public class TicTacToeGame extends Game {
         }
     }
 
+    @Override
+    public boolean checkWin(int x, int y, Player<TicTacToeTile> p) {
+        TicTacToeTile symbol = p.getSymbol();
+
+        boolean rowWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (this.getBoard().getTile(i, y) != symbol) {
+                rowWin = false;
+                break;
+            }
+        }
+        if (rowWin) return true;
+
+
+        boolean colWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (this.board.getTile(x, i) != symbol) {
+                colWin = false;
+                break;
+            }
+        }
+        if (colWin) return true;
+
+
+        if (x == y) {
+            boolean diagWin = true;
+            for (int i = 0; i < 3; i++) {
+                if (this.board.getTile(i, i) != symbol) {
+                    diagWin = false;
+                    break;
+                }
+            }
+            if (diagWin) return true;
+        }
+
+
+        if (x + y == 2) {
+            boolean antiDiagWin = true;
+            for (int i = 0; i < 3; i++) {
+                if (this.board.getTile(i, 2 - i) != symbol) {
+                    antiDiagWin = false;
+                    break;
+                }
+            }
+            return antiDiagWin;
+        }
+
+        return false;
+    }
 }

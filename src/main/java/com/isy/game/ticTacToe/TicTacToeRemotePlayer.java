@@ -1,30 +1,28 @@
-package com.isy.game.player;
+package com.isy.game.ticTacToe;
 
-import com.isy.game.ticTacToe.GameState;
-import com.isy.game.Tile;
+import com.isy.game.player.Player;
 import com.isy.server.await.Promise;
 import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.server.Server;
-import com.isy.util.PlayerEventManager;
 
 import static com.isy.server.ServerUtils.await;
 
-public class RemotePlayer extends Player{
-    private Game game;
+public class TicTacToeRemotePlayer extends Player<TicTacToeTile> {
+    private Game<TicTacToeTile> game;
 
-    public RemotePlayer(String name, Tile symbol, Server client){
+    public TicTacToeRemotePlayer(String name, TicTacToeTile symbol, Server client){
         super(name, symbol, client);
 
 
     }
 
-    public void setGame(Game game){
+    public void setGame(Game<TicTacToeTile> game){
         this.game = game;
     }
 
     @Override
-    public int[] getMove(Board board) {
+    public int[] getMove(Board<TicTacToeTile> board) {
         if(client == null){
             throw new IllegalStateException("RemotePlayer needs a server client");
         }
