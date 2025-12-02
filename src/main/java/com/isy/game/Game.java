@@ -5,15 +5,15 @@ import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.Scene;
 import com.isy.server.Server;
 
-public abstract class Game implements Runnable {
+public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
     private Scene renderScene;
-    protected final Board board;
-    protected final Player[] players;
-    protected Player activeTurnPlayer;
+    protected final Board<T> board;
+    protected final Player<T>[] players;
+    protected Player<T> activeTurnPlayer;
     protected GameState state;
     protected Server client;
 
-    public Game(Board board, Player[] players) {
+    public Game(Board<T> board, Player<T>[] players) {
         this.board = board;
         this.players = players;
         this.activeTurnPlayer = players[0];
@@ -26,6 +26,7 @@ public abstract class Game implements Runnable {
     }
 
     public abstract void gameLoop();
+    public abstract boolean checkWin(int x, int y, Player<T> p);
 
     public void setRenderScene(Scene scene){
         this.renderScene = scene;
@@ -44,7 +45,7 @@ public abstract class Game implements Runnable {
         }
     }
 
-    public Board getBoard() {
+    public Board<T> getBoard() {
         return board;
     }
 

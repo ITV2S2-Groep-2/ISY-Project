@@ -5,10 +5,10 @@ import com.isy.game.Game;
 import com.isy.game.GameType;
 import com.isy.game.player.Player;
 import com.isy.game.PlayerType;
-import com.isy.game.player.AiPlayer;
-import com.isy.game.player.HumanPlayer;
-import com.isy.game.player.RemotePlayer;
-import com.isy.game.Tile;
+import com.isy.game.ticTacToe.TicTacToeAiPlayer;
+import com.isy.game.ticTacToe.TicTacToeHumanPlayer;
+import com.isy.game.ticTacToe.TicTacToeRemotePlayer;
+import com.isy.game.ticTacToe.TicTacToeTile;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.server.Server;
@@ -73,8 +73,8 @@ public class GameCreator {
     }
 
     public void startLocalGame() {
-        Player player1 = createPlayerByType(getPlayer1(), player1Name, Tile.X);
-        Player player2 = createPlayerByType(getPlayer2(), player2Name, Tile.O);
+        Player player1 = createPlayerByType(getPlayer1(), player1Name, TicTacToeTile.X);
+        Player player2 = createPlayerByType(getPlayer2(), player2Name, TicTacToeTile.O);
 
         GameType gameType = getGameType();
         Class<? extends Game> gameClass = GameType.getClass(gameType);
@@ -96,12 +96,12 @@ public class GameCreator {
         Player localPlayer;
 
         if(player1 == PlayerType.HUMAN){
-            localPlayer = new HumanPlayer(player1Name, iStart ? Tile.X : Tile.O, Server.getInstance());
+            localPlayer = new TicTacToeHumanPlayer(player1Name, iStart ? TicTacToeTile.X : TicTacToeTile.O, Server.getInstance());
         } else if (player1 == PlayerType.AI) {
-            localPlayer = new AiPlayer(player1Name, iStart ? Tile.X : Tile.O, Server.getInstance());
+            localPlayer = new TicTacToeAiPlayer(player1Name, iStart ? TicTacToeTile.X : TicTacToeTile.O, Server.getInstance());
         }else localPlayer = null;
 
-        RemotePlayer remotePlayer = new RemotePlayer(player2Name, iStart ? Tile.O : Tile.X, Server.getInstance());
+        TicTacToeRemotePlayer remotePlayer = new TicTacToeRemotePlayer(player2Name, iStart ? TicTacToeTile.O : TicTacToeTile.X, Server.getInstance());
 
         Class<? extends Game> gameClass = GameType.getClass(gameType);
         Game game;
@@ -144,11 +144,11 @@ public class GameCreator {
         Main.window.getManager().showScene("joinGameServerMenuScene");
     }
 
-    private Player createPlayerByType(PlayerType type, String name, Tile tile) {
+    private Player createPlayerByType(PlayerType type, String name, TicTacToeTile tile) {
         return switch (type) {
-            case PlayerType.HUMAN -> new HumanPlayer(name, tile, null);
-            case PlayerType.AI -> new AiPlayer(name, tile, null);
-            case PlayerType.REMOTE -> new RemotePlayer(name, tile, null);
+            case PlayerType.HUMAN -> new TicTacToeHumanPlayer(name, tile, null);
+            case PlayerType.AI -> new TicTacToeAiPlayer(name, tile, null);
+            case PlayerType.REMOTE -> new TicTacToeRemotePlayer(name, tile, null);
         };
     }
 }

@@ -1,11 +1,12 @@
 package com.isy.gui.scene;
 
+import com.isy.game.ITile;
 import com.isy.server.await.Promise;
 import com.isy.game.Game;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.util.PlayerEventManager;
 import com.isy.util.PlayerTurnEventListener;
-import com.isy.game.Tile;
+import com.isy.game.ticTacToe.TicTacToeTile;
 import com.isy.gui.Window;
 import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
@@ -26,7 +27,7 @@ public class GameScene extends Scene {
 
     private JPanel gridPanel;
     private JLabel playerNameLabel;
-    private Game game;
+    private Game<?> game;
 
     public GameScene(Window window) {
         super("game", window);
@@ -85,7 +86,7 @@ public class GameScene extends Scene {
     }
 
     @Override
-    public void initGame(Game game){
+    public void initGame(Game<?> game){
         this.game = game;
 
         GridLayout layout = new GridLayout(this.game.getBoard().getHeight(), this.game.getBoard().getWidth());
@@ -106,11 +107,11 @@ public class GameScene extends Scene {
         }
     }
 
-    public void reloadBoardValues(Game game) {
-        Tile[][] tiles = game.getBoard().getTiles();
+    public void reloadBoardValues(Game<?> game) {
+        ITile[][] tiles = game.getBoard().getTiles();
         for (int y = 0; y < game.getBoard().getHeight(); y++) {
             for (int x = 0; x < game.getBoard().getWidth(); x++) {
-                this.boardButtons.get(x).get(y).setText(tiles[x][y].toString());
+                tiles[x][y].updateOnBoard(this.boardButtons.get(x).get(y));
                 this.boardButtons.get(x).get(y).repaint();
             }
         }
