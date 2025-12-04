@@ -1,11 +1,7 @@
-package com.isy.gui.components;
-
-import com.isy.util.lang.LangHandler;
-import org.jetbrains.annotations.Nullable;
+package com.isy.gui.components.swing;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class RoundedButton extends JButton {
     private int radius = 15;
@@ -16,6 +12,8 @@ public class RoundedButton extends JButton {
         super();
         this.backgroundColor = backgroundColor;
         this.textColor = textColor;
+
+        setFont(UIManager.getDefaults().getFont("TabbedPane.font"));
         setFocusPainted(false);
         setBorderPainted(false);
         setContentAreaFilled(false);
