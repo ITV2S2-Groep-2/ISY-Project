@@ -3,7 +3,6 @@ package com.isy.game.othello;
 import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.game.player.Player;
-import com.isy.game.ticTacToe.TicTacToeTile;
 
 public class OthelloGame extends Game<OthelloTile> {
 

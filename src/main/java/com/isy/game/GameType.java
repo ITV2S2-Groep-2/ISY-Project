@@ -5,7 +5,7 @@ import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.*;
 
 public enum GameType {
-    TICTACTOE ("tic-tac-toe"), OTHELLO ("othello");
+    TICTACTOE ("tic-tac-toe"), OTHELLO ("reversi");
 
     public final String label;
 
@@ -16,7 +16,7 @@ public enum GameType {
     public static GameType fromLabel(String label) {
         return switch (label) {
             case "tic-tac-toe" -> GameType.TICTACTOE;
-            case "othello" -> GameType.OTHELLO;
+            case "reversi" -> GameType.OTHELLO;
             default -> null;
         };
     }
