@@ -8,7 +8,11 @@ public class OthelloGame extends Game<OthelloTile> {
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
-        //TODO: set default board values
+        OthelloTile[][] tiles = this.getBoard().getTiles();
+        tiles[3][3] = OthelloTile.PLAYER_2;
+        tiles[4][4] = OthelloTile.PLAYER_2;
+        tiles[3][4] = OthelloTile.PLAYER_1;
+        tiles[4][3] = OthelloTile.PLAYER_1;
     }
 
 
