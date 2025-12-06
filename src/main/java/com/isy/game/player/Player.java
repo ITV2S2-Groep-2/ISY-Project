@@ -9,10 +9,10 @@ import static com.isy.server.ServerUtils.await;
 
 public abstract class Player<T extends Enum<T> & ITile> {
     private final String name;
-    private final TicTacToeTile symbol;
+    private final T symbol;
     protected Server client;
 
-    public Player(String name, TicTacToeTile symbol, Server client){
+    public Player(String name, T symbol, Server client){
         this.name = name;
         this.symbol = symbol;
         this.client = client;
@@ -26,7 +26,7 @@ public abstract class Player<T extends Enum<T> & ITile> {
         return name;
     }
 
-    public TicTacToeTile getSymbol(){
+    public T getSymbol(){
         return symbol;
     }
 

@@ -15,8 +15,22 @@ public enum OthelloTile implements ITile {
         this.icon = new ImageIcon(imagePath);
     }
 
+    //TODO: TEMP
+    @Override
+    public String toString() {
+        if (this == EMPTY)
+            return " ";
+
+        return this.name();
+    }
+
     @Override
     public void updateOnBoard(JButton jButton) {
-        jButton.setIcon(this.icon);
+//        jButton.setIcon(this.icon);
+        jButton.setText(this.toString());
+    }
+
+    public static OthelloTile[][] createBoard(int width, int height){
+        return new OthelloTile[width][height];
     }
 }

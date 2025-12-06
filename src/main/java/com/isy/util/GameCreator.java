@@ -14,6 +14,8 @@ import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 
+import java.lang.reflect.Constructor;
+
 import static com.isy.gui.scene.GameMenuScene.joinError;
 import static com.isy.server.ServerUtils.await;
 
@@ -73,12 +75,25 @@ public class GameCreator {
     }
 
     public void startLocalGame() {
-        Player player1 = createPlayerByType(getPlayer1(), player1Name, TicTacToeTile.X);
-        Player player2 = createPlayerByType(getPlayer2(), player2Name, TicTacToeTile.O);
+        Class<? extends Player<?>> player1Class = GameType.getPlayerClass(getPlayer1(), gameType);
+        Class<? extends Player<?>> player2Class = GameType.getPlayerClass(getPlayer2(), gameType);
+        Player<?> player1 = null;
+        Player<?> player2 = null;
+        try {
+            Constructor<?>[] player1Constructors = player1Class.getDeclaredConstructors();
+            player1 = (Player<?>) player1Constructors[0].newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
+
+            Constructor<?>[] player2Constructors = player2Class.getDeclaredConstructors();
+            player2 = (Player<?>) player2Constructors[0].newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
+
+        } catch (Exception e) {
+            throw new RuntimeException("invalid player constructor", e);
+        }
+
 
         GameType gameType = getGameType();
-        Class<? extends Game> gameClass = GameType.getClass(gameType);
-        Game game;
+        Class<? extends Game<?>> gameClass = GameType.getClass(gameType);
+        Game<?> game;
         try {
             game = gameClass.getDeclaredConstructor(Player[].class).newInstance((Object)new Player[]{player1, player2});
         } catch (Exception e) {
@@ -92,9 +107,10 @@ public class GameCreator {
         Main.window.getManager().showScene("game");
     }
 
+    //TODO: make use of generic players
     public void startRemoteGame(boolean iStart) {
         Player localPlayer;
-
+        
         if(player1 == PlayerType.HUMAN){
             localPlayer = new TicTacToeHumanPlayer(player1Name, iStart ? TicTacToeTile.X : TicTacToeTile.O, Server.getInstance());
         } else if (player1 == PlayerType.AI) {
