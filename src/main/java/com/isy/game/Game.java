@@ -149,6 +149,14 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         return board;
     }
 
+    public Player<?> getOpponent() {
+        if (this.players[0] == this.activeTurnPlayer) {
+            return this.players[1];
+        } else {
+            return this.players[0];
+        }
+    }
+
     @Override
     public void run() {
         gameLoop();
