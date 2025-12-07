@@ -76,4 +76,12 @@ public enum GameType {
         }
         return null;
     }
+
+    public static int[] getBoardDimensionsByGameType(GameType gameType) {
+        return switch (gameType) {
+            case TICTACTOE -> new int[]{3, 3};
+            case OTHELLO -> new int[]{8, 8};
+            default -> new int[]{3, 3};
+        };
+    }
 }

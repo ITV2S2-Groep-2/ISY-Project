@@ -43,8 +43,6 @@ public class Board<T extends Enum<T> & ITile> {
         return true;
     }
 
-//    public abstract boolean checkWin(int x, int y, Player p);
-
     public boolean isBoardFull(){
         boolean isFull = true;
 

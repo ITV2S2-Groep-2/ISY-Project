@@ -5,10 +5,7 @@ import com.isy.game.Game;
 import com.isy.game.GameType;
 import com.isy.game.player.Player;
 import com.isy.game.PlayerType;
-import com.isy.game.ticTacToe.TicTacToeAiPlayer;
-import com.isy.game.ticTacToe.TicTacToeHumanPlayer;
-import com.isy.game.ticTacToe.TicTacToeRemotePlayer;
-import com.isy.game.ticTacToe.TicTacToeTile;
+import com.isy.game.player.RemotePlayer;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.server.Server;
@@ -107,17 +104,20 @@ public class GameCreator {
         Main.window.getManager().showScene("game");
     }
 
-    //TODO: make use of generic players
     public void startRemoteGame(boolean iStart) {
-        Player localPlayer;
-        
-        if(player1 == PlayerType.HUMAN){
-            localPlayer = new TicTacToeHumanPlayer(player1Name, iStart ? TicTacToeTile.X : TicTacToeTile.O, Server.getInstance());
-        } else if (player1 == PlayerType.AI) {
-            localPlayer = new TicTacToeAiPlayer(player1Name, iStart ? TicTacToeTile.X : TicTacToeTile.O, Server.getInstance());
-        }else localPlayer = null;
+        Class<? extends Player<?>> localPlayerClass = GameType.getPlayerClass(getPlayer1(), gameType);
+        Class<? extends Player<?>> remotePlayerClass = GameType.getPlayerClass(PlayerType.REMOTE, gameType);
+        Player<?> localPlayer = null;
+        RemotePlayer<?> remotePlayer = null;
+        try {
+            Constructor<?>[] player1Constructors = localPlayerClass.getDeclaredConstructors();
+            localPlayer = (Player<?>) player1Constructors[0].newInstance(player1Name, GameType.getPlayerTileValue(iStart ? 0 : 1, gameType), Server.getInstance());
 
-        TicTacToeRemotePlayer remotePlayer = new TicTacToeRemotePlayer(player2Name, iStart ? TicTacToeTile.O : TicTacToeTile.X, Server.getInstance());
+            Constructor<?>[] player2Constructors = remotePlayerClass.getDeclaredConstructors();
+            remotePlayer = (RemotePlayer<?>) player2Constructors[0].newInstance(player2Name, GameType.getPlayerTileValue(iStart ? 1 : 0, gameType), Server.getInstance());
+        } catch (Exception e) {
+            throw new RuntimeException("invalid player constructor", e);
+        }
 
         Class<? extends Game> gameClass = GameType.getClass(gameType);
         Game game;
@@ -148,7 +148,7 @@ public class GameCreator {
 
         String accept = await(new Promise("^(OK|ERR).*").setCommand("login " + this.getPlayer1Name()));
 
-        if (accept.toLowerCase().contains("err")){
+        if (accept.toLowerCase().contains("err")) {
             joinError("error.used_name");
             return;
         }
@@ -160,11 +160,4 @@ public class GameCreator {
         Main.window.getManager().showScene("joinGameServerMenuScene");
     }
 
-    private Player createPlayerByType(PlayerType type, String name, TicTacToeTile tile) {
-        return switch (type) {
-            case PlayerType.HUMAN -> new TicTacToeHumanPlayer(name, tile, null);
-            case PlayerType.AI -> new TicTacToeAiPlayer(name, tile, null);
-            case PlayerType.REMOTE -> new TicTacToeRemotePlayer(name, tile, null);
-        };
-    }
 }

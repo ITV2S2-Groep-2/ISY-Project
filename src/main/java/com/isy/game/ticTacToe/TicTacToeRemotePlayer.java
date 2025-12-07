@@ -1,25 +1,18 @@
 package com.isy.game.ticTacToe;
 
-import com.isy.game.player.Player;
+import com.isy.game.player.RemotePlayer;
 import com.isy.server.await.Promise;
 import com.isy.game.Board;
-import com.isy.game.Game;
 import com.isy.server.Server;
 
 import static com.isy.server.ServerUtils.await;
 
-public class TicTacToeRemotePlayer extends Player<TicTacToeTile> {
-    private Game<TicTacToeTile> game;
+public class TicTacToeRemotePlayer extends RemotePlayer<TicTacToeTile> {
 
     public TicTacToeRemotePlayer(String name, TicTacToeTile symbol, Server client){
         super(name, symbol, client);
-
-
     }
 
-    public void setGame(Game<TicTacToeTile> game){
-        this.game = game;
-    }
 
     @Override
     public int[] getMove(Board<TicTacToeTile> board) {

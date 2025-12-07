@@ -1,22 +1,16 @@
 package com.isy.game.othello;
 
 import com.isy.game.Board;
-import com.isy.game.Game;
-import com.isy.game.player.Player;
+import com.isy.game.player.RemotePlayer;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 
 import static com.isy.server.ServerUtils.await;
 
-public class OthelloRemotePlayer extends Player<OthelloTile> {
-    private Game<OthelloTile> game;
+public class OthelloRemotePlayer extends RemotePlayer<OthelloTile> {
 
     public OthelloRemotePlayer(String name, OthelloTile symbol, Server client){
         super(name, symbol, client);
-    }
-
-    public void setGame(Game<OthelloTile> game){
-        this.game = game;
     }
 
     @Override
