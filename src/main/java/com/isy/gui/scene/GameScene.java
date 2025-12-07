@@ -81,6 +81,10 @@ public class GameScene extends Scene {
 
         GridBagConstraints gridPanelConstrains = new GridBagConstraints();
         gridPanelConstrains.gridy = 2;
+
+        gridPanelConstrains.weighty = 1;        // Board krijgt alle verticale ruimte
+        gridPanelConstrains.weightx = 1;        // (optioneel) meer horizontale ruimte
+        gridPanelConstrains.fill = GridBagConstraints.BOTH; // Laat het board meegroeiën
         gridPanel = new JPanel();
         controlPanel.add(gridPanel, gridPanelConstrains);
     }
@@ -92,7 +96,6 @@ public class GameScene extends Scene {
         GridLayout layout = new GridLayout(this.game.getBoard().getHeight(), this.game.getBoard().getWidth());
         gridPanel.setSize(this.game.getBoard().getHeight() * 100, this.game.getBoard().getWidth() * 100);
         gridPanel.setLayout(layout);
-
         gridPanel.removeAll();
 
         for (int x = 0; x < game.getBoard().getHeight(); x++) {
