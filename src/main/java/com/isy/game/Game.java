@@ -121,7 +121,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
     public void renderBoard() {
         if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
-            gs.reloadBoardValues(this);
+            gs.reloadBoardValues();
         }
     }
 
