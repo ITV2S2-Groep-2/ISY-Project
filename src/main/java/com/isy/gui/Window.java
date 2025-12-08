@@ -40,7 +40,7 @@ public class Window {
         frame.add(this.manager.generatePanel(), BorderLayout.CENTER);
 
         //Display the window.
-        frame.setSize(800, 800);
+        frame.setSize(1000, 800); // Groter gemaakt voor othello
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
