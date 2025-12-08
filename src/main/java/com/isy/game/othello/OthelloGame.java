@@ -27,6 +27,7 @@ public class OthelloGame extends Game<OthelloTile> {
         for (int[] availableMove : availableMoves) {
             System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
         }
+        this.addAvailableMovesToBoard(availableMoves);
 
         this.renderBoard();
 
@@ -42,6 +43,7 @@ public class OthelloGame extends Game<OthelloTile> {
             return val[0] == finalMove[0] && val[1] == finalMove[1];
         });
 
+        this.removeAvailableMovesFromBoard();
         boolean correctMove = isAvailable ? this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol()) : false;
 
         if (correctMove) {
@@ -104,6 +106,23 @@ public class OthelloGame extends Game<OthelloTile> {
             }
         }
     }
+
+    private void addAvailableMovesToBoard(List<int[]> availableMoves) {
+        for (int[] move : availableMoves) {
+            this.getBoard().setTile(move[0], move[1], OthelloTile.POSSIBLE_MOVE);
+        }
+    }
+
+    private void removeAvailableMovesFromBoard() {
+        for (int row = 0; row < this.getBoard().getHeight(); row++) {
+            for (int col = 0; col < this.getBoard().getWidth(); col++) {
+                if (this.getBoard().getTile(col, row) == OthelloTile.POSSIBLE_MOVE) {
+                    this.getBoard().setTile(col, row, OthelloTile.EMPTY, true);
+                }
+            }
+        }
+    }
+
 
     @Override
     public boolean checkWin(int x, int y, Player<OthelloTile> p) {
