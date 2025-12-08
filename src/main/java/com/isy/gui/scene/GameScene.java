@@ -109,7 +109,7 @@ public class GameScene extends Scene {
 
     public void reloadBoardValues(Game<?> game) {
         ITile[][] tiles = game.getBoard().getTiles();
-        System.out.println("RELOAD DIE SHIZZLE!");
+
         for (int y = 0; y < game.getBoard().getHeight(); y++) {
             for (int x = 0; x < game.getBoard().getWidth(); x++) {
                 tiles[x][y].updateOnBoard(this.boardButtons.get(x).get(y));

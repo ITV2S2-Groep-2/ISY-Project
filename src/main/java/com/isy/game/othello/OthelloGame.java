@@ -97,7 +97,7 @@ public class OthelloGame extends Game<OthelloTile> {
 
                 if (current == activeTurnPlayer.getSymbol()) {
                     for(Integer[] t : tilesToFlip){
-                        this.getBoard().setTile(t[0], t[1], activeTurnPlayer.getSymbol());
+                        this.getBoard().setTile(t[0], t[1], activeTurnPlayer.getSymbol(), true);
                     }
                     tilesToFlip.clear();
                     break;
