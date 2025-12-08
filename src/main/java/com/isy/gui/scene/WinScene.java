@@ -63,7 +63,9 @@ public class WinScene extends Scene{
                 Thread.sleep(1000);
                 backButton.setText(LangHandler.get().translate("win_scene.go_back_to_main_menu.button", 1));
                 Thread.sleep(1000);
-                goBackToMainMenu(null);
+                if (this.getWindow().getManager().getCurrentScene() == this) {
+                    goBackToMainMenu(null);
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
