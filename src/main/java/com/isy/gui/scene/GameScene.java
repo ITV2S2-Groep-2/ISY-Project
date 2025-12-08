@@ -6,10 +6,10 @@ import com.isy.game.Game;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.util.PlayerEventManager;
 import com.isy.util.PlayerTurnEventListener;
-import com.isy.game.ticTacToe.TicTacToeTile;
 import com.isy.gui.Window;
 import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
+import com.isy.util.ResizeBoardListener;
 import com.isy.util.lang.LangHandler;
 import com.isy.gui.components.UIButton;
 import com.isy.gui.components.TextField;
@@ -81,8 +81,14 @@ public class GameScene extends Scene {
 
         GridBagConstraints gridPanelConstrains = new GridBagConstraints();
         gridPanelConstrains.gridy = 2;
+
+        gridPanelConstrains.weighty = 1;        // Board krijgt alle verticale ruimte
+        gridPanelConstrains.weightx = 1;        // (optioneel) meer horizontale ruimte
+        gridPanelConstrains.fill = GridBagConstraints.BOTH; // Laat het board meegroeiën
         gridPanel = new JPanel();
         controlPanel.add(gridPanel, gridPanelConstrains);
+
+        this.gridPanel.addComponentListener(new ResizeBoardListener(this));
     }
 
     @Override
@@ -92,13 +98,13 @@ public class GameScene extends Scene {
         GridLayout layout = new GridLayout(this.game.getBoard().getHeight(), this.game.getBoard().getWidth());
         gridPanel.setSize(this.game.getBoard().getHeight() * 100, this.game.getBoard().getWidth() * 100);
         gridPanel.setLayout(layout);
-
         gridPanel.removeAll();
 
         for (int x = 0; x < game.getBoard().getHeight(); x++) {
             this.boardButtons.add(new ArrayList<>());
             for (int y = 0; y < game.getBoard().getWidth(); y++) {
-                final JButton button = BoardTile.createButton(game.getBoard().getTile(x, y).toString());
+                final JButton button = BoardTile.createButton();
+                game.getBoard().getTile(x, y).updateOnBoard(button);
 
                 button.addActionListener(new PlayerTurnEventListener(game, x, y));
                 this.boardButtons.get(x).add(button);
@@ -107,8 +113,9 @@ public class GameScene extends Scene {
         }
     }
 
-    public void reloadBoardValues(Game<?> game) {
+    public void reloadBoardValues() {
         ITile[][] tiles = game.getBoard().getTiles();
+
         for (int y = 0; y < game.getBoard().getHeight(); y++) {
             for (int x = 0; x < game.getBoard().getWidth(); x++) {
                 tiles[x][y].updateOnBoard(this.boardButtons.get(x).get(y));

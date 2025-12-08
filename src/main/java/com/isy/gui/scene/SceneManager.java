@@ -1,7 +1,5 @@
 package com.isy.gui.scene;
 
-import com.isy.game.GameType;
-import com.isy.gui.Window;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

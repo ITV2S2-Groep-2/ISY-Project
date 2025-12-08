@@ -1,21 +1,20 @@
-package com.isy.game.ticTacToe;
+package com.isy.game.othello;
 
-import com.isy.game.player.RemotePlayer;
-import com.isy.server.await.Promise;
 import com.isy.game.Board;
+import com.isy.game.player.RemotePlayer;
 import com.isy.server.Server;
+import com.isy.server.await.Promise;
 
 import static com.isy.server.ServerUtils.await;
 
-public class TicTacToeRemotePlayer extends RemotePlayer<TicTacToeTile> {
+public class OthelloRemotePlayer extends RemotePlayer<OthelloTile> {
 
-    public TicTacToeRemotePlayer(String name, TicTacToeTile symbol, Server client){
+    public OthelloRemotePlayer(String name, OthelloTile symbol, Server client){
         super(name, symbol, client);
     }
 
-
     @Override
-    public int[] getMove(Board<TicTacToeTile> board) {
+    public int[] getMove(Board<OthelloTile> board) {
         if(client == null){
             throw new IllegalStateException("RemotePlayer needs a server client");
         }
