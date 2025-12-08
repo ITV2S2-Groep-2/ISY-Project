@@ -35,8 +35,9 @@ public class Board<T extends Enum<T> & ITile> {
      * @return True if tile has been successfully set, returns false when the tile at the location specified was not empty(can't override tiles in tic tac toe)
      */
     public boolean setTile(int x, int y, T tile){
-        if (getTile(x, y) != this.emptyTile)
-            return false;
+//        if (getTile(x, y) != this.emptyTile)
+//            return false;
+        // eff uitgezet voor othello, dit wordt nog gecheckt.
 
         this.tiles[x][y] = tile;
 
