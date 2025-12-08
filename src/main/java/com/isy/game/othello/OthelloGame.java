@@ -31,6 +31,11 @@ public class OthelloGame extends Game<OthelloTile> {
 
         this.renderBoard();
 
+        if (availableMoves.isEmpty()) {
+            this.giveTurnOver();
+            return false;
+        }
+
         move = this.activeTurnPlayer.getMove(this.getBoard());
         if (move == null) {
             return false;
@@ -52,6 +57,10 @@ public class OthelloGame extends Game<OthelloTile> {
                 this.state = GameState.WON;
                 return false;
             } else if (this.board.isBoardFull()) {
+                this.giveTurnOver();
+                if (this.checkWin(0,0, this.activeTurnPlayer)) {
+                    this.state = GameState.WON;
+                }
                 return true;
             }
 
@@ -82,8 +91,10 @@ public class OthelloGame extends Game<OthelloTile> {
                 x += d[0];
                 y += d[1];
 
-                if (x < 0 || x >= board.getHeight() || y < 0 || y >= board.getWidth())
+                if (x < 0 || x >= board.getHeight() || y < 0 || y >= board.getWidth()) {
+                    tilesToFlip.clear();
                     break;
+                }
 
                 OthelloTile current = this.getBoard().getTile(x, y);
 
@@ -126,6 +137,32 @@ public class OthelloGame extends Game<OthelloTile> {
 
     @Override
     public boolean checkWin(int x, int y, Player<OthelloTile> p) {
+        int currentPlayerCount = 0;
+        int opponentPlayerCount = 0;
+
+        OthelloTile opponentTile = (OthelloTile) this.getOpponent().getSymbol();
+
+        for (OthelloTile[] row : this.getBoard().getTiles()) {
+            for (OthelloTile tile : row) {
+                if (tile == p.getSymbol()) {
+                    currentPlayerCount++;
+                } else if (tile == opponentTile){
+                    opponentPlayerCount++;
+                }
+            }
+        }
+
+        System.out.println("currentplayer count = " + currentPlayerCount + p.getSymbol().toString());
+        System.out.println("opponentPlayer count = " + opponentPlayerCount + opponentTile.toString());
+
+        if (opponentPlayerCount == 0) {
+            return true;
+        }
+
+        if (this.getBoard().isBoardFull()) {
+            return currentPlayerCount > opponentPlayerCount;
+        }
+
         return false;
     }
 }
