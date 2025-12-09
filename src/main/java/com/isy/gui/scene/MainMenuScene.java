@@ -6,7 +6,6 @@ import com.isy.gui.components.Header;
 import com.isy.gui.components.ScenePanel;
 import com.isy.gui.components.UIButton;
 import com.isy.util.GameCreator;
-import com.isy.gui.components.RoundedButton;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
