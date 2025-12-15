@@ -7,8 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class UIButton {
+    public static final String clickSound = "ClickMenuObject.wav";
+    public static final String hoverSound = "HoverSound.wav";
 
     public static JButton createButton() {
         return new RoundedButton(Style.primaryComponentBackgroundColor, Style.primaryTextColor);
@@ -19,6 +23,15 @@ public class UIButton {
 
         JButton button = createButton();
         button.setText(text);
+        button.addActionListener(e -> SoundUtils.playSoundEffect(clickSound));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                SoundUtils.playSoundEffect(hoverSound);
+            }
+        });
 
         LangHandler.get().bind(button::setText, langKey, params);
 
@@ -27,26 +40,68 @@ public class UIButton {
 
     public static JButton createButton(String langKey, ActionListener listener, @Nullable Object... params) {
         JButton button = createButton(langKey, params);
-        button.addActionListener(listener);
+        button.addActionListener(e -> {
+            listener.actionPerformed(e);
+            SoundUtils.playSoundEffect(clickSound);
+        });
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                SoundUtils.playSoundEffect(hoverSound);
+            }
+        });
 
         return button;
     }
 
     public static JButton createButton(ActionListener listener) {
         JButton button = createButton();
-        button.addActionListener(listener);
+        button.addActionListener(e -> {
+            listener.actionPerformed(e);
+            SoundUtils.playSoundEffect(clickSound);
+        });
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                SoundUtils.playSoundEffect(hoverSound);
+            }
+        });
+
         return button;
     }
 
     public static JButton createButton(Icon icon) {
         JButton button = createButton();
         button.setIcon(icon);
+        button.addActionListener(e -> SoundUtils.playSoundEffect(clickSound));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                SoundUtils.playSoundEffect(hoverSound);
+            }
+        });
+
         return button;
     }
 
     public static JButton createButton(String langKey, Icon icon, @Nullable Object... params) {
         JButton button = createButton(langKey, params);
         button.setIcon(icon);
+        button.addActionListener(e -> SoundUtils.playSoundEffect(clickSound));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                SoundUtils.playSoundEffect(hoverSound);
+            }
+        });
 
         return button;
     }

@@ -2,9 +2,7 @@ package com.isy.gui.scene;
 
 import com.isy.game.GameType;
 import com.isy.gui.Window;
-import com.isy.gui.components.Header;
-import com.isy.gui.components.ScenePanel;
-import com.isy.gui.components.UIButton;
+import com.isy.gui.components.*;
 import com.isy.util.GameCreator;
 
 import javax.imageio.ImageIO;
@@ -24,6 +22,7 @@ public class MainMenuScene extends Scene{
     public void init() {
         ScenePanel panel = this.getScenePanel();
         panel.setBackgroundImage("/back2.jpg"); // dit zorgt ervoor dat alleen deze scene deze background heeft
+        SoundUtils.playBackgroundMusic("tttBack.wav");
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
