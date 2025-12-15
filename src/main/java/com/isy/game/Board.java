@@ -1,18 +1,18 @@
 package com.isy.game;
 
-import com.isy.game.player.Player;
-
 import java.util.Arrays;
 
-public abstract class Board {
-    protected final Tile[][] tiles;
+public class Board<T extends Enum<T> & ITile> {
+    private final T[][] tiles;
+    private final T emptyTile;
     private final int height;
     private final int width;
 
-    public Board(int height, int width){
+    public Board(int height, int width, T emptyTile, getConstructor<T> constructor){
         this.height = height;
         this.width = width;
-        this.tiles = new Tile[height][width];
+        this.emptyTile = emptyTile;
+        this.tiles = constructor.newInstance(this.width, this.height);
 
         this.resetBoard();
     }
@@ -23,7 +23,7 @@ public abstract class Board {
      * @param y y location of tile, min of 0 and max of 2
      * @return The given tile at the location specified
      */
-    public Tile getTile(int x, int y){
+    public T getTile(int x, int y){
         return this.tiles[x][y];
     }
 
@@ -34,24 +34,38 @@ public abstract class Board {
      * @param tile the Tile you want the location to be
      * @return True if tile has been successfully set, returns false when the tile at the location specified was not empty(can't override tiles in tic tac toe)
      */
-    public boolean setTile(int x, int y, Tile tile){
-        if (getTile(x, y) != Tile.EMPTY)
-            return false;
+    public boolean setTile(int x, int y, T tile){
+        return this.setTile(x, y, tile, false);
+    }
+
+    /**
+     * Set Tile at given location
+     * @param x x location of tile, min of 0 and max of 2
+     * @param y y location of tile, min of 0 and max of 2
+     * @param tile the Tile you want the location to be
+     * @param overrideCheck boolean to skip the empty tile check
+     * @return True if tile has been successfully set, returns false when the tile at the location specified was not empty(can't override tiles in tic tac toe)
+     */
+    public boolean setTile(int x, int y, T tile, boolean overrideCheck){
+        if (!overrideCheck) {
+            if (getTile(x, y) != this.emptyTile)
+                return false;
+        }
 
         this.tiles[x][y] = tile;
 
         return true;
     }
 
-    public abstract boolean checkWin(int x, int y, Player p);
-
     public boolean isBoardFull(){
         boolean isFull = true;
 
-        for (Tile[] tiles : this.tiles) {
-            for (Tile tile : tiles) {
-                if (tile == Tile.EMPTY)
+        for (T[] tiles : this.tiles) {
+            for (T tile : tiles) {
+                if (tile == this.emptyTile) {
                     isFull = false;
+                    break;
+                }
             }
         }
 
@@ -62,12 +76,12 @@ public abstract class Board {
      * Reset the boards to EMPTY
      */
     public void resetBoard(){
-        for (Tile[] tile : this.tiles) {
-            Arrays.fill(tile, Tile.EMPTY);
+        for (T[] tile : this.tiles) {
+            Arrays.fill(tile, this.emptyTile);
         }
     }
 
-    public Tile[][] getTiles() {
+    public T[][] getTiles() {
         return tiles;
     }
 
@@ -77,5 +91,9 @@ public abstract class Board {
 
     public int getWidth() {
         return this.width ;
+    }
+
+    public interface getConstructor<T>{
+        T[][] newInstance(int width, int height);
     }
 }

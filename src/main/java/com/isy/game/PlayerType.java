@@ -9,17 +9,13 @@ public enum PlayerType {
         this.label = label;
     }
 
-    static public PlayerType fromLabel(String label) {
-        switch (label) {
-            case "Human":
-                return PlayerType.HUMAN;
-            case "AI":
-                return PlayerType.AI;
-            case "Remote":
-                return PlayerType.REMOTE;
-            default:
-                return null;
-        }
+    public static PlayerType fromLabel(String label) {
+        return switch (label) {
+            case "Human" -> PlayerType.HUMAN;
+            case "AI" -> PlayerType.AI;
+            case "Remote" -> PlayerType.REMOTE;
+            default -> null;
+        };
     }
 
 }

@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.game.GameType;
 import com.isy.server.await.Promise;
 import com.isy.server.Server;
 import com.isy.gui.Window;
@@ -93,8 +94,8 @@ public class JoinGameServerMenuScene extends Scene {
     private void onJoinButtonClicked(ActionEvent e) {
         if (Server.getInstance() == null) return;
 
-        // TODO: based on gametype label
-        await(new Promise().setCommand("subscribe tic-tac-toe"));
+        GameType gameType = GameCreator.getCurrentInstance().getGameType();
+        await(new Promise().setCommand("subscribe " + gameType.label));
 
         joinButton.setVisible(false);
         waitingLabel.setVisible(true);

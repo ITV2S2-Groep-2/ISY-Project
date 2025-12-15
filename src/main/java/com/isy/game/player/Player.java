@@ -1,17 +1,19 @@
 package com.isy.game.player;
 import com.isy.game.Board;
+import com.isy.game.GameType;
+import com.isy.game.ITile;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
-import com.isy.game.Tile;
+import com.isy.util.GameCreator;
 
 import static com.isy.server.ServerUtils.await;
 
-public abstract class Player {
+public abstract class Player<T extends Enum<T> & ITile> {
     private final String name;
-    private final Tile symbol;
+    private final T symbol;
     protected Server client;
 
-    public Player(String name, Tile symbol, Server client){
+    public Player(String name, T symbol, Server client){
         this.name = name;
         this.symbol = symbol;
         this.client = client;
@@ -25,11 +27,11 @@ public abstract class Player {
         return name;
     }
 
-    public Tile getSymbol(){
+    public T getSymbol(){
         return symbol;
     }
 
-    public abstract int[] getMove(Board board);
+    public abstract int[] getMove(Board<T> board);
 
     public void sendServerData(int[] move){
         await(new Promise().setCommand("move " + formatClientMove(move)));
@@ -41,8 +43,8 @@ public abstract class Player {
      * @return a single int which was converted by calculating x + (y * 3)
      */
     public int formatClientMove(int[] move){
-        // TODO: columns parameter meegeven (8 voor othello) i.p.v. hard coded 3.
-        return move[0] + (move[1] * 3);
+        int[] dimensions = GameType.getBoardDimensionsByGameType(GameCreator.getCurrentInstance().getGameType());
+        return move[0] + (move[1] * dimensions[0]);
     }
 
     /**
@@ -51,8 +53,9 @@ public abstract class Player {
      * @return an int array including row and col.
      */
     public int[] formatServerMove(int move){
-        int row = move % 3;
-        int col = move / 3;
+        int[] dimensions = GameType.getBoardDimensionsByGameType(GameCreator.getCurrentInstance().getGameType());
+        int row = move % dimensions[0];
+        int col = move / dimensions[0];
         return new int[]{row, col};
     }
 }

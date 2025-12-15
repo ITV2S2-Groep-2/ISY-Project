@@ -3,6 +3,7 @@ package com.isy.gui;
 import com.isy.gui.scene.*;
 import com.isy.util.GameSettings;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,14 +26,21 @@ public class Window {
 
     private void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("Game");
+        JFrame frame = new JFrame("Games client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        try {
+            Image img = ImageIO.read(getClass().getResource("/icon.png"));
+            frame.setIconImage(img);
+        } catch (Exception e) {
+            System.out.println("Frame icon not found");
+        }
 
         frame.setLayout(new BorderLayout());
         frame.add(this.manager.generatePanel(), BorderLayout.CENTER);
 
         //Display the window.
-        frame.setSize(800, 800);
+        frame.setSize(1000, 800); // Groter gemaakt voor othello
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

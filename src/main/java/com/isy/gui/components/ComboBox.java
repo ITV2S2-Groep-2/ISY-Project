@@ -1,6 +1,7 @@
 package com.isy.gui.components;
 
 import com.isy.gui.Style;
+import com.isy.gui.components.swing.RoundedComboBox;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -9,19 +10,9 @@ import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 
 public class ComboBox {
-    public static JComboBox createComboBox(Object[] elements) {
-        JComboBox box = new JComboBox(elements);
+    public static <T> JComboBox<T> createComboBox(T[] elements) {
+        JComboBox<T> box = new RoundedComboBox<>(elements, Style.primaryComponentBackgroundColor, Style.primaryTextColor);
 
-        box.setBackground(Style.primaryComponentBackgroundColor);
-        box.setForeground(Style.primaryTextColor);
-        box.setBorder(BorderFactory.createCompoundBorder(
-                new StrokeBorder(new BasicStroke(2), Style.primaryBorderColor),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
-
-        box.setPreferredSize(new Dimension(256, 64));
-
-        box.setFocusable(false);
         box.setUI(new BasicComboBoxUI() {
             @Override
             protected JButton createArrowButton() {
