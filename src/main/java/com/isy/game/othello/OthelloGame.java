@@ -41,7 +41,7 @@ public class OthelloGame extends Game<OthelloTile> {
         for (int[] availableMove : availableMoves) {
             System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
         }
-        this.addAvailableMovesToBoard(availableMoves);
+        if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
 
         this.renderBoard();
 
