@@ -16,7 +16,7 @@ public class OthelloGame extends Game<OthelloTile> {
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
 
-        this.useReversiRules = GameSettings.get().getUseReversiRules();
+        this.useReversiRules = GameSettings.get().getUseReversiRules() && this.client == null;
 
         if (!this.useReversiRules) {
             this.getBoard().setTile(3, 3, this.players[1].getSymbol());
