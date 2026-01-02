@@ -54,13 +54,13 @@ public class GameMenuScene extends Scene{
                 .map(val -> val.label)
                 .toArray());
 
-        textField1 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
-        textField2 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
+        textField1 = TextField.createTextField("game.general.player.text_field.placeholder", Math.round(Math.random() * 1000));
+        textField2 = TextField.createTextField("game.general.player.text_field.placeholder", Math.round(Math.random() * 1000));
 
         JComponent gameSpecificComponent = null;
         switch (gameType) {
             case OTHELLO -> {
-                JCheckBox checkBox = CheckBox.createCheckBox("reversi.use_reversi_rules", (itemEvent) -> {
+                JCheckBox checkBox = CheckBox.createCheckBox("game.reversi.use_reversi_rules", (itemEvent) -> {
                     GameSettings.get().setUseReversiRules(itemEvent.getStateChange() == ItemEvent.SELECTED);
                 });
                 gameSpecificComponent = checkBox;
@@ -72,7 +72,7 @@ public class GameMenuScene extends Scene{
         panel.add(error, next(gbc));
 
         row(gbc,2);
-        panel.add(Header.createHeader("tic.tac.toe.header"), next(gbc));
+        panel.add(Header.createHeader("game." + gameType.label + ".header"), next(gbc));
 
         row(gbc,1);
         panel.add(dropdown1, next(gbc));
@@ -89,7 +89,7 @@ public class GameMenuScene extends Scene{
 
         row(gbc,1);
         panel.add(UIButton.createButton("settings.back.button", this::goMainMenu), next(gbc));
-        panel.add(UIButton.createButton("ttt.game.start_game.button", this::startGame), next(gbc));
+        panel.add(UIButton.createButton("game.general.start_game.button", this::startGame), next(gbc));
     }
 
     private void startGame(ActionEvent e){

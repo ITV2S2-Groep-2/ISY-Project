@@ -86,6 +86,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         /*
             winscene handler
          */
+        Main.window.getManager().addScene(new WinScene(Main.window));
         if (this.state == GameState.WON){
             String playerName = this.activeTurnPlayer.getName();
             ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);

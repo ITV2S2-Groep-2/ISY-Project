@@ -28,7 +28,7 @@ public class WinScene extends Scene{
     public void init() {
         JPanel panel = this.getScenePanel();
 
-        title = Header.createHeader("tic.tac.toe.header");
+        title = Header.createHeader("game." + GameCreator.getCurrentInstance().getGameType().label + ".header");
 
         backButton = UIButton.createButton("win_scene.go_back_to_main_menu.button", this::goBackToMainMenu, 3);
 
