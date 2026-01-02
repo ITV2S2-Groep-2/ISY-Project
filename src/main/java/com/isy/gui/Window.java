@@ -18,7 +18,6 @@ public class Window {
         this.manager.addScene(new WinScene(this));
         this.manager.addScene(new JoinGameServerMenuScene(this));
         this.manager.addScene(new LangSwitchScene(this));
-        this.manager.addScene(new GameMenuScene(this));
         this.manager.addScene(new MainMenuScene(this), true);
 
         this.createAndShowGUI();

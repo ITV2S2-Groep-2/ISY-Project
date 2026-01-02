@@ -36,3 +36,5 @@ ttt.game.player.text_field.placeholder=Player%d
 #errors
 error.incorrect_name=Player name can't have special characters and needs to be between 1 and 16 long!
 error.used_name=A player with this name is already logged in!
+
+reversi.use_reversi_rules=Use the Reversi ruleset.

@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.Main;
 import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.*;
@@ -49,6 +50,7 @@ public class MainMenuScene extends Scene{
 
     private void goToGameMenuSceneWithSelectedGame(GameType game) {
         GameCreator.createNewInstance(game);
+        Main.window.getManager().addScene(new GameMenuScene(Main.window), true);
         this.getWindow().getManager().showScene("gameMenu");
     }
 

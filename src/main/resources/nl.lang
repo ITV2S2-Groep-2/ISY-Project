@@ -32,3 +32,5 @@ settings.lang.menu.header=Instellingen
 
 #text field placeholders
 ttt.game.player.text_field.placeholder=Speler%d
+
+reversi.use_reversi_rules=Gebruik de regelset van Reservi.

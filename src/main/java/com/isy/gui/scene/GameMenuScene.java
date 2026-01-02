@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.util.GameSettings;
 import com.isy.util.lang.LangHandler;
 import com.isy.game.*;
 import com.isy.gui.Window;
@@ -7,11 +8,13 @@ import com.isy.gui.components.ComboBox;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.TextField;
 import com.isy.gui.components.UIButton;
+import com.isy.gui.components.CheckBox;
 import com.isy.util.GameCreator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.Arrays;
 
 import static com.isy.gui.GridBagConstrainsUtil.*;
@@ -27,6 +30,12 @@ public class GameMenuScene extends Scene{
 
     @Override
     public void init() {
+
+        GameType gameType = GameCreator.getCurrentInstance().getGameType();
+        if (gameType == null) {
+            return;
+        }
+
         JPanel panel = this.getScenePanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -48,6 +57,17 @@ public class GameMenuScene extends Scene{
         textField1 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
         textField2 = TextField.createTextField("ttt.game.player.text_field.placeholder", Math.round(Math.random() * 1000));
 
+        JComponent gameSpecificComponent = null;
+        switch (gameType) {
+            case OTHELLO -> {
+                JCheckBox checkBox = CheckBox.createCheckBox("reversi.use_reversi_rules", (itemEvent) -> {
+                    GameSettings.get().setUseReversiRules(itemEvent.getStateChange() == ItemEvent.SELECTED);
+                });
+                gameSpecificComponent = checkBox;
+                checkBox.setSelected(GameSettings.get().getUseReversiRules());
+            }
+        };
+
         initConstraints(gbc, 2);
         panel.add(error, next(gbc));
 
@@ -61,6 +81,11 @@ public class GameMenuScene extends Scene{
         row(gbc,1);
         panel.add(textField1, next(gbc));
         panel.add(textField2, next(gbc));
+
+        if (gameSpecificComponent != null) {
+            row(gbc,1);
+            panel.add(gameSpecificComponent, next(gbc));
+        }
 
         row(gbc,1);
         panel.add(UIButton.createButton("settings.back.button", this::goMainMenu), next(gbc));
