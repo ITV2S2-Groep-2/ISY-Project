@@ -69,6 +69,8 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             if (cancel) {
                 break;
             }
+
+            ((GameScene) getRenderScene()).nextTurn();
         }
 
 

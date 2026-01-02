@@ -28,7 +28,9 @@ public class GameScene extends Scene {
     private JPanel gridPanel;
     private JLabel playerNameLabel;
     private Game<?> game;
-
+    private String player1Name;
+    private String player2Name;
+    private boolean myTurn;
     public GameScene(Window window) {
         super("game", window);
         this.boardButtons = new ArrayList<>();
@@ -126,8 +128,36 @@ public class GameScene extends Scene {
 
     public void setPlayerNames(String player1Name, String player2Name, boolean iStart) {
         if (playerNameLabel != null) {
+            this.player1Name = player1Name;
+            this.player2Name = player2Name;
+            this.myTurn = iStart;
             playerNameLabel.setText(LangHandler.get().translate("player.name.display", iStart ? "X" : "O", player1Name, !iStart ? "X" : "O", player2Name));
         }
+        updatePlayerLabel();
+    }
+
+    private void updatePlayerLabel() {
+        if (playerNameLabel == null) return;
+
+        String youSymbol = myTurn
+                ? "<span style='color:red'>X</span>"
+                : "X";
+
+        String opponentSymbol = !myTurn
+                ? "<span style='color:red'>O</span>"
+                : "O";
+
+        playerNameLabel.setText(
+                "<html>" +
+                        LangHandler.get().translate(
+                                "player.name.display",
+                                youSymbol,
+                                player1Name,
+                                opponentSymbol,
+                                player2Name
+                        ) +
+                        "</html>"
+        );
     }
 
     private void goForfeit(ActionEvent actionEvent) {
@@ -139,5 +169,10 @@ public class GameScene extends Scene {
 
     private void sendMessage(ActionEvent actionEvent, String message) {
         await(new Promise().setCommand("message " + message));
+    }
+
+    public void nextTurn() {
+        myTurn = !myTurn;
+        updatePlayerLabel();
     }
 }
