@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.Main;
 import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.*;
@@ -30,8 +31,8 @@ public class MainMenuScene extends Scene{
         initConstraints(gbc, 1);
 
         panel.add(Header.createHeader("select.game.header"), next(gbc));
-        panel.add(UIButton.createButton("tic.tac.toe.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), next(row(gbc)));
-        panel.add(UIButton.createButton("othello.game.button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), next(row(gbc)));
+        panel.add(UIButton.createButton("game." + GameType.TICTACTOE.label + ".select_button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), next(row(gbc)));
+        panel.add(UIButton.createButton("game." + GameType.OTHELLO.label + ".select_button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), next(row(gbc)));
 
 
         JButton settingsButton = UIButton.createButton(this::goToSettings);
@@ -49,6 +50,7 @@ public class MainMenuScene extends Scene{
 
     private void goToGameMenuSceneWithSelectedGame(GameType game) {
         GameCreator.createNewInstance(game);
+        Main.window.getManager().addScene(new GameMenuScene(Main.window), true);
         this.getWindow().getManager().showScene("gameMenu");
     }
 

@@ -14,6 +14,8 @@ public class GameSettings {
     private final int defaultBackgroundVolume = 25;
     private final int defaultEffectsVolume = 25;
 
+    private boolean useReversiRules = false;
+
     public GameSettings(){
         this.hostName = defaultHostName;
         this.portNumber = defaultPortNumber;
@@ -62,4 +64,12 @@ public class GameSettings {
     public float getBackgroundVolume(){ return this.backgroundVolume; }
 
     public float getEffectsVolume(){ return this.effectsVolume; }
+
+    public boolean getUseReversiRules() {
+        return useReversiRules;
+    }
+
+    public void setUseReversiRules(boolean useReversiRules) {
+        this.useReversiRules = useReversiRules;
+    }
 }

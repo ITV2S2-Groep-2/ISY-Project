@@ -1,38 +1,55 @@
-#headers
+#
+# headers
+#
 select.game.header=Select your game!
 waiting.tournament.header=Waiting on a tournament to start...
-tic.tac.toe.header=Tic Tac Toe
 settings.menu.header=Settings
+settings.lang.menu.header=Language settings
 
-#displays
-player.name.display=[%s] %s(You) VS [%s] %s(Opponent)
+game.tic-tac-toe.header=Tic Tac Toe
+game.reversi.header=Othello
 
-#labels
+
+#
+# labels
+#
 directly.subscribe.label=Instead directly subscribe to a game!
 waiting.match.label=Waiting for match!
 win_scene.win_label=%s Won!
 win_scene.lose_label=%s Lost!
 win_scene.person.you=You
 win_scene.person.nobody=Nobody
-error.message.server.label=Error: %s
+player.name.display=[%s] %s(You) VS [%s] %s(Opponent)
 
-#buttons
-ttt.game.forfeit.button=Forfeit
+game.reversi.use_reversi_rules=Use the Reversi ruleset.
+
+
+#
+# buttons
+#
 win_scene.go_back_to_main_menu.button=Back(Automatic in %d)
-ttt.game.start_game.button=Start
 settings.back.button=Back
 settings.save.button=Save
 leave.server.button=Leave
 subscribe.server.button=Subscribe
-tic.tac.toe.game.button=Tic Tac Toe
 game.scene.button=Send
-othello.game.button=Othello
-settings.lang.button=Settings
-settings.lang.menu.header=Settings
+settings.lang.button=Language settings
 
-#text field placeholders
-ttt.game.player.text_field.placeholder=Player%d
+game.general.forfeit.button=Forfeit
+game.general.start_game.button=Start
+game.tic-tac-toe.select_button=Tic Tac Toe
+game.reversi.select_button=Othello
 
-#errors
+
+#
+# text field placeholders
+#
+game.general.player.text_field.placeholder=Player%d
+
+
+#
+# errors
+#
 error.incorrect_name=Player name can't have special characters and needs to be between 1 and 16 long!
 error.used_name=A player with this name is already logged in!
+error.message.server.label=Error: %s

@@ -4,34 +4,52 @@ import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.GameState;
+import com.isy.util.GameSettings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class OthelloGame extends Game<OthelloTile> {
+    private boolean useReversiRules = false;
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
-        this.getBoard().setTile(3, 3, this.players[1].getSymbol());
-        this.getBoard().setTile(4, 4, this.players[1].getSymbol());
-        this.getBoard().setTile(3, 4, this.players[0].getSymbol());
-        this.getBoard().setTile(4, 3, this.players[0].getSymbol());
+
+        this.useReversiRules = GameSettings.get().getUseReversiRules() && this.client == null;
+
+        if (!this.useReversiRules) {
+            this.getBoard().setTile(3, 3, this.players[1].getSymbol());
+            this.getBoard().setTile(4, 4, this.players[1].getSymbol());
+            this.getBoard().setTile(3, 4, this.players[0].getSymbol());
+            this.getBoard().setTile(4, 3, this.players[0].getSymbol());
+        }
     }
 
     @Override
     public boolean handleSingleTurn() {
         int[] move = null;
 
-        List<int[]> availableMoves = OthelloUtils.getAvailableMoves2(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol());
+        List<int[]> availableMoves = new ArrayList<>();
+        if (this.useReversiRules && this.turnCounter <= 4) {
+            availableMoves = this.openingAvailableMoves();
+        } else {
+            availableMoves = OthelloUtils.getAvailableMoves2(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol());
+
+        }
+
         for (int[] availableMove : availableMoves) {
             System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
         }
-        this.addAvailableMovesToBoard(availableMoves);
+        if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
 
         this.renderBoard();
 
         if (availableMoves.isEmpty()) {
+            if (this.useReversiRules) {
+                this.state = GameState.LOST;
+                return true;
+            }
             this.giveTurnOver();
             return false;
         }
@@ -50,6 +68,11 @@ public class OthelloGame extends Game<OthelloTile> {
 
         this.removeAvailableMovesFromBoard();
         boolean correctMove = isAvailable ? this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol()) : false;
+
+        if (this.useReversiRules && this.turnCounter <= 4) {
+            this.giveTurnOver();
+            return false;
+        }
 
         if (correctMove) {
             flipTiles(move);
@@ -116,6 +139,20 @@ public class OthelloGame extends Game<OthelloTile> {
                 }
             }
         }
+    }
+
+    private List<int[]> openingAvailableMoves() {
+        List<int[]> moves = new ArrayList<>();
+        int[][] centerTiles = new int[][]{ new int[]{3, 3}, new int[]{3, 4}, new int[]{4, 3}, new int[]{4, 4}};
+
+        for (int[] coord : centerTiles) {
+            OthelloTile tile = this.getBoard().getTile(coord[0], coord[1]);
+            if (tile != OthelloTile.PLAYER_1 && tile != OthelloTile.PLAYER_2) {
+                moves.add(coord);
+            }
+        }
+
+        return moves;
     }
 
     private void addAvailableMovesToBoard(List<int[]> availableMoves) {

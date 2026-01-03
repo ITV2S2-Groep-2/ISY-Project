@@ -23,6 +23,8 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
     protected GameState state;
     protected Server client;
 
+    protected int turnCounter = 0;
+
     public Game(Board<T> board, Player<T>[] players) {
         this.board = board;
         this.players = players;
@@ -65,6 +67,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             turn handler
          */
         while (this.state == GameState.ONGOING) {
+            this.turnCounter++;
             boolean cancel = this.handleSingleTurn();
             if (cancel) {
                 break;
@@ -83,6 +86,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         /*
             winscene handler
          */
+        Main.window.getManager().addScene(new WinScene(Main.window));
         if (this.state == GameState.WON){
             String playerName = this.activeTurnPlayer.getName();
             ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);

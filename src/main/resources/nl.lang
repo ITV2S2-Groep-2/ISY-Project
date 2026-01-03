@@ -1,34 +1,55 @@
-#headers
+#
+# headers
+#
 select.game.header=Selecteer je spel!
 waiting.tournament.header=Wachten tot een toernooi begint...
-tic.tac.toe.header=Boter, kaas en eieren
 settings.menu.header=Instellingen
+settings.lang.menu.header=Taal instellingen
 
-#displays
-player.name.display=Jij bent %s
+game.tic-tac-toe.header=Boter, kaas en eieren
+game.reversi.header=Othello
 
-#labels
+
+#
+# labels
+#
 directly.subscribe.label=Abonneer je in plaats daarvan direct op een spel!
 waiting.match.label=Wachten op een wedstrijd!
 win_scene.win_label=%s won!
 win_scene.lose_label=%s verloor!
 win_scene.person.you=Jij
 win_scene.person.nobody=Niemand
-error.message.server.label=Fout: %s
+player.name.display=[%s] %s(jij) VS [%s] %s(tegenstander)
 
-#buttons
-ttt.game.forfeit.button=Opgeven
+game.reversi.use_reversi_rules=Gebruik de regelset van Reservi.
+
+
+#
+# buttons
+#
 win_scene.go_back_to_main_menu.button=Terug
-ttt.game.start_game.button=Start
 settings.back.button=Terug
 settings.save.button=Opslaan
 leave.server.button=Verlaten
 subscribe.server.button=Abonneren
-tic.tac.toe.game.button=Boter, kaas en eieren
 game.scene.button=Verstuur
-othello.game.button=Othello
-settings.lang.button=Instellingen
-settings.lang.menu.header=Instellingen
+settings.lang.button=Taal instellingen
 
-#text field placeholders
-ttt.game.player.text_field.placeholder=Speler%d
+game.general.forfeit.button=Opgeven
+game.general.start_game.button=Start
+game.tic-tac-toe.select_button=Boter, kaas en eieren
+game.reversi.select_button=Othello
+
+
+#
+# text field placeholders
+#
+game.general.player.text_field.placeholder=Speler%d
+
+
+#
+# errors
+#
+error.incorrect_name=Spelers naam mag geen speciale karakters bevatten en moet tussen 1 en 16 karakters lang zijn!
+error.used_name=Een speler met deze naam is al ingelogd!
+error.message.server.label=Fout: %s
