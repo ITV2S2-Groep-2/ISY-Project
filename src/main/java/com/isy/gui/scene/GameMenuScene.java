@@ -49,10 +49,10 @@ public class GameMenuScene extends Scene{
         //TODO: make combobox translated
         dropdown1 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
                 .filter(val -> !val.equals(PlayerType.REMOTE))
-                .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type." + val.label.toLowerCase()))
+                .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type.", val.label))
                 .toArray());
         dropdown2 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
-                .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type." + val.label.toLowerCase()))
+                .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type.", val.label))
                 .toArray());
 
         textField1 = TextField.createTextField("game.general.player.text_field.placeholder", Math.round(Math.random() * 1000));
@@ -94,8 +94,8 @@ public class GameMenuScene extends Scene{
     }
 
     private void startGame(ActionEvent e){
-        PlayerType player1Type = PlayerType.fromLabel((String) dropdown1.getSelectedItem());
-        PlayerType player2Type = PlayerType.fromLabel((String) dropdown2.getSelectedItem());
+        PlayerType player1Type = PlayerType.fromLabel(((RoundedComboBox.ComboBoxTranslatedElement)dropdown1.getSelectedItem()).getValue());
+        PlayerType player2Type = PlayerType.fromLabel(((RoundedComboBox.ComboBoxTranslatedElement)dropdown2.getSelectedItem()).getValue());
 
         String player1Name = textField1.getText();
         String player2Name = textField2.getText();

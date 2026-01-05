@@ -46,6 +46,12 @@ game.reversi.select_button=Othello
 #
 game.general.player.text_field.placeholder=Player%d
 
+#
+# ComboBox elements
+#
+ui.combo_box.player_type.human=Human Player
+ui.combo_box.player_type.ai=Ai Player
+ui.combo_box.player_type.remote=Remote Player
 
 #
 # errors

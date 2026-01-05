@@ -58,15 +58,21 @@ public class RoundedComboBox<T> extends JComboBox<T> {
     }
 
     public static class ComboBoxTranslatedElement{
-        private final String langKey;
+        private final String langKeyPrefix;
+        private final String value;
 
-        public ComboBoxTranslatedElement(String langKey){
-            this.langKey = langKey;
+        public ComboBoxTranslatedElement(String langKeyPrefix, String value){
+            this.langKeyPrefix = langKeyPrefix;
+            this.value = value;
         }
 
         @Override
         public String toString() {
-            return LangHandler.get().translate(this.langKey);
+            return LangHandler.get().translate(this.langKeyPrefix + value.toLowerCase());
+        }
+
+        public String getValue() {
+            return this.value;
         }
     }
 }
