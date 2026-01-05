@@ -1,5 +1,7 @@
 package com.isy.gui.components.swing;
 
+import com.isy.util.lang.LangHandler;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.StrokeBorder;
@@ -53,5 +55,24 @@ public class RoundedComboBox<T> extends JComboBox<T> {
     @Override
     protected void paintChildren(Graphics g) {
         super.paintChildren(g);
+    }
+
+    public static class ComboBoxTranslatedElement{
+        private final String langKeyPrefix;
+        private final String value;
+
+        public ComboBoxTranslatedElement(String langKeyPrefix, String value){
+            this.langKeyPrefix = langKeyPrefix;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return LangHandler.get().translate(this.langKeyPrefix + value.toLowerCase());
+        }
+
+        public String getValue() {
+            return this.value;
+        }
     }
 }
