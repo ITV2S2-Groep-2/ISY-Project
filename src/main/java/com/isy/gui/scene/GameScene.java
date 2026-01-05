@@ -30,11 +30,12 @@ public class GameScene extends Scene {
     private Game<?> game;
     private String player1Name;
     private String player2Name;
-    private boolean myTurn;
+    private boolean myTurn = true;
     public GameScene(Window window) {
         super("game", window);
         this.boardButtons = new ArrayList<>();
     }
+
 
     @Override
     public void init() {
@@ -126,18 +127,19 @@ public class GameScene extends Scene {
         }
     }
 
-    public void setPlayerNames(String player1Name, String player2Name, boolean iStart) {
+    public void setPlayerNames(String player1Name, String player2Name, boolean isStart) {
         if (playerNameLabel != null) {
             this.player1Name = player1Name;
             this.player2Name = player2Name;
-            this.myTurn = iStart;
-            playerNameLabel.setText(LangHandler.get().translate("player.name.display", iStart ? "X" : "O", player1Name, !iStart ? "X" : "O", player2Name));
+            this.myTurn = isStart;
+            updatePlayerLabel(isStart);
+            // playerNameLabel.setText(LangHandler.get().translate("player.name.display", iStart ? "X" : "O", player1Name, !iStart ? "X" : "O", player2Name));
         }
-        updatePlayerLabel();
+
     }
 
-    private void updatePlayerLabel() {
-        if (playerNameLabel == null) return;
+    private void updatePlayerLabel(boolean isStart) {
+        if (playerNameLabel == null || game == null) return;
 
         String youSymbol = myTurn
                 ? "<span style='color:red'>X</span>"
@@ -173,6 +175,6 @@ public class GameScene extends Scene {
 
     public void nextTurn() {
         myTurn = !myTurn;
-        updatePlayerLabel();
+        updatePlayerLabel(myTurn);
     }
 }

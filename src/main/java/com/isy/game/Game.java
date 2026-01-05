@@ -70,7 +70,8 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
                 break;
             }
 
-            ((GameScene) getRenderScene()).nextTurn();
+
+
         }
 
 
@@ -145,6 +146,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         } else {
             this.activeTurnPlayer = this.players[0];
         }
+        ((GameScene) getRenderScene()).nextTurn();
     }
 
     public Board<T> getBoard() {
