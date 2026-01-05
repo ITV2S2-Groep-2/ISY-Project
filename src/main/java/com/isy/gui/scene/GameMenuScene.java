@@ -1,5 +1,6 @@
 package com.isy.gui.scene;
 
+import com.isy.gui.components.swing.RoundedComboBox;
 import com.isy.util.GameSettings;
 import com.isy.util.lang.LangHandler;
 import com.isy.game.*;
@@ -48,10 +49,10 @@ public class GameMenuScene extends Scene{
         //TODO: make combobox translated
         dropdown1 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
                 .filter(val -> !val.equals(PlayerType.REMOTE))
-                .map(val -> val.label)
+                .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type." + val.label.toLowerCase()))
                 .toArray());
         dropdown2 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
-                .map(val -> val.label)
+                .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type." + val.label.toLowerCase()))
                 .toArray());
 
         textField1 = TextField.createTextField("game.general.player.text_field.placeholder", Math.round(Math.random() * 1000));
