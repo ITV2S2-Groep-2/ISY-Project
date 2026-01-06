@@ -1,26 +1,26 @@
 package com.isy.gui.scene;
 
+import com.isy.gui.components.*;
+import com.isy.gui.components.input.CheckBox;
+import com.isy.gui.components.input.ComboBox;
+import com.isy.gui.components.input.TextField;
+import com.isy.gui.components.input.UIButton;
+import com.isy.gui.components.layout.ContentBox;
+import com.isy.gui.components.layout.FlexBox;
 import com.isy.gui.components.swing.RoundedComboBox;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.util.GameSettings;
 import com.isy.util.lang.LangHandler;
 import com.isy.game.*;
 import com.isy.gui.Window;
-import com.isy.gui.components.ComboBox;
-import com.isy.gui.components.Header;
-import com.isy.gui.components.TextField;
-import com.isy.gui.components.UIButton;
-import com.isy.gui.components.CheckBox;
 import com.isy.util.GameCreator;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
 
-import static com.isy.gui.GridBagConstrainsUtil.*;
-
-public class GameMenuScene extends Scene{
+public class GameMenuScene extends Scene {
     static JComboBox dropdown1, dropdown2;
     static JTextField textField1, textField2;
     static JTextField error;
@@ -37,16 +37,9 @@ public class GameMenuScene extends Scene{
             return;
         }
 
-        JPanel panel = this.getScenePanel();
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.CENTER;
-
         error = TextField.createTextField();
         error.hide();
 
-        //TODO: make combobox translated
         dropdown1 = ComboBox.createComboBox(Arrays.stream(PlayerType.values())
                 .filter(val -> !val.equals(PlayerType.REMOTE))
                 .map(val -> new RoundedComboBox.ComboBoxTranslatedElement("ui.combo_box.player_type.", val.label))
@@ -69,28 +62,29 @@ public class GameMenuScene extends Scene{
             }
         };
 
-        initConstraints(gbc, 2);
-        panel.add(error, next(gbc));
+        ContentBox contentBox = new ContentBox(getScenePanel(), BoxLayout.Y_AXIS);
 
-        row(gbc,2);
-        panel.add(Header.createHeader("game." + gameType.label + ".header"), next(gbc));
+        contentBox.add(error, 20);
+        contentBox.add(Header.createHeader("game." + gameType.label + ".header"), 20);
 
-        row(gbc,1);
-        panel.add(dropdown1, next(gbc));
-        panel.add(dropdown2, next(gbc));
+        FlexBox flexBox = new FlexBox(BoxLayout.X_AXIS);
+        flexBox.add(dropdown1, 20);
+        flexBox.add(dropdown2, 20);
+        contentBox.add(flexBox.getComponent(), 20);
 
-        row(gbc,1);
-        panel.add(textField1, next(gbc));
-        panel.add(textField2, next(gbc));
+        flexBox = new FlexBox(BoxLayout.X_AXIS);
+        flexBox.add(textField1, 20);
+        flexBox.add(textField2, 20);
+        contentBox.add(flexBox.getComponent(), 20);
 
-        if (gameSpecificComponent != null) {
-            row(gbc,1);
-            panel.add(gameSpecificComponent, next(gbc));
+        if (gameSpecificComponent != null){
+            contentBox.add(gameSpecificComponent, 20);
         }
 
-        row(gbc,1);
-        panel.add(UIButton.createButton("settings.back.button", this::goMainMenu), next(gbc));
-        panel.add(UIButton.createButton("game.general.start_game.button", this::startGame), next(gbc));
+        flexBox = new FlexBox(BoxLayout.X_AXIS);
+        flexBox.add(UIButton.createButton("settings.back.button", this::goMainMenu), 20);
+        flexBox.add(UIButton.createButton("game.general.start_game.button", this::startGame), 20);
+        contentBox.add(flexBox.getComponent(), 0);
     }
 
     private void startGame(ActionEvent e){

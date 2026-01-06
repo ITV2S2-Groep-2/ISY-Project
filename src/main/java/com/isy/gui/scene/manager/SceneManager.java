@@ -1,4 +1,4 @@
-package com.isy.gui.scene;
+package com.isy.gui.scene.manager;
 
 import org.jetbrains.annotations.Nullable;
 

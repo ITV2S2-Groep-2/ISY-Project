@@ -26,6 +26,7 @@ public class RoundedComboBox<T> extends JComboBox<T> {
         setFocusable(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setPreferredSize(new Dimension(256, 64));
+        setMaximumSize(new Dimension(256, 64));
     }
 
     @Override

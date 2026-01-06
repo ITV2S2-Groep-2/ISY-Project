@@ -1,4 +1,4 @@
-package com.isy.gui.components;
+package com.isy.gui.components.input;
 
 import com.isy.gui.Style;
 import com.isy.util.lang.LangHandler;

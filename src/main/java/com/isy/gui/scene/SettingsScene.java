@@ -1,11 +1,13 @@
 package com.isy.gui.scene;
 
-import com.isy.gui.components.SoundUtils;
+import com.isy.gui.components.layout.ContentBox;
+import com.isy.gui.components.layout.FlexBox;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.util.GameSettings;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
-import com.isy.gui.components.TextField;
-import com.isy.gui.components.UIButton;
+import com.isy.gui.components.input.TextField;
+import com.isy.gui.components.input.UIButton;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -13,7 +15,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class SettingsScene extends Scene{
+public class SettingsScene extends Scene {
     static JTextField portTextField, hostNameTextField;
     private JSlider volumeSlider;
     private JLabel volumeLabel;
@@ -24,37 +26,27 @@ public class SettingsScene extends Scene{
 
     @Override
     public void init() {
-        JPanel panel = this.getScenePanel();
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        ContentBox content = new ContentBox(getScenePanel(), BoxLayout.Y_AXIS);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        panel.add(Header.createHeader("settings.menu.header"), gbc);
+        content.add(Header.createHeader("settings.menu.header"), 20);
 
-        gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         hostNameTextField = TextField.createTextField(GameSettings.get().getHostName());
-        panel.add(hostNameTextField, gbc);
+        content.add(hostNameTextField, 20);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
         portTextField = TextField.createTextField(String.valueOf(GameSettings.get().getPortNumber()));
-        panel.add(portTextField, gbc);
+        content.add(portTextField, 20);
 
-        // ---- Volume slider ----
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        content.add(createVolumePanel(), 20);
 
+        content.add(UIButton.createButton("settings.lang.button", this::langSettings), 20);
+
+        FlexBox flexBox = new FlexBox(BoxLayout.X_AXIS);
+        flexBox.add(UIButton.createButton("settings.back.button", this::goMainMenu, 120, 64, null), 16);
+        flexBox.add(UIButton.createButton("settings.save.button", this::saveSettings, 120, 64, null), 0);
+        content.add(flexBox.getComponent(), 20);
+    }
+
+    private JPanel createVolumePanel(){
         JPanel volumePanel = new JPanel(new BorderLayout(8, 0));
         volumeLabel = new JLabel("Volume:"); // je kunt dit vervangen door een lokale tekst key
         volumePanel.add(volumeLabel, BorderLayout.WEST);
@@ -81,36 +73,13 @@ public class SettingsScene extends Scene{
         });
 
         volumePanel.add(volumeSlider, BorderLayout.CENTER);
-        panel.add(volumePanel, gbc);
 
-
-        // temp back button
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 1;
-        JButton backButton = UIButton.createButton("settings.back.button", this::goMainMenu);
-        backButton.setPreferredSize(new Dimension(128,64));
-        panel.add(backButton, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 5;
-        gbc.gridwidth = 1;
-        JButton saveButton = UIButton.createButton("settings.save.button", this::saveSettings);
-        saveButton.setPreferredSize(new Dimension(128,64));
-        panel.add(saveButton, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        JButton langButton = UIButton.createButton("settings.lang.button", this::langSettings);
-        langButton.setPreferredSize(new Dimension(128,64));
-        panel.add(langButton, gbc);
+        return volumePanel;
     }
 
     private void langSettings(ActionEvent actionEvent) {
         this.getWindow().getManager().showScene("langSwitchScene");
     }
-
 
     private void goMainMenu(ActionEvent actionEvent) {
         this.getWindow().getManager().showScene("mainMenuScene");

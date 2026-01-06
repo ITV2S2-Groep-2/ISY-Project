@@ -20,6 +20,8 @@ public class RoundedButton extends JButton {
         setOpaque(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setPreferredSize(new Dimension(256, 64));
+        setMaximumSize(new Dimension(256, 64));
+        setAlignmentX(Component.CENTER_ALIGNMENT);
     }
 
     @Override

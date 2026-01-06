@@ -1,6 +1,7 @@
 package com.isy.gui;
 
 import com.isy.gui.scene.*;
+import com.isy.gui.scene.manager.SceneManager;
 import com.isy.util.GameSettings;
 
 import javax.imageio.ImageIO;

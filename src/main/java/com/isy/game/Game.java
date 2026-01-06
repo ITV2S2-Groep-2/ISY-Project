@@ -4,7 +4,7 @@ import com.isy.Main;
 import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
-import com.isy.gui.scene.Scene;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;

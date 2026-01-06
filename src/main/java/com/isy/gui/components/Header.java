@@ -14,6 +14,7 @@ public class Header {
         JLabel label = new JLabel(text);
         label.setForeground(Style.primaryTextColor);
         label.setFont(new Font("Arial", Font.BOLD, 24));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //bind the label
         LangHandler.get().bind(label::setText, langKey, params);

@@ -1,11 +1,8 @@
-package com.isy.gui.scene;
+package com.isy.gui.scene.manager;
 
 import com.isy.game.Game;
 import com.isy.gui.Window;
-import com.isy.gui.components.ScenePanel;
-
-import javax.swing.*;
-import java.awt.*;
+import com.isy.gui.components.layout.ScenePanel;
 
 public abstract class Scene {
     private final String name;

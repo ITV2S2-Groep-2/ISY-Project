@@ -1,11 +1,9 @@
-package com.isy.gui.components;
+package com.isy.gui.components.input;
 
 import com.isy.gui.Style;
 import com.isy.gui.components.swing.RoundedComboBox;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.StrokeBorder;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 

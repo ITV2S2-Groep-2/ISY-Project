@@ -1,12 +1,13 @@
 package com.isy.gui.scene;
 
 import com.isy.game.GameType;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.server.await.Promise;
 import com.isy.server.Server;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.Label;
-import com.isy.gui.components.UIButton;
+import com.isy.gui.components.input.UIButton;
 import com.isy.util.GameCreator;
 
 import javax.swing.*;
@@ -20,12 +21,14 @@ import static com.isy.server.ServerUtils.playerToMovePattern;
 import static com.isy.server.ServerUtils.asyncAwait;
 import static com.isy.server.ServerUtils.await;
 
+//TODO: FIX UI TO USE NEW SYSTEM
 public class JoinGameServerMenuScene extends Scene {
     private String ownName;
     private JButton joinButton;
     private JLabel waitingLabel;
     private JLabel errorLabel;
 
+    @Deprecated
     private final GridBagConstraints constraints;
 
     public JoinGameServerMenuScene(Window window) {
@@ -115,6 +118,7 @@ public class JoinGameServerMenuScene extends Scene {
         });
     }
 
+    @Deprecated
     public GridBagConstraints generateConstrains(){
         GridBagConstraints gd = new GridBagConstraints();
         gd.gridx = 0;
@@ -125,6 +129,7 @@ public class JoinGameServerMenuScene extends Scene {
         return gd;
     }
 
+    @Deprecated
     public GridBagConstraints getConstraints() {
         return constraints;
     }

@@ -1,4 +1,4 @@
-package com.isy.gui.components;
+package com.isy.gui.components.layout;
 
 import com.isy.gui.Style;
 

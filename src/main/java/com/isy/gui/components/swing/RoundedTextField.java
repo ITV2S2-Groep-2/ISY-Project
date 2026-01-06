@@ -17,6 +17,7 @@ public class RoundedTextField extends JTextField {
         setOpaque(false);
         setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         setPreferredSize(new Dimension(256, 64));
+        setMaximumSize(new Dimension(256, 64));
         setForeground(this.textColor);
     }
 

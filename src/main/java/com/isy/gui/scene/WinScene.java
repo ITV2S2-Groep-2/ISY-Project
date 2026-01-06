@@ -3,7 +3,9 @@ package com.isy.gui.scene;
 import com.isy.Main;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
-import com.isy.gui.components.UIButton;
+import com.isy.gui.components.input.UIButton;
+import com.isy.gui.components.layout.ContentBox;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.util.lang.LangHandler;
 import com.isy.util.GameCreator;
 
@@ -11,29 +13,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class WinScene extends Scene{
+public class WinScene extends Scene {
     private JLabel title;
     private JButton backButton;
     private boolean online;
 
-    private final GridBagConstraints constraints;
-
     public WinScene(Window window) {
         super("winScene", window);
-        this.constraints = generateConstrains();
         this.getScenePanel().setLayout(new GridBagLayout());
     }
 
     @Override
     public void init() {
-        JPanel panel = this.getScenePanel();
+        ContentBox content = new ContentBox(getScenePanel(), BoxLayout.Y_AXIS);
 
         title = Header.createHeader("game." + GameCreator.getCurrentInstance().getGameType().label + ".header");
-
         backButton = UIButton.createButton("win_scene.go_back_to_main_menu.button", this::goBackToMainMenu, 3);
 
-        panel.add(title, getConstraints());
-        panel.add(backButton, getConstraints());
+        content.add(title, 20);
+        content.add(backButton, 20);
     }
 
     private void goBackToMainMenu(ActionEvent actionEvent) {
@@ -82,19 +80,5 @@ public class WinScene extends Scene{
         this.online = online;
         this.getWindow().getManager().showScene(this.getName());
         title.setText(LangHandler.get().translate("win_scene.lose_label", playerName));
-    }
-
-    public GridBagConstraints generateConstrains(){
-        GridBagConstraints gd = new GridBagConstraints();
-        gd.gridx = 0;
-        gd.fill = GridBagConstraints.NONE;
-        gd.anchor = GridBagConstraints.CENTER;
-        gd.insets = new Insets(5, 0, 5, 0);
-
-        return gd;
-    }
-
-    public GridBagConstraints getConstraints() {
-        return constraints;
     }
 }

@@ -1,4 +1,4 @@
-package com.isy.gui.components;
+package com.isy.gui.components.input;
 
 import com.isy.gui.Style;
 import com.isy.gui.components.swing.RoundedTextField;
@@ -6,8 +6,6 @@ import com.isy.util.lang.LangHandler;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.StrokeBorder;
 import java.awt.*;
 
 public class TextField {

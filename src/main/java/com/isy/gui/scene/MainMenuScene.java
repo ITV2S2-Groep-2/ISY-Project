@@ -4,16 +4,15 @@ import com.isy.Main;
 import com.isy.game.GameType;
 import com.isy.gui.Window;
 import com.isy.gui.components.*;
+import com.isy.gui.components.input.UIButton;
+import com.isy.gui.components.layout.ContentBox;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.util.GameCreator;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
-import static com.isy.gui.GridBagConstrainsUtil.*;
-
-public class MainMenuScene extends Scene{
+public class MainMenuScene extends Scene {
 
     public MainMenuScene(Window window) {
         super("mainMenuScene", window);
@@ -21,31 +20,21 @@ public class MainMenuScene extends Scene{
 
     @Override
     public void init() {
-        ScenePanel panel = this.getScenePanel();
-        panel.setBackgroundImage("/back2.jpg"); // dit zorgt ervoor dat alleen deze scene deze background heeft
+        getScenePanel().setBackgroundImage("/back2.jpg");
         SoundUtils.playBackgroundMusic("tttBack.wav");
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
 
-        initConstraints(gbc, 1);
+        ContentBox content = new ContentBox(getScenePanel(), BoxLayout.Y_AXIS);
 
-        panel.add(Header.createHeader("select.game.header"), next(gbc));
-        panel.add(UIButton.createButton("game." + GameType.TICTACTOE.label + ".select_button", e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), next(row(gbc)));
-        panel.add(UIButton.createButton("game." + GameType.OTHELLO.label + ".select_button", e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), next(row(gbc)));
+        content.add(Header.createHeader("select.game.header"), 20);
 
+        content.add(UIButton.createButton("game." + GameType.TICTACTOE.label + ".select_button",
+                e -> goToGameMenuSceneWithSelectedGame(GameType.TICTACTOE)), 20);
 
-        JButton settingsButton = UIButton.createButton(this::goToSettings);
-        settingsButton.setPreferredSize(new Dimension(48, 48));
-        try{
-            Image img = ImageIO.read(getClass().getResource("/settings.png"));
-            Image scaledImg = img.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-            settingsButton.setIcon(new ImageIcon(scaledImg));
-        } catch(Exception ex){
-            settingsButton.setText("settings.menu.button");
-            System.out.println(ex);
-        }
-        panel.add(settingsButton, next(row(gbc)));
+        content.add(UIButton.createButton("game." + GameType.OTHELLO.label + ".select_button",
+                e -> goToGameMenuSceneWithSelectedGame(GameType.OTHELLO)), 20);
+
+        content.add(UIButton.createButton(this::goToSettings, 48, 48,
+                "/settings.png", "settings.menu.button"), 0);
     }
 
     private void goToGameMenuSceneWithSelectedGame(GameType game) {

@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.game.ITile;
+import com.isy.gui.scene.manager.Scene;
 import com.isy.server.await.Promise;
 import com.isy.game.Game;
 import com.isy.game.ticTacToe.GameState;
@@ -11,8 +12,8 @@ import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
 import com.isy.util.ResizeBoardListener;
 import com.isy.util.lang.LangHandler;
-import com.isy.gui.components.UIButton;
-import com.isy.gui.components.TextField;
+import com.isy.gui.components.input.UIButton;
+import com.isy.gui.components.input.TextField;
 
 import javax.swing.*;
 import java.awt.*;
