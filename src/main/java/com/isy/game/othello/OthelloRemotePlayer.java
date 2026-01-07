@@ -1,6 +1,6 @@
 package com.isy.game.othello;
 
-import com.isy.game.Board;
+import com.isy.game.Game;
 import com.isy.game.player.RemotePlayer;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
@@ -14,7 +14,7 @@ public class OthelloRemotePlayer extends RemotePlayer<OthelloTile> {
     }
 
     @Override
-    public int[] getMove(Board<OthelloTile> board) {
+    public int[] getMove(Game<OthelloTile> game) {
         if(client == null){
             throw new IllegalStateException("RemotePlayer needs a server client");
         }

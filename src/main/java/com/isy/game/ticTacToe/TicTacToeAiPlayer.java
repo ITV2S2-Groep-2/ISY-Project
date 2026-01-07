@@ -1,6 +1,7 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.game.Board;
+import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.server.Server;
 
@@ -16,9 +17,9 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
     TicTacToeTile otherSymbol = (symbol == TicTacToeTile.X) ? TicTacToeTile.O : TicTacToeTile.X;
 
     @Override
-    public int[] getMove(Board<TicTacToeTile> board) {
-        System.out.println("AI");
-        //TEMP
+    public int[] getMove(Game<TicTacToeTile> game) {
+        Board<TicTacToeTile> board = game.getBoard();
+
         TicTacToeTile[][] tiles = board.getTiles();
 
         // Simuleer wachttijd omdat anders AI soms sneller zet dan de server je in de lobby kan zetten.

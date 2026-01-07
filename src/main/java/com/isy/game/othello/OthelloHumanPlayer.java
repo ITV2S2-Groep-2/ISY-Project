@@ -1,6 +1,7 @@
 package com.isy.game.othello;
 
 import com.isy.game.Board;
+import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.server.Server;
 import com.isy.util.PlayerEventManager;
@@ -16,7 +17,8 @@ public class OthelloHumanPlayer extends Player<OthelloTile> {
     }
 
     @Override
-    public int[] getMove(Board<OthelloTile> board) {
+    public int[] getMove(Game<OthelloTile> game) {
+        Board<OthelloTile> board = game.getBoard();
         int[] move = await(PlayerEventManager.get());
 
         //TODO: remove remote to probably game class

@@ -102,7 +102,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
         this.renderBoard();
 
-        move = this.activeTurnPlayer.getMove(this.getBoard());
+        move = this.activeTurnPlayer.getMove(this);
         if(move == null){
             return false;
         }
@@ -153,12 +153,20 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         return board;
     }
 
-    public Player<?> getOpponent() {
+    public Player<T> getActiveTurnPlayer() {
+        return this.activeTurnPlayer;
+    }
+
+    public Player<T> getOpponent() {
         if (this.players[0] == this.activeTurnPlayer) {
             return this.players[1];
         } else {
             return this.players[0];
         }
+    }
+
+    public int getTurnCounter() {
+        return this.turnCounter;
     }
 
     @Override

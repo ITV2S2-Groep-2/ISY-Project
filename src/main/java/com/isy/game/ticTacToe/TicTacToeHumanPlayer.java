@@ -1,6 +1,7 @@
 package com.isy.game.ticTacToe;
 
 import com.isy.game.Board;
+import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.server.Server;
 import com.isy.util.PlayerEventManager;
@@ -16,7 +17,9 @@ public class TicTacToeHumanPlayer extends Player<TicTacToeTile> {
     }
 
     @Override
-    public int[] getMove(Board<TicTacToeTile> board) {
+    public int[] getMove(Game<TicTacToeTile> game) {
+        Board<TicTacToeTile> board = game.getBoard();
+
         int[] move = await(PlayerEventManager.get());
 
         if(move != null){
