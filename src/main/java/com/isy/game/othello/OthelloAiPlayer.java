@@ -17,13 +17,7 @@ public class OthelloAiPlayer extends Player<OthelloTile> {
     public int[] getMove(Game<OthelloTile> game) {
         OthelloGame othelloGame = (OthelloGame) game;
         boolean useReversiRules = othelloGame.getUseReversiRules();
-        List<int[]> availableMoves;
-
-        if (useReversiRules && game.getTurnCounter() <= 4) {
-            availableMoves = othelloGame.openingAvailableMoves();
-        } else {
-            availableMoves = OthelloUtils.getAvailableMoves2(game.getBoard(), game.getActiveTurnPlayer().getSymbol(), game.getOpponent().getSymbol());
-        }
+        List<int[]> availableMoves = OthelloUtils.getAvailableMoves(game.getBoard(), game.getActiveTurnPlayer().getSymbol(), game.getOpponent().getSymbol(), useReversiRules && game.getTurnCounter() <= 4);
 
         if (availableMoves.isEmpty()) {
             return null;

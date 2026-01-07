@@ -30,13 +30,7 @@ public class OthelloGame extends Game<OthelloTile> {
     public boolean handleSingleTurn() {
         int[] move = null;
 
-        List<int[]> availableMoves = new ArrayList<>();
-        if (this.useReversiRules && this.turnCounter <= 4) {
-            availableMoves = this.openingAvailableMoves();
-        } else {
-            availableMoves = OthelloUtils.getAvailableMoves2(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol());
-
-        }
+        List<int[]> availableMoves = OthelloUtils.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol(), useReversiRules && this.getTurnCounter() <= 4);
 
         for (int[] availableMove : availableMoves) {
             System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
@@ -141,20 +135,6 @@ public class OthelloGame extends Game<OthelloTile> {
         }
     }
 
-    public List<int[]> openingAvailableMoves() {
-        List<int[]> moves = new ArrayList<>();
-        int[][] centerTiles = new int[][]{ new int[]{3, 3}, new int[]{3, 4}, new int[]{4, 3}, new int[]{4, 4}};
-
-        for (int[] coord : centerTiles) {
-            OthelloTile tile = this.getBoard().getTile(coord[0], coord[1]);
-            if (tile != OthelloTile.PLAYER_1 && tile != OthelloTile.PLAYER_2) {
-                moves.add(coord);
-            }
-        }
-
-        return moves;
-    }
-
     private void addAvailableMovesToBoard(List<int[]> availableMoves) {
         for (int[] move : availableMoves) {
             this.getBoard().setTile(move[0], move[1], OthelloTile.POSSIBLE_MOVE);
@@ -188,9 +168,6 @@ public class OthelloGame extends Game<OthelloTile> {
                 }
             }
         }
-
-        System.out.println("currentplayer count = " + currentPlayerCount + p.getSymbol().toString());
-        System.out.println("opponentPlayer count = " + opponentPlayerCount + opponentTile.toString());
 
         if (opponentPlayerCount == 0) {
             return true;
