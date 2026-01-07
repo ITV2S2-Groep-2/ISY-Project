@@ -54,7 +54,7 @@ public class OthelloGame extends Game<OthelloTile> {
             return false;
         }
 
-        move = this.activeTurnPlayer.getMove(this.getBoard());
+        move = this.activeTurnPlayer.getMove(this);
         if (move == null) {
             return false;
         }
@@ -141,7 +141,7 @@ public class OthelloGame extends Game<OthelloTile> {
         }
     }
 
-    private List<int[]> openingAvailableMoves() {
+    public List<int[]> openingAvailableMoves() {
         List<int[]> moves = new ArrayList<>();
         int[][] centerTiles = new int[][]{ new int[]{3, 3}, new int[]{3, 4}, new int[]{4, 3}, new int[]{4, 4}};
 
@@ -201,5 +201,9 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         return false;
+    }
+
+    public boolean getUseReversiRules() {
+        return this.useReversiRules;
     }
 }

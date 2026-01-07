@@ -1,5 +1,6 @@
 package com.isy.game.player;
 import com.isy.game.Board;
+import com.isy.game.Game;
 import com.isy.game.GameType;
 import com.isy.game.ITile;
 import com.isy.server.Server;
@@ -31,7 +32,7 @@ public abstract class Player<T extends Enum<T> & ITile> {
         return symbol;
     }
 
-    public abstract int[] getMove(Board<T> board);
+    public abstract int[] getMove(Game<T> game);
 
     public void sendServerData(int[] move){
         await(new Promise().setCommand("move " + formatClientMove(move)));
