@@ -11,6 +11,7 @@ import com.isy.gui.scene.JoinGameServerMenuScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 
 import static com.isy.gui.scene.GameMenuScene.joinError;
@@ -27,6 +28,12 @@ public class GameCreator {
     }
 
     public static GameCreator createNewInstance(GameType gameType){
+        instance = new GameCreator(gameType);
+
+        return getCurrentInstance();
+    }
+
+    public static GameCreator createNewInstance(GameType gameType, File file){
         instance = new GameCreator(gameType);
 
         return getCurrentInstance();
@@ -92,16 +99,20 @@ public class GameCreator {
         Class<? extends Game<?>> gameClass = GameType.getClass(gameType);
         Game<?> game;
         try {
-            game = gameClass.getDeclaredConstructor(Player[].class).newInstance((Object)new Player[]{player1, player2});
+            game = gameClass.getDeclaredConstructor(Player[].class).newInstance((Object) new Player[]{player1, player2});
         } catch (Exception e) {
             throw new RuntimeException("invalid game constructor", e);
         }
 
-        Main.window.getManager().addScene(new GameScene(Main.window), true);
+        ResultWriter.player1 = player1;
+        ResultWriter.player2 = player2;
 
-        game.setRenderScene(Main.window.getManager().getScene("game"));
-        new Thread(game).start();
-        Main.window.getManager().showScene("game");
+        // Main.window.getManager().addScene(new GameScene(Main.window), true);
+
+        // game.setRenderScene(Main.window.getManager().getScene("game"));
+        game.run();
+//        new Thread(game).start();
+        // Main.window.getManager().showScene("game");
     }
 
     public void startRemoteGame(boolean iStart) {
