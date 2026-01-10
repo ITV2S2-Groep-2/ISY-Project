@@ -9,8 +9,10 @@ import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
+import com.isy.util.ResultWriter;
 import com.isy.util.lang.LangHandler;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 import static com.isy.server.ServerUtils.asyncAwait;
@@ -86,14 +88,20 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         /*
             winscene handler
          */
-        Main.window.getManager().addScene(new WinScene(Main.window));
+        // Main.window.getManager().addScene(new WinScene(Main.window));
+
         if (this.state == GameState.WON){
             String playerName = this.activeTurnPlayer.getName();
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
+            System.out.println(playerName + " Has Won");
+            ResultWriter.winPlayer1++;
+            // ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
-            ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
+            System.out.println(getOpponent() + "Has Won");
+            ResultWriter.winPlayer2++;
+            // ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
         } else {
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
+            System.out.println("remesie");
+            // ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
     };
 
