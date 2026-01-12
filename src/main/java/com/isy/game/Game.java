@@ -2,6 +2,7 @@ package com.isy.game;
 
 import com.isy.Main;
 import com.isy.game.player.Player;
+import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.manager.Scene;
@@ -10,8 +11,6 @@ import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
 import com.isy.util.lang.LangHandler;
-
-import java.util.Arrays;
 
 import static com.isy.server.ServerUtils.asyncAwait;
 
@@ -106,9 +105,13 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         if(move == null){
             return false;
         }
-        System.out.println(Arrays.toString(move));
-        System.out.println(this.activeTurnPlayer.getSymbol());
+
         boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+
+        if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
+            this.activeTurnPlayer.sendServerData(move);
+        }
+
         if (correctMove) {
             if(this.checkWin(move[0], move[1], this.activeTurnPlayer)){
                 this.state = GameState.WON;

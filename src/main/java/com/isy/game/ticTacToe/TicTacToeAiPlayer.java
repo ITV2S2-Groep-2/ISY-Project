@@ -30,10 +30,7 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
         }
 
         int[] move = getBestMove(tiles);
-
-        if(this.client != null){
-            sendServerData(move);
-        }
+        
         return move;
     }
 

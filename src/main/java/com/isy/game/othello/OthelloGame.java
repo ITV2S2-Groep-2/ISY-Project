@@ -3,6 +3,7 @@ package com.isy.game.othello;
 import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.game.player.Player;
+import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.util.GameSettings;
 
@@ -49,6 +50,8 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         move = this.activeTurnPlayer.getMove(this);
+        this.removeAvailableMovesFromBoard();
+
         if (move == null) {
             return false;
         }
@@ -60,8 +63,11 @@ public class OthelloGame extends Game<OthelloTile> {
             return val[0] == finalMove[0] && val[1] == finalMove[1];
         });
 
-        this.removeAvailableMovesFromBoard();
         boolean correctMove = isAvailable ? this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol()) : false;
+
+        if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
+            this.activeTurnPlayer.sendServerData(move);
+        }
 
         if (this.useReversiRules && this.turnCounter <= 4) {
             this.giveTurnOver();

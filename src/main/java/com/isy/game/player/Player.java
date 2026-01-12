@@ -1,5 +1,4 @@
 package com.isy.game.player;
-import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.game.GameType;
 import com.isy.game.ITile;
