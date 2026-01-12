@@ -22,7 +22,7 @@ win_scene.person.nobody=Nobody
 player.name.display=[%s] %s(You) VS [%s] %s(Opponent)
 
 game.reversi.use_reversi_rules=Use the Reversi ruleset.
-
+game.volume.label=Volume:
 
 #
 # buttons

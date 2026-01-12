@@ -1,7 +1,9 @@
 package com.isy.gui.scene;
 
+import com.isy.gui.Style;
 import com.isy.gui.components.layout.ContentBox;
 import com.isy.gui.components.layout.FlexBox;
+import com.isy.gui.components.swing.RoundedPanel;
 import com.isy.gui.scene.manager.Scene;
 import com.isy.util.GameSettings;
 import com.isy.gui.Window;
@@ -15,10 +17,11 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+import static com.isy.gui.components.Label.createLabel;
+
 public class SettingsScene extends Scene {
     static JTextField portTextField, hostNameTextField;
     private JSlider volumeSlider;
-    private JLabel volumeLabel;
 
     public SettingsScene(Window window) {
         super("settingsScene", window);
@@ -47,9 +50,8 @@ public class SettingsScene extends Scene {
     }
 
     private JPanel createVolumePanel(){
-        JPanel volumePanel = new JPanel(new BorderLayout(8, 0));
-        volumeLabel = new JLabel("Volume:"); // je kunt dit vervangen door een lokale tekst key
-        volumePanel.add(volumeLabel, BorderLayout.WEST);
+        JPanel volumePanel = new RoundedPanel(new BorderLayout(8, 0));
+        volumePanel.add(createLabel("game.volume.label"), BorderLayout.WEST);
 
         // slider 0..100
         GameSettings gs = GameSettings.get();
@@ -60,6 +62,8 @@ public class SettingsScene extends Scene {
         volumeSlider.setPaintTicks(true);
         volumeSlider.setPaintLabels(true);
         volumeSlider.setFocusable(false);
+        volumeSlider.setOpaque(false);
+        volumeSlider.setForeground(Style.primaryTextColor);
 
         // update label als slider verandert en save naar GameSettings direct
         volumeSlider.addChangeListener(new ChangeListener() {
@@ -67,7 +71,6 @@ public class SettingsScene extends Scene {
             public void stateChanged(ChangeEvent e) {
                 int value = volumeSlider.getValue();
                 // bijvoorbeeld: toon % in label
-                volumeLabel.setText("Volume: " + value + "%");
                 GameSettings.get().setBackgroundVolume(value);
             }
         });
