@@ -75,10 +75,12 @@ public class GameMenuScene extends Scene {
         flexBox = new FlexBox(BoxLayout.X_AXIS);
         flexBox.add(textField1, 20);
         flexBox.add(textField2, 20);
-        contentBox.add(flexBox.getComponent(), 20);
+        contentBox.add(flexBox.getComponent(), gameSpecificComponent != null ? 5 : 20);
 
         if (gameSpecificComponent != null){
-            contentBox.add(gameSpecificComponent, 20);
+            flexBox = new FlexBox(BoxLayout.X_AXIS);
+            flexBox.add(gameSpecificComponent, 0);
+            contentBox.add(flexBox.getComponent(), 5);
         }
 
         flexBox = new FlexBox(BoxLayout.X_AXIS);

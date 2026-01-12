@@ -1,6 +1,7 @@
 package com.isy.gui.components.input;
 
 import com.isy.gui.Style;
+import com.isy.gui.components.swing.SpecialCheckBox;
 import com.isy.util.lang.LangHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,9 +11,9 @@ import java.awt.event.ItemListener;
 
 public class CheckBox {
     public static JCheckBox createCheckBox() {
-        JCheckBox checkBox = new JCheckBox();
+        JCheckBox checkBox = new SpecialCheckBox();
 
-        checkBox.setBackground(null);
+        checkBox.setBackground(Style.primaryComponentBackgroundColor);
         checkBox.setForeground(Style.primaryTextColor);
 
         checkBox.setFont(UIManager.getDefaults().getFont("TabbedPane.font"));
@@ -21,7 +22,8 @@ public class CheckBox {
         checkBox.setContentAreaFilled(false);
         checkBox.setOpaque(false);
         checkBox.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        checkBox.setPreferredSize(new Dimension(256, 64));
+        checkBox.setPreferredSize(new Dimension(552, 64));
+        checkBox.setMaximumSize(new Dimension(552, 64));
 
         return checkBox;
     }
