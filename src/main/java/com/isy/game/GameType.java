@@ -46,6 +46,12 @@ public enum GameType {
                     default -> null;
                 };
             }
+            case RANDOMAI -> {
+                return switch (gameType) {
+                    case OTHELLO -> OthelloRandomAI.class;
+                    default -> null;
+                };
+            }
 
             case REMOTE -> {
                 return switch (gameType) {

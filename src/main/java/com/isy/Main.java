@@ -79,7 +79,7 @@ public class Main {
             ResultWriter.addModel(model);
             for (int i = 0; i < 499; i++ ){
                 long startTime =  System.nanoTime();
-               //  gameCreator.startLocalGameSimulation(model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null));
+                gameCreator.startLocalGameSimulation(model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null));
                 long endTime = System.nanoTime();
                 long realTime = endTime - startTime;
                 if (realTime < minTime) {
