@@ -3,16 +3,14 @@ package com.isy.util;
 import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.game.othello.OthelloGame;
-import com.isy.game.othello.OthelloRemotePlayer;
 import com.isy.game.othello.OthelloTile;
 import com.isy.game.othello.OthelloUtils;
 import com.isy.game.player.Player;
-import com.isy.game.ticTacToe.TicTacToeTile;
 import com.isy.server.Server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class OthelloAI extends Player<OthelloTile> {
 
@@ -92,7 +90,14 @@ public class OthelloAI extends Player<OthelloTile> {
             return null;
         }
 
+        double startTime = System.currentTimeMillis();
+        System.out.println("before best move " + startTime);
+
         int[] move = getBestMove(tiles);
+
+        double endTime = System.currentTimeMillis();
+        System.out.println("after best move: " + Arrays.toString(move) + " " + endTime);
+        System.out.println("time in ms: " + (endTime - startTime));
 
         return move;
     }
@@ -101,18 +106,16 @@ public class OthelloAI extends Player<OthelloTile> {
         int[] bestMove = new int[]{-1, -1};
         int bestValue = Integer.MIN_VALUE;
 
-        for(int row = 0; row < boardSize; row++){
-            for(int col = 0; col < boardSize; col++){
-                if(tiles[col][row] == OthelloTile.EMPTY){
-                    tiles[col][row] = symbol;
-                    int moveValue = minimax(tiles, maxDepth, -100000, 100000, false);
-                    tiles[col][row] = OthelloTile.EMPTY;
-                    if(moveValue > bestValue){
-                        bestMove[0] = col;
-                        bestMove[1] = row;
-                        bestValue = moveValue;
-                    }
-                }
+        List<int[]> avm = this.availableMoves(tiles, this.symbol, this.otherSymbol);
+
+        for (int[] move : avm) {
+            tiles[move[0]][move[1]] = symbol;
+            int moveValue = minimax(tiles, maxDepth, -100000, 100000, false);
+            tiles[move[0]][move[1]] = OthelloTile.EMPTY;
+            if(moveValue > bestValue){
+                bestMove[0] = move[0];
+                bestMove[1] = move[1];
+                bestValue = moveValue;
             }
         }
 
@@ -437,38 +440,38 @@ public class OthelloAI extends Player<OthelloTile> {
 
         if(isMax){
             int highestVal = -10000;
-            for(int row = 0; row < boardSize; row++){
-                for(int col = 0; col < boardSize; col++){
-                    if(tiles[col][row] == OthelloTile.EMPTY){
-                        tiles[col][row] = symbol;
-                        int curVal = minimax(tiles, depth-1, alpha, beta, false);
-                        tiles[col][row] = OthelloTile.EMPTY;
-                        highestVal= Math.max(highestVal, curVal);
-                        alpha = Math.max(alpha, curVal);
-                        if(beta <= alpha){
-                            break;
-                        }
-                    }
+
+            List<int[]> avm = this.availableMoves(tiles, this.symbol, this.otherSymbol);
+
+            for (int[] move : avm) {
+                tiles[move[0]][move[1]] = symbol;
+                int curVal = minimax(tiles, depth-1, alpha, beta, false);
+                tiles[move[0]][move[1]] = OthelloTile.EMPTY;
+                highestVal= Math.max(highestVal, curVal);
+                alpha = Math.max(alpha, curVal);
+                if(beta <= alpha){
+                    break;
                 }
             }
+
             return highestVal;
         }
         else{
             int lowestVal = 10000;
-            for(int row = 0; row < boardSize; row++){
-                for(int col = 0; col < boardSize; col++){
-                    if(tiles[col][row] == OthelloTile.EMPTY){
-                        tiles[col][row] = otherSymbol;
-                        int curVal = minimax(tiles, depth-1, alpha, beta, true);
-                        tiles[col][row] = OthelloTile.EMPTY;
-                        lowestVal= Math.min(lowestVal, curVal);
-                        beta = Math.min(beta, curVal);
-                        if(beta <= alpha){
-                            break;
-                        }
-                    }
+
+            List<int[]> avm = this.availableMoves(tiles, this.otherSymbol, this.symbol);
+
+            for (int[] move : avm) {
+                tiles[move[0]][move[1]] = symbol;
+                int curVal = minimax(tiles, depth-1, alpha, beta, true);
+                tiles[move[0]][move[1]] = OthelloTile.EMPTY;
+                lowestVal= Math.min(lowestVal, curVal);
+                beta = Math.min(beta, curVal);
+                if(beta <= alpha){
+                    break;
                 }
             }
+
             return lowestVal;
         }
     }
