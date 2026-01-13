@@ -16,19 +16,21 @@ import java.util.Random;
 
 public class OthelloAI extends Player<OthelloTile> {
 
+    String parentName = "";
     double mobility_diffWeight = 5;
     double corner_diffWeight = 25;
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
     int maxDepth = 10;
 
-    public OthelloAI(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth){
+    public OthelloAI(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
         super(name, symbol, client);
         this.mobility_diffWeight = mobWeight;
         this.corner_diffWeight = cornerWeight;
         this.stability_diffWeight = stabilityWeight;
         this.disc_diffWeight = discWeight;
         this.maxDepth = maxDepth;
+        this.parentName = parentName;
     }
 
     public static int boardSize = 8;
