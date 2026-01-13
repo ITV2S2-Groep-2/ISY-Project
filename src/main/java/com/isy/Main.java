@@ -77,7 +77,6 @@ public class Main {
             long minTime = Long.MAX_VALUE;
             long maxTime = 0;
             ResultWriter.addModel(model);
-            gameCreator.setPlayers(null, PlayerType.RANDOMAI, null, "RandomAI");
             for (int i = 0; i < 499; i++ ){
                 long startTime =  System.nanoTime();
                //  gameCreator.startLocalGameSimulation(model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null));

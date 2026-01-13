@@ -46,13 +46,7 @@ public enum GameType {
                     default -> null;
                 };
             }
-            case RANDOMAI -> {
-                return switch (gameType) {
-                    case TICTACTOE -> TicTacToeAiPlayer.class;
-                    case OTHELLO -> OthelloRandomAI.class;
-                    default -> null;
-                };
-            }
+
             case REMOTE -> {
                 return switch (gameType) {
                     case TICTACTOE -> TicTacToeRemotePlayer.class;
