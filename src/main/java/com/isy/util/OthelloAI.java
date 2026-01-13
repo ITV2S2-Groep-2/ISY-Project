@@ -32,6 +32,33 @@ public class OthelloAI extends Player<OthelloTile> {
         this.maxDepth = maxDepth;
         this.parentName = parentName;
     }
+    public OthelloAI(String name, OthelloTile symbol, Server client){
+        super(name, symbol, client);
+    }
+
+
+
+    public String getParent() {
+        return parentName;
+    }
+
+    public double getMobility_diffWeight() {
+        return mobility_diffWeight;
+    }
+
+    public double getCorner_diffWeight() {
+        return corner_diffWeight;
+    }
+    public double getStability_diffWeight() {
+        return stability_diffWeight;
+    }
+    public double getDisc_diffWeight() {
+        return disc_diffWeight;
+    }
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
 
     public static int boardSize = 8;
 

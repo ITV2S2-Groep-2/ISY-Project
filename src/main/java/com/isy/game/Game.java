@@ -92,15 +92,13 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
         if (this.state == GameState.WON){
             String playerName = this.activeTurnPlayer.getName();
-            System.out.println(playerName + " Has Won");
-            ResultWriter.winPlayer1++;
+            ResultWriter.addWin(playerName);
             // ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
-            System.out.println(getOpponent() + "Has Won");
-            ResultWriter.winPlayer2++;
+            ResultWriter.addLoss(this.activeTurnPlayer.getName());
             // ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
         } else {
-            System.out.println("remesie");
+            ResultWriter.addDraw(this.activeTurnPlayer.getName());
             // ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
     };
