@@ -112,31 +112,6 @@ public class GameCreator {
         // Main.window.getManager().showScene("game");
     }
 
-    public void startLocalGameSimulation(Player<?> model, Player<?> RandomAI) {
-        Class<? extends Player<?>> player2Class = GameType.getPlayerClass(getPlayer2(), gameType);
-        Player<?> player1 = model;
-        Player<?> player2 = RandomAI;
-
-
-
-        GameType gameType = getGameType();
-        Class<? extends Game<?>> gameClass = GameType.getClass(gameType);
-        Game<?> game;
-        try {
-            game = gameClass.getDeclaredConstructor(Player[].class).newInstance((Object) new Player[]{player1, player2});
-        } catch (Exception e) {
-            throw new RuntimeException("invalid game constructor", e);
-        }
-
-
-        // Main.window.getManager().addScene(new GameScene(Main.window), true);
-
-        // game.setRenderScene(Main.window.getManager().getScene("game"));
-        game.run();
-//        new Thread(game).start();
-        // Main.window.getManager().showScene("game");
-    }
-
     public void startRemoteGame(boolean iStart) {
         Class<? extends Player<?>> localPlayerClass = GameType.getPlayerClass(getPlayer1(), gameType);
         Class<? extends Player<?>> remotePlayerClass = GameType.getPlayerClass(PlayerType.REMOTE, gameType);

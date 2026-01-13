@@ -4,7 +4,9 @@ import com.isy.game.Game;
 import com.isy.game.GameType;
 import com.isy.game.ITile;
 import com.isy.game.PlayerType;
+import com.isy.game.othello.OthelloGame;
 import com.isy.game.othello.OthelloTile;
+import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.TicTacToeTile;
 import com.isy.gui.Window;
 import com.isy.util.*;
@@ -71,7 +73,7 @@ public class Main {
 //                maak list van modellen
 
         //zo kom je uit op 25 modellen totaal
-        GameCreator gameCreator = GameCreator.createNewInstance(GameType.OTHELLO);
+
         for( OthelloAI model : models) {
             long totalTime = 0;
             long minTime = Long.MAX_VALUE;
@@ -79,7 +81,8 @@ public class Main {
             ResultWriter.addModel(model);
             for (int i = 0; i < 499; i++ ){
                 long startTime =  System.nanoTime();
-                gameCreator.startLocalGameSimulation(model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null));
+                OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                game.run();
                 long endTime = System.nanoTime();
                 long realTime = endTime - startTime;
                 if (realTime < minTime) {

@@ -273,7 +273,7 @@ public class OthelloAI extends Player<OthelloTile> {
             }
 
             //count stable discs left side, down > up
-            for (int row = boardSize - 1; row > 0; row--){
+            for (int row = boardSize - 2; row > 0; row--){
                 if(tiles[0][row] == tiles[0][row + 1] && tiles[0][row] != OthelloTile.EMPTY){
                     if(tiles[0][row] == symbol) {
                         if(!isStable[0][row]) {
@@ -297,7 +297,7 @@ public class OthelloAI extends Player<OthelloTile> {
         if(tiles[boardSize - 1][0] == symbol){
 
             //count stable discs upper side, right > left
-            for (int col = boardSize - 1; col > 0; col--){
+            for (int col = boardSize - 2; col > 0; col--){
                 if(tiles[col][0] == tiles[col + 1][0] && tiles[col][0] != OthelloTile.EMPTY){
                     if(!isStable[col][0]) {
                         isStable[col][0] = true;
@@ -339,7 +339,7 @@ public class OthelloAI extends Player<OthelloTile> {
         if(tiles[boardSize - 1][boardSize - 1] == symbol){
 
             //count stable discs lower side, right > left
-            for (int col = boardSize - 1; col > 0; col--){
+            for (int col = boardSize - 2; col > 0; col--){
                 if(tiles[col][boardSize - 1] == tiles[col + 1][boardSize - 1] && tiles[col][boardSize - 1] != OthelloTile.EMPTY){
                     if(tiles[col][boardSize - 1] == symbol) {
                         if(!isStable[col][boardSize - 1]) {
@@ -359,7 +359,7 @@ public class OthelloAI extends Player<OthelloTile> {
             }
 
             //count stable discs right side, down > up
-            for (int row = boardSize - 1; row > 0; row--){
+            for (int row = boardSize - 2; row > 0; row--){
                 if(tiles[boardSize - 1][row] == tiles[boardSize - 1][row + 1] && tiles[boardSize - 1][row] != OthelloTile.EMPTY){
                     if(tiles[boardSize - 1][row] == symbol) {
                         if(!isStable[boardSize - 1][row]) {
