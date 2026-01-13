@@ -16,12 +16,22 @@ import java.util.Random;
 
 public class OthelloAI extends Player<OthelloTile> {
 
-    public OthelloAI(String name, OthelloTile symbol, Server client){
+    double mobility_diffWeight = 5;
+    double corner_diffWeight = 25;
+    double stability_diffWeight = 10;
+    double disc_diffWeight = 1;
+    int maxDepth = 10;
+
+    public OthelloAI(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth){
         super(name, symbol, client);
+        this.mobility_diffWeight = mobWeight;
+        this.corner_diffWeight = cornerWeight;
+        this.stability_diffWeight = stabilityWeight;
+        this.disc_diffWeight = discWeight;
+        this.maxDepth = maxDepth;
     }
 
     public static int boardSize = 8;
-    int MAX_DEPTH = 10;
 
     OthelloTile symbol = getSymbol();
     OthelloTile otherSymbol = (symbol == OthelloTile.PLAYER_1) ? OthelloTile.PLAYER_2 : OthelloTile.PLAYER_1;
@@ -66,7 +76,7 @@ public class OthelloAI extends Player<OthelloTile> {
             for(int col = 0; col < boardSize; col++){
                 if(tiles[col][row] == OthelloTile.EMPTY){
                     tiles[col][row] = symbol;
-                    int moveValue = minimax(tiles, MAX_DEPTH, -100000, 100000, false);
+                    int moveValue = minimax(tiles, maxDepth, -100000, 100000, false);
                     tiles[col][row] = OthelloTile.EMPTY;
                     if(moveValue > bestValue){
                         bestMove[0] = col;
