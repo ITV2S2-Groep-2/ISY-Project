@@ -22,7 +22,7 @@ win_scene.person.nobody=Niemand
 player.name.display=[%s] %s(jij) VS [%s] %s(tegenstander)
 
 game.reversi.use_reversi_rules=Gebruik de regelset van Reservi.
-
+game.volume.label=Volume:
 
 #
 # buttons

@@ -37,57 +37,29 @@ public class GameScene extends Scene {
 
     @Override
     public void init() {
-        JPanel controlPanel = this.getScenePanel();
-        controlPanel.setLayout(new GridBagLayout());
+        JPanel scenePanel = this.getScenePanel();
+        scenePanel.setLayout(new FlowLayout());
 
         JButton forfeitButton = UIButton.createButton("game.general.forfeit.button", this::goForfeit);
         forfeitButton.setPreferredSize(new Dimension(128, 32));
-        GridBagConstraints forfeitConstraints = new GridBagConstraints();
-        forfeitConstraints.gridx = 0;
-        forfeitConstraints.gridy = 1;
-        forfeitConstraints.anchor = GridBagConstraints.LINE_START;
-        forfeitConstraints.insets = new Insets(5, 5, 5, 5);
-        controlPanel.add(forfeitButton, forfeitConstraints);
-
-        JTextField messageText = TextField.createTextField();
-        GridBagConstraints messageTextConstraints = new GridBagConstraints();
-        messageTextConstraints.gridx = 2;
-        messageTextConstraints.gridy = 15;
-        messageTextConstraints.anchor = GridBagConstraints.LINE_START;
-        messageTextConstraints.insets = new Insets(5, 5, 5, 5);
-        controlPanel.add(messageText, messageTextConstraints);
-
-        JButton sendButton = UIButton.createButton("game.scene.button", actionEvent -> sendMessage(actionEvent, messageText.getText()));
-        sendButton.setPreferredSize(new Dimension(128, 32));
-        GridBagConstraints sendConstraints = new GridBagConstraints();
-        sendConstraints.gridx = 2;
-        sendConstraints.gridy = 16;
-        sendConstraints.anchor = GridBagConstraints.LINE_START;
-        sendConstraints.insets = new Insets(5, 5, 5, 5);
-        controlPanel.add(sendButton, sendConstraints);
+        scenePanel.add(forfeitButton);
 
         playerNameLabel = Label.createLabel("");
         playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        GridBagConstraints labelConstraints = new GridBagConstraints();
-        labelConstraints.gridx = 0;
-        labelConstraints.gridy = 0;
-        labelConstraints.gridwidth = GridBagConstraints.REMAINDER;
-        labelConstraints.insets = new Insets(0, 0, 10, 0);
-        labelConstraints.anchor = GridBagConstraints.CENTER;
-        labelConstraints.fill = GridBagConstraints.HORIZONTAL;
-
-        controlPanel.add(playerNameLabel, labelConstraints);
-
-        GridBagConstraints gridPanelConstrains = new GridBagConstraints();
-        gridPanelConstrains.gridy = 2;
-
-        gridPanelConstrains.weighty = 1;        // Board krijgt alle verticale ruimte
-        gridPanelConstrains.weightx = 1;        // (optioneel) meer horizontale ruimte
-        gridPanelConstrains.fill = GridBagConstraints.BOTH; // Laat het board meegroeiën
+        scenePanel.add(playerNameLabel);
+        scenePanel.add(Box.createHorizontalStrut(10000));
         gridPanel = new JPanel();
-        controlPanel.add(gridPanel, gridPanelConstrains);
+        scenePanel.add(gridPanel);
+        scenePanel.add(Box.createHorizontalStrut(10000));
+
+        JTextField messageText = TextField.createTextField();
+        scenePanel.add(messageText);
+
+        JButton sendButton = UIButton.createButton("game.scene.button", actionEvent -> sendMessage(actionEvent, messageText.getText()));
+        sendButton.setPreferredSize(new Dimension(128, 32));
+        scenePanel.add(sendButton);
 
         this.gridPanel.addComponentListener(new ResizeBoardListener(this));
     }
@@ -125,9 +97,11 @@ public class GameScene extends Scene {
         }
     }
 
+    //TODO: FIX THIS SINCE THIS DOESNT DO ANYRHING RIGHT NOW OR IS COMPLETLY BROKEN
     public void setPlayerNames(String player1Name, String player2Name, boolean iStart) {
         if (playerNameLabel != null) {
             playerNameLabel.setText(LangHandler.get().translate("player.name.display", iStart ? "X" : "O", player1Name, !iStart ? "X" : "O", player2Name));
+            playerNameLabel.repaint();
         }
     }
 
