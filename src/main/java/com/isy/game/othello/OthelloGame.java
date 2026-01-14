@@ -70,15 +70,44 @@ public class OthelloGame extends Game<OthelloTile> {
 
         if (correctMove) {
             flipTiles(move);
-            if (this.checkWin(move[0], move[1], this.activeTurnPlayer)){
-                this.state = GameState.WON;
-                return false;
-            } else if (this.board.isBoardFull()) {
-                this.giveTurnOver();
-                if (this.checkWin(0,0, this.activeTurnPlayer)) {
-                    this.state = GameState.WON;
+
+            /*
+                wincheck
+                return true to end game
+                board is full -> count stones -> edit state -> end game
+                board is not full but both players have no moves left -> count stones -> end game
+             */
+            if (this.board.isBoardFull()) {
+                int state = this.hasMoreTiles(this.activeTurnPlayer.getSymbol());
+                System.out.println(state);
+                switch (state) {
+                    case 0:
+                        return true;
+                    case 1:
+                        this.state = GameState.WON;
+                        return true;
+                    case 2:
+                        this.state = GameState.LOST;
+                        return true;
                 }
-                return true;
+            } else {
+                List<int[]> availableMovesUpcoming = OthelloUtils.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol(), useReversiRules && this.getTurnCounter() <= 4);
+                List<int[]> availableMovesOpponent = OthelloUtils.getAvailableMoves(getBoard(), (OthelloTile) this.getOpponent().getSymbol(), this.activeTurnPlayer.getSymbol(), useReversiRules && this.getTurnCounter() <= 4);
+
+                if (availableMovesUpcoming.isEmpty() && availableMovesOpponent.isEmpty()) {
+                    int state = this.hasMoreTiles(this.activeTurnPlayer.getSymbol());
+                    System.out.println(state);
+                    switch (state) {
+                        case 0:
+                            return true;
+                        case 1:
+                            this.state = GameState.WON;
+                            return true;
+                        case 2:
+                            this.state = GameState.LOST;
+                            return true;
+                    }
+                }
             }
 
             this.giveTurnOver();
@@ -178,6 +207,36 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         return false;
+    }
+
+    /*
+        counts tiles from type of symbol and compares to count of opponent
+        returns 0 for equal, 1 for more, 2 for less
+     */
+    public int hasMoreTiles(OthelloTile p) {
+        int currentPlayerCount = 0;
+        int opponentPlayerCount = 0;
+
+        OthelloTile opponentTile = (OthelloTile) this.getOpponent().getSymbol();
+
+        for (OthelloTile[] row : this.getBoard().getTiles()) {
+            for (OthelloTile tile : row) {
+                if (tile == p) {
+                    currentPlayerCount++;
+                } else if (tile == opponentTile){
+                    opponentPlayerCount++;
+                }
+            }
+        }
+
+        if (currentPlayerCount > opponentPlayerCount) {
+            return 1;
+        }
+        if (opponentPlayerCount >  currentPlayerCount) {
+            return 2;
+        }
+
+        return 0;
     }
 
     public boolean getUseReversiRules() {
