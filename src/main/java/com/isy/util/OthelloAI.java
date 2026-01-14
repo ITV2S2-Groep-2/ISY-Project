@@ -19,7 +19,7 @@ public class OthelloAI extends Player<OthelloTile> {
     double corner_diffWeight = 25;
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
-    int maxDepth = 10;
+    int maxDepth = 2;
 
     public OthelloAI(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
         super(name, symbol, client);

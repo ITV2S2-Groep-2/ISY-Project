@@ -8,6 +8,7 @@ import com.isy.gui.scene.manager.Scene;
 import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
+import com.isy.util.OthelloRandomAI;
 import com.isy.util.PlayerEventManager;
 import com.isy.util.ResultWriter;
 import com.isy.util.lang.LangHandler;
@@ -91,14 +92,27 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         // Main.window.getManager().addScene(new WinScene(Main.window));
 
         if (this.state == GameState.WON){
-            String playerName = this.activeTurnPlayer.getName();
-            ResultWriter.addWin(playerName);
+            if (this.activeTurnPlayer instanceof OthelloRandomAI) {
+                ResultWriter.addLoss(getOpponent().getName());
+            } else {
+                ResultWriter.addWin(this.activeTurnPlayer.getName());
+            }
+
             // ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
-            ResultWriter.addLoss(this.activeTurnPlayer.getName());
+            if (this.activeTurnPlayer instanceof OthelloRandomAI) {
+                ResultWriter.addWin(getOpponent().getName());
+            } else {
+                ResultWriter.addLoss(this.activeTurnPlayer.getName());
+            }
+
             // ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
         } else {
-            ResultWriter.addDraw(this.activeTurnPlayer.getName());
+            if (this.activeTurnPlayer instanceof OthelloRandomAI) {
+                ResultWriter.addDraw(getOpponent().getName());
+            } else {
+                ResultWriter.addDraw(this.activeTurnPlayer.getName());
+            }
             // ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
     };

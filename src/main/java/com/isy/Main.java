@@ -44,23 +44,23 @@ public class Main {
                 double randomValueCornerWeight = baseModel.getCorner_diffWeight() * (r.nextDouble(5, 20) / 100);
                 double randomValueStabilityWeight = baseModel.getStability_diffWeight() * (r.nextDouble(5, 20) / 100);
                 double randomValueDiscWeight = baseModel.getDisc_diffWeight() * (r.nextDouble(5, 20) / 100);
-                int randomValueMaxDepth = baseModel.getMaxDepth() * (r.nextInt(5, 20) / 100);
+                double randomValueMaxDepth = baseModel.getMaxDepth() * (r.nextInt(5, 20) / 100.0);
 
 
-                randomValueObWeight = (PlusOrMinus[r.nextInt(0,1)] == '+') ? baseModel.getMobility_diffWeight() + randomValueObWeight : baseModel.getMobility_diffWeight() - randomValueObWeight;
-                randomValueCornerWeight = (PlusOrMinus[r.nextInt(0,1)] == '+') ? baseModel.getCorner_diffWeight() + randomValueCornerWeight : baseModel.getCorner_diffWeight() - randomValueCornerWeight;
-                randomValueStabilityWeight = (PlusOrMinus[r.nextInt(0,1)] == '+') ? baseModel.getStability_diffWeight() + randomValueStabilityWeight : baseModel.getStability_diffWeight() - randomValueStabilityWeight;
-                randomValueDiscWeight = (PlusOrMinus[r.nextInt(0,1)] == '+') ? baseModel.getDisc_diffWeight() + randomValueDiscWeight : baseModel.getDisc_diffWeight() - randomValueDiscWeight;
-                randomValueMaxDepth = (PlusOrMinus[r.nextInt(0,1)] == '+') ? baseModel.getMaxDepth() + randomValueMaxDepth : baseModel.getMaxDepth() - randomValueMaxDepth;
+                randomValueObWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getMobility_diffWeight() + randomValueObWeight : baseModel.getMobility_diffWeight() - randomValueObWeight;
+                randomValueCornerWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getCorner_diffWeight() + randomValueCornerWeight : baseModel.getCorner_diffWeight() - randomValueCornerWeight;
+                randomValueStabilityWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getStability_diffWeight() + randomValueStabilityWeight : baseModel.getStability_diffWeight() - randomValueStabilityWeight;
+                randomValueDiscWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getDisc_diffWeight() + randomValueDiscWeight : baseModel.getDisc_diffWeight() - randomValueDiscWeight;
+                randomValueMaxDepth = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getMaxDepth() + randomValueMaxDepth : baseModel.getMaxDepth() - randomValueMaxDepth;
+
 
                 double roundObWeight = Math.round(randomValueObWeight * 100.0) / 100.0;
                 double roundCornerWeight = Math.round(randomValueCornerWeight * 100.0) / 100.0;
                 double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
                 double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
+                int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
 
-                if (randomValueMaxDepth < 5) randomValueMaxDepth = 5;
-
-                OthelloAI model = new OthelloAI("MODEL_" + i, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, randomValueMaxDepth, baseModel.getName());
+                OthelloAI model = new OthelloAI("MODEL_" + i, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModel.getName());
                 models.add(model);
             }
         }
@@ -79,7 +79,7 @@ public class Main {
             long minTime = Long.MAX_VALUE;
             long maxTime = 0;
             ResultWriter.addModel(model);
-            for (int i = 0; i < 499; i++ ){
+            for (int i = 0; i < 19; i++ ){
                 long startTime =  System.nanoTime();
                 OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
                 game.run();
@@ -93,9 +93,10 @@ public class Main {
                 }
                 totalTime += realTime;
             }
-            long avgTime = totalTime / 500;
+            long avgTime = totalTime / 20;
             ResultWriter.addTime(model.getName(),avgTime, minTime, maxTime, totalTime);
         }
+        System.out.println("Writing");
         ResultWriter.writeAll("history.json");
         ResultWriter.writeTop5("top5.json");
 
