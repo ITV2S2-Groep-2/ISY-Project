@@ -31,7 +31,7 @@ public class Main {
         //'maken' van een model kan zijn dat je een record hebt waarin je de variabelen opslaat
         // en als je de game speelt geef je ze door wanneer je de ai player maakt voor het spelen van de game
 
-        JSONObject topmodel = ModelFileReader.Read("topmodel.json");
+        JSONObject topmodel = ModelFileReader.Read("top5.json");
         // depth met cap 5 afronden
         ArrayList<OthelloAI> models = new ArrayList<OthelloAI>();
         if (topmodel == null) {
@@ -79,7 +79,7 @@ public class Main {
             long minTime = Long.MAX_VALUE;
             long maxTime = 0;
             ResultWriter.addModel(model);
-            for (int i = 0; i < 19; i++ ){
+            for (int i = 0; i < 499; i++ ){
                 long startTime =  System.nanoTime();
                 OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
                 game.run();
@@ -93,9 +93,10 @@ public class Main {
                 }
                 totalTime += realTime;
             }
-            long avgTime = totalTime / 20;
+            long avgTime = totalTime / 500;
             ResultWriter.addTime(model.getName(),avgTime, minTime, maxTime, totalTime);
         }
+        // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
         System.out.println("Writing");
         ResultWriter.writeAll("history.json");
         ResultWriter.writeTop5("top5.json");
