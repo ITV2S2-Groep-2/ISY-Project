@@ -89,8 +89,8 @@ public class ResultWriter {
         ArrayList<Map.Entry<String, JSONObject>> list = new ArrayList<>(modelMap.entrySet());
 
         list.sort((element1, element2) ->
-                element1.getValue().getJSONObject("stats").getInt("wins") -
-                        element2.getValue().getJSONObject("stats").getInt("wins")); // heb ik met behulp van AI geschreven
+                element2.getValue().getJSONObject("stats").getInt("wins") -
+                        element1.getValue().getJSONObject("stats").getInt("wins")); // heb ik met behulp van AI geschreven
         for (int i = 0; i < 5; i++ ) {
             root.put(list.get(i).getKey(), list.get(i).getValue());
         }
