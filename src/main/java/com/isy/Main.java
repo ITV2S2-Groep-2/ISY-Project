@@ -121,6 +121,7 @@ public class Main {
         //zo kom je uit op 25 modellen totaal
 
         for( OthelloAI model : models) {
+            //TODO: swap turns around halfway
             long totalTime = 0;
             long minTime = Long.MAX_VALUE;
             long maxTime = 0;
@@ -139,6 +140,7 @@ public class Main {
                 }
                 totalTime += realTime;
             }
+            model.cleanup();
             long avgTime = totalTime / 3;
             ResultWriter.addTime(model.getName(),avgTime, minTime, maxTime, totalTime);
         }
