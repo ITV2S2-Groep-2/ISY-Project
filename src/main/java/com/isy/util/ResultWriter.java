@@ -70,18 +70,18 @@ public class ResultWriter {
         time.put("Total Time", totalTime);
     }
     public static void writeAll(String filename) {
-        JSONObject root = new JSONObject();
-
+        JSONObject root = ModelFileReader.Read(filename);
+        if (root == null) {
+            root = new JSONObject();
+        }
         for (var entry : modelMap.entrySet()) {
             root.put(entry.getKey(), entry.getValue());
         }
         try (FileWriter file = new FileWriter(filename)) {
             file.write(root.toString(4));
-
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
     public static void writeTop5(String filename) {
         JSONObject root = new JSONObject();
