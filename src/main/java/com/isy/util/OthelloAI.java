@@ -149,7 +149,7 @@ public class OthelloAI extends Player<OthelloTile> {
         //onthouden
         int totalTiles = myTiles + otherTiles;
 
-        int phase = totalTiles / 64;
+        double phase = (double) totalTiles / 64;
 
         int discDiff = myTiles - otherTiles;
 
@@ -394,8 +394,21 @@ public class OthelloAI extends Player<OthelloTile> {
             }
         }
 
+        int mobilityDiff = myMobility - otherMobility;
+
+        double mobilityPhase = (1 - phase);
+        double discPhase = phase;
+
+        value = (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
+                (cornerDiff * corner_diffWeight) +
+                (stableDiscDiff * stability_diffWeight) +
+                (discDiff * disc_diffWeight * discPhase) -
+                (cPunishments + xPunishments * -corner_diffWeight));
+
+
         var berekening = myMobility +
                 otherMobility +
+                mobilityDiff +
                 myTiles +
                 otherTiles +
                 totalTiles +
