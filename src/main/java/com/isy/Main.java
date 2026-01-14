@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 
 public class Main {
@@ -36,7 +37,7 @@ public class Main {
         ArrayList<OthelloAI> models = new ArrayList<OthelloAI>();
         if (topmodel == null) {
             OthelloAI baseModel = new OthelloAI("BASEMODEL", OthelloTile.PLAYER_1, null);
-            //
+            models.add(baseModel);
             for (int i = 0; i < 23; i++) {
                 char[] PlusOrMinus = {'+', '-'};
                 Random r = new Random();
@@ -60,11 +61,56 @@ public class Main {
                 double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
                 int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
 
-                OthelloAI model = new OthelloAI("MODEL_" + i, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModel.getName());
+                UUID id = UUID.randomUUID();
+                String modelId = id.toString();
+
+                OthelloAI model = new OthelloAI(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModel.getName());
                 models.add(model);
             }
         }
         else {
+            for (String baseModelName : topmodel.keySet()) {
+                JSONObject modelJson = topmodel.getJSONObject(baseModelName);
+                JSONObject settings = modelJson.getJSONObject("settings");
+                double BaseMobility_diffWeight = settings.getDouble("mobility_diffWeight");
+                double BaseCorner_diffWeight = settings.getDouble("corner_diffWeight");
+                double BaseStability_diffWeight = settings.getDouble("stability_diffWeight");
+                double BaseDisc_diffWeight = settings.getDouble("disc_diffWeight");
+                int BaseMaxDepth = settings.getInt("maxDepth");
+                String parent = settings.getString("Parent");
+                OthelloAI baseModel = new OthelloAI(baseModelName, OthelloTile.PLAYER_1, null, BaseMobility_diffWeight,BaseCorner_diffWeight, BaseStability_diffWeight,  BaseDisc_diffWeight, BaseMaxDepth, parent );
+                models.add(baseModel);
+                for (int i = 0; i < 4; i++) {
+                    char[] PlusOrMinus = {'+', '-'};
+                    Random r = new Random();
+                    double randomValueObWeight = BaseMobility_diffWeight * (r.nextDouble(5, 20) / 100);
+                    double randomValueCornerWeight = BaseCorner_diffWeight * (r.nextDouble(5, 20) / 100);
+                    double randomValueStabilityWeight = BaseStability_diffWeight * (r.nextDouble(5, 20) / 100);
+                    double randomValueDiscWeight = BaseDisc_diffWeight * (r.nextDouble(5, 20) / 100);
+                    double randomValueMaxDepth =BaseMaxDepth * (r.nextInt(5, 20) / 100.0);
+
+
+                    randomValueObWeight = (PlusOrMinus[r.nextInt(2)] == '+') ?BaseMobility_diffWeight + randomValueObWeight : BaseMobility_diffWeight - randomValueObWeight;
+                    randomValueCornerWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseCorner_diffWeight + randomValueCornerWeight :BaseCorner_diffWeight - randomValueCornerWeight;
+                    randomValueStabilityWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseStability_diffWeight + randomValueStabilityWeight : BaseStability_diffWeight - randomValueStabilityWeight;
+                    randomValueDiscWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseDisc_diffWeight + randomValueDiscWeight : BaseDisc_diffWeight - randomValueDiscWeight;
+                    randomValueMaxDepth = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseMaxDepth + randomValueMaxDepth : BaseMaxDepth - randomValueMaxDepth;
+
+
+                    double roundObWeight = Math.round(randomValueObWeight * 100.0) / 100.0;
+                    double roundCornerWeight = Math.round(randomValueCornerWeight * 100.0) / 100.0;
+                    double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
+                    double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
+                    int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
+                    UUID id = UUID.randomUUID();
+                    String modelId = id.toString();
+
+                    OthelloAI model = new OthelloAI(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModelName);
+                    models.add(model);
+                }
+
+
+            }
             // nu nog niks
         }
 //                for topmodel in file
@@ -79,7 +125,7 @@ public class Main {
             long minTime = Long.MAX_VALUE;
             long maxTime = 0;
             ResultWriter.addModel(model);
-            for (int i = 0; i < 499; i++ ){
+            for (int i = 0; i < 2; i++ ){
                 long startTime =  System.nanoTime();
                 OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
                 game.run();
@@ -93,7 +139,7 @@ public class Main {
                 }
                 totalTime += realTime;
             }
-            long avgTime = totalTime / 500;
+            long avgTime = totalTime / 3;
             ResultWriter.addTime(model.getName(),avgTime, minTime, maxTime, totalTime);
         }
         // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
