@@ -302,9 +302,11 @@ public class OthelloAI extends Player<OthelloTile> {
             //count stable discs upper side, right > left
             for (int col = boardSize - 2; col > 0; col--){
                 if(tiles[col][0] == tiles[col + 1][0] && tiles[col][0] != OthelloTile.EMPTY){
-                    if(!isStable[col][0]) {
-                        isStable[col][0] = true;
-                        myStableDiscs++;
+                    if(tiles[col][0] == symbol) {
+                        if (!isStable[col][0]) {
+                            isStable[col][0] = true;
+                            myStableDiscs++;
+                        }
                     }
                     else if (tiles[col][0] == otherSymbol) {
                         if(!isStable[col][0]) {
