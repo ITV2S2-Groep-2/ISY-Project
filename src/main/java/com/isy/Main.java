@@ -80,7 +80,7 @@ public class Main {
                 String parent = settings.getString("Parent");
                 OthelloAI baseModel = new OthelloAI(baseModelName, OthelloTile.PLAYER_1, null, BaseMobility_diffWeight,BaseCorner_diffWeight, BaseStability_diffWeight,  BaseDisc_diffWeight, BaseMaxDepth, parent );
                 models.add(baseModel);
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 4; i++) {
                     char[] PlusOrMinus = {'+', '-'};
                     Random r = new Random();
                     double randomValueObWeight = BaseMobility_diffWeight * (r.nextDouble(5, 20) / 100);
