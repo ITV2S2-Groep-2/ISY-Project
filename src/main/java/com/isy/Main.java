@@ -37,7 +37,7 @@ public class Main {
         ArrayList<OthelloAI> models = new ArrayList<OthelloAI>();
         if (topmodel == null) {
             OthelloAI baseModel = new OthelloAI("BASEMODEL", OthelloTile.PLAYER_1, null);
-            //
+            models.add(baseModel);
             for (int i = 0; i < 23; i++) {
                 char[] PlusOrMinus = {'+', '-'};
                 Random r = new Random();
