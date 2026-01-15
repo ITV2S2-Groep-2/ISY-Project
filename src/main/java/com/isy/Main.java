@@ -10,6 +10,7 @@ import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.TicTacToeTile;
 import com.isy.gui.Window;
 import com.isy.util.*;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -32,18 +33,17 @@ public class Main {
             player1Name = args[1];
             player2Name = args[2];
         }
-        //'maken' van een model kan zijn dat je een record hebt waarin je de variabelen opslaat
-        // en als je de game speelt geef je ze door wanneer je de ai player maakt voor het spelen van de game
 
         JSONObject topmodel = ModelFileReader.Read("top5.json");
         // depth met cap 5 afronden
         ArrayList<OthelloAI> models = new ArrayList<OthelloAI>();
+        Random r = new Random();
         if (topmodel == null) {
             OthelloAI baseModel = new OthelloAI("BASEMODEL", OthelloTile.PLAYER_1, null);
             models.add(baseModel);
             for (int i = 0; i < 23; i++) {
                 char[] PlusOrMinus = {'+', '-'};
-                Random r = new Random();
+
                 double randomValueObWeight = baseModel.getMobility_diffWeight() * (r.nextDouble(5, 20) / 100);
                 double randomValueCornerWeight = baseModel.getCorner_diffWeight() * (r.nextDouble(5, 20) / 100);
                 double randomValueStabilityWeight = baseModel.getStability_diffWeight() * (r.nextDouble(5, 20) / 100);
@@ -85,7 +85,6 @@ public class Main {
                 models.add(baseModel);
                 for (int i = 0; i < 4; i++) {
                     char[] PlusOrMinus = {'+', '-'};
-                    Random r = new Random();
                     double randomValueObWeight = BaseMobility_diffWeight * (r.nextDouble(5, 20) / 100);
                     double randomValueCornerWeight = BaseCorner_diffWeight * (r.nextDouble(5, 20) / 100);
                     double randomValueStabilityWeight = BaseStability_diffWeight * (r.nextDouble(5, 20) / 100);
@@ -183,7 +182,6 @@ public class Main {
 
         @Override
         public void run() {
-            //TODO: swap turns around halfway
             totalTime = 0;
             minTime = Long.MAX_VALUE;
             maxTime = 0;
@@ -193,14 +191,7 @@ public class Main {
 
             for (int i = 0; i < GAME_AMOUNT; i++ ) {
                 final long startTime = System.nanoTime();
-                Callable<GameResult> task = () -> {
-                    OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
-                    game.run();
-                    long endTime = System.nanoTime();
-                    long realTime = endTime - startTime;
-
-                    return new GameResult(realTime);
-                };
+                Callable<GameResult> task = getGameResultCallable(i, startTime);
                 games.add(executor.submit(task));
             }
 
@@ -226,6 +217,25 @@ public class Main {
             model.cleanup();
             avgTime = totalTime / GAME_AMOUNT;
             finished = true;
+        }
+
+        private @NotNull Callable<GameResult> getGameResultCallable(int i, long startTime) {
+            Callable<GameResult> task = () -> {
+                OthelloGame game;
+                if(i < GAME_AMOUNT / 2){
+                    game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                }
+                else {
+                    game = new OthelloGame(new Player[]{new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null), model});
+                }
+                game.run();
+
+                long endTime = System.nanoTime();
+                long realTime = endTime - startTime;
+
+                return new GameResult(realTime);
+            };
+            return task;
         }
     }
 
