@@ -20,8 +20,8 @@ public class Main {
     public static Window window;
     public static Game runningGame = null;
 
-    public static final int MAXDEPTH = 8;
-    public static final int MINDEPTH = 5;
+    public static final int MAXDEPTH = 6;
+    public static final int MINDEPTH = 6;
 
     public static void main(String[] args) {
         long start = System.nanoTime();
@@ -75,6 +75,7 @@ public class Main {
 
         List<ModelRunner> modelRunnerList = new ArrayList<>();
         for( OthelloAI model : models) {
+            ResultWriter.addModel(model);
             ModelRunner runner = new ModelRunner(model);
             modelRunnerList.add(runner);
             new Thread(runner).start();
@@ -100,7 +101,11 @@ public class Main {
         }
 
         for (ModelRunner modelRunner : modelRunnerList) {
-            ResultWriter.addTime(modelRunner.model.getName(),modelRunner.avgTime, modelRunner.minTime, modelRunner.maxTime, modelRunner.totalTime);
+            ResultWriter.addTime(
+                    modelRunner.model.getName(),
+                    modelRunner.avgTime, modelRunner.minTime, modelRunner.maxTime, modelRunner.totalTime,
+                    modelRunner.model.totalMoveTime / modelRunner.model.moveCount, modelRunner.model.minMoveTime, modelRunner.model.maxMoveTime, modelRunner.model.totalMoveTime
+            );
         }
 
 
@@ -171,17 +176,18 @@ public class Main {
         return model;
     }
 
-    static final int GAME_AMOUNT = 500;
+    static final int GAME_AMOUNT = 10;
     static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
 
         long avgTime = 0;
         long minTime = Long.MAX_VALUE;
-        long maxTime = 0;
+        long maxTime = Long.MIN_VALUE;
         long totalTime = 0;
+
         boolean finished = false;
-        final OthelloAI model;
+        public final OthelloAI model;
 
         public ModelRunner(OthelloAI model){
             this.model = model;
@@ -192,7 +198,6 @@ public class Main {
             totalTime = 0;
             minTime = Long.MAX_VALUE;
             maxTime = 0;
-            ResultWriter.addModel(model);
 
             List<Future<GameResult>> games = new ArrayList<>();
 

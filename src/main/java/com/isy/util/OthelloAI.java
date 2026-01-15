@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 
 public class OthelloAI extends Player<OthelloTile> {
 
-    String parentName = "";
+    String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
     double corner_diffWeight = 25;
     double stability_diffWeight = 10;
@@ -22,6 +22,11 @@ public class OthelloAI extends Player<OthelloTile> {
     int maxDepth = 7;
 
     final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    public long totalMoveTime = 0;
+    public long minMoveTime = Long.MAX_VALUE;
+    public long maxMoveTime = Long.MIN_VALUE;
+    public int moveCount = 0;
 
     /*
     debugging / testing
@@ -85,6 +90,7 @@ public class OthelloAI extends Player<OthelloTile> {
 
     @Override
     public int[] getMove(Game<OthelloTile> gameArg) {
+        long startTime = System.nanoTime();
         game = gameArg;
         OthelloGame othelloGame = (OthelloGame) game;
         Board<OthelloTile> board = game.getBoard();
@@ -109,6 +115,13 @@ public class OthelloAI extends Player<OthelloTile> {
 //        double endTime = System.currentTimeMillis();
 //        System.out.println("after best move: " + Arrays.toString(move) + " " + endTime);
 //        System.out.println("time in ms: " + (endTime - startTime));
+
+        long endTime = System.nanoTime();
+        this.moveCount++;
+        long currMoveTime = endTime - startTime;
+        if (currMoveTime < this.minMoveTime) this.minMoveTime = currMoveTime;
+        if (currMoveTime > this.maxMoveTime) this.maxMoveTime = currMoveTime;
+        this.totalMoveTime += currMoveTime;
 
         return move;
     }
@@ -476,7 +489,6 @@ public class OthelloAI extends Player<OthelloTile> {
 
     public int minimax(OthelloTile[][] tiles, int depth, int alpha, int beta, boolean isMax, boolean depthIsDecreased){
         boolean boardFull =  boardFull(tiles);
-
         byte[] availableMovesUpcoming = null;
         byte[] availableMovesOpponent = null;
 
@@ -505,9 +517,9 @@ public class OthelloAI extends Player<OthelloTile> {
 
             int highestVal = -10000;
 
-            if (hasMoves(availableMovesUpcoming)) {
+            if (!hasMoves(availableMovesUpcoming)) {
                 availableMovesOpponent = getAvailableMoves2(tiles, this.otherSymbol, this.symbol, false);
-                if (hasMoves(availableMovesOpponent)) {
+                if (!hasMoves(availableMovesOpponent)) {
                     return evaluateBoard(tiles, 0, 0);
                 }
 
@@ -547,9 +559,9 @@ public class OthelloAI extends Player<OthelloTile> {
 
             int lowestVal = 10000;
 
-            if (hasMoves(availableMovesOpponent)) {
+            if (!hasMoves(availableMovesOpponent)) {
                 availableMovesUpcoming = getAvailableMoves2(tiles, this.otherSymbol, this.symbol, false);
-                if (hasMoves(availableMovesUpcoming)) {
+                if (!hasMoves(availableMovesUpcoming)) {
                     return evaluateBoard(tiles, 0, 0);
                 }
 
@@ -678,18 +690,8 @@ public class OthelloAI extends Player<OthelloTile> {
 
     public void flipTiles(OthelloTile[][] tiles, int xO, int yO, OthelloTile symbol) {
         ArrayList<Integer[]> tilesToFlip = new ArrayList<>();
-        int[][] dirs = {
-                {1, 0},   // down
-                {-1, 0},  // up
-                {0, 1},   // right
-                {0, -1},  // left
-                {-1, -1}, // up-left
-                {-1, 1},  // up-right
-                {1, -1},  // down-left
-                {1, 1}    // down-right
-        };
 
-        for (int[] d : dirs) {
+        for (int[] d : directions) {
             int x = xO;
             int y = yO;
 

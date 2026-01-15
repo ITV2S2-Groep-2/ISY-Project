@@ -28,10 +28,16 @@ public class ResultWriter {
         stats.put("top_5_count", 0);
 
         JSONObject time = new JSONObject();
-        time.put("avg_time", 0.0);
-        time.put("min_time", 0.0);
-        time.put("max_time", 0.0);
-        time.put("total_time", 0.0);
+        time.put("avg_time", 0);
+        time.put("min_time", 0);
+        time.put("max_time", 0);
+        time.put("total_time", 0);
+
+        time.put("avg_move_time", 0);
+        time.put("min_move_time", 0);
+        time.put("max_move_time", 0);
+        time.put("total_move_time", 0);
+
 
         JSONObject JsonModel = new JSONObject();
         JsonModel.put("settings", settings);
@@ -58,13 +64,19 @@ public class ResultWriter {
         stats.put("draws", stats.getInt("draws") + 1);
     }
 
-    public static void addTime(String modelName, long avgTime, long minTime, long maxTime, long totalTime) {
+    public static void addTime(String modelName, long avgTime, long minTime, long maxTime, long totalTime, long avgMoveTime, long minMoveTime, long maxMoveTime, long totalMoveTime) {
         JSONObject model = modelMap.get(modelName);
         JSONObject time = model.getJSONObject("time");
         time.put("avg_time", avgTime);
         time.put("min_time", minTime);
         time.put("max_time", maxTime);
         time.put("total_time", totalTime);
+
+        time.put("avg_move_time", avgMoveTime);
+        time.put("min_move_time", minMoveTime);
+        time.put("max_move_time", maxMoveTime);
+        time.put("total_move_time", totalMoveTime);
+
     }
     public static void writeAll(String filename) {
         JSONObject root = ModelFileReader.Read(filename);
