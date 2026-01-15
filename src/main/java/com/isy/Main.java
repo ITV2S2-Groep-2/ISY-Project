@@ -122,13 +122,69 @@ public class Main {
 
         //zo kom je uit op 25 modellen totaal
 
+        List<ModelRunner> modelRunnerList = new ArrayList<>();
         for( OthelloAI model : models) {
+            ModelRunner runner = new ModelRunner(model);
+            modelRunnerList.add(runner);
+            new Thread(runner).start();
+        }
+
+        boolean allFinished = false;
+
+        while (!allFinished){
+            allFinished = true;
+
+            for (ModelRunner modelRunner : modelRunnerList) {
+                if (!modelRunner.finished) {
+                    allFinished = false;
+                    break;
+                }
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        for (ModelRunner modelRunner : modelRunnerList) {
+            ResultWriter.addTime(modelRunner.model.getName(),modelRunner.avgTime, modelRunner.minTime, modelRunner.maxTime, modelRunner.totalTime);
+        }
+
+
+        // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
+        System.out.println("Writing");
+        ResultWriter.writeAll("history.json");
+        ResultWriter.writeTop5("top5.json");
+
+        System.out.println("Time: " + (System.nanoTime() - start));
+
+        // window = new Window();
+
+    }
+
+    static final int GAME_AMOUNT = 20;
+    static class ModelRunner implements Runnable{
+        long avgTime = 0;
+        long minTime = Long.MAX_VALUE;
+        long maxTime = 0;
+        long totalTime = 0;
+        boolean finished = false;
+        OthelloAI model;
+
+        public ModelRunner(OthelloAI model){
+            this.model = model;
+        }
+
+        @Override
+        public void run() {
             //TODO: swap turns around halfway
-            long totalTime = 0;
-            long minTime = Long.MAX_VALUE;
-            long maxTime = 0;
+            totalTime = 0;
+            minTime = Long.MAX_VALUE;
+            maxTime = 0;
             ResultWriter.addModel(model);
-            for (int i = 0; i < 2; i++ ){
+            for (int i = 0; i < GAME_AMOUNT; i++ ){
                 long startTime =  System.nanoTime();
                 OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
                 game.run();
@@ -146,18 +202,9 @@ public class Main {
                 totalTime += realTime;
             }
             model.cleanup();
-            long avgTime = totalTime / 3;
-            ResultWriter.addTime(model.getName(),avgTime, minTime, maxTime, totalTime);
+            avgTime = totalTime / GAME_AMOUNT;
+            finished = true;
         }
-        // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
-        System.out.println("Writing");
-        ResultWriter.writeAll("history.json");
-        ResultWriter.writeTop5("top5.json");
-
-        System.out.println("Time: " + (System.nanoTime() - start));
-
-        // window = new Window();
-
     }
 
 }
