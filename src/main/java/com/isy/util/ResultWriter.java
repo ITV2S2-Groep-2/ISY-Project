@@ -1,15 +1,11 @@
 package com.isy.util;
 
-import com.isy.game.player.Player;
-import com.isy.game.ticTacToe.TicTacToeAiPlayer;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class ResultWriter {
 
@@ -18,23 +14,24 @@ public class ResultWriter {
     public static void addModel(OthelloAI model) {
 
         JSONObject settings = new JSONObject();
-        settings.put("Parent", model.getParent());
-        settings.put("mobility_diffWeight", model.getMobility_diffWeight());
-        settings.put("corner_diffWeight", model.getCorner_diffWeight());
-        settings.put("stability_diffWeight", model.getStability_diffWeight());
-        settings.put("disc_diffWeight", model.getDisc_diffWeight());
-        settings.put("maxDepth", model.getMaxDepth());
+        settings.put("parent", model.getParent());
+        settings.put("mobility_diff_weight", model.getMobility_diffWeight());
+        settings.put("corner_diff_weight", model.getCorner_diffWeight());
+        settings.put("stability_diff_weight", model.getStability_diffWeight());
+        settings.put("disc_diff_weight", model.getDisc_diffWeight());
+        settings.put("max_depth", model.getMaxDepth());
 
         JSONObject stats = new JSONObject();
         stats.put("wins", 0);
         stats.put("losses", 0);
         stats.put("draws", 0);
+        stats.put("top_5_count", 0);
 
         JSONObject time = new JSONObject();
-        time.put("AVG Time", 0.0);
-        time.put("MIN Time", 0.0);
-        time.put("MAX Time", 0.0);
-        time.put("Total Time", 0.0);
+        time.put("avg_time", 0.0);
+        time.put("min_time", 0.0);
+        time.put("max_time", 0.0);
+        time.put("total_time", 0.0);
 
         JSONObject JsonModel = new JSONObject();
         JsonModel.put("settings", settings);
@@ -64,10 +61,10 @@ public class ResultWriter {
     public static void addTime(String modelName, long avgTime, long minTime, long maxTime, long totalTime) {
         JSONObject model = modelMap.get(modelName);
         JSONObject time = model.getJSONObject("time");
-        time.put("AVG Time", avgTime);
-        time.put("MIN Time", minTime);
-        time.put("MAX Time", maxTime);
-        time.put("Total Time", totalTime);
+        time.put("avg_time", avgTime);
+        time.put("min_time", minTime);
+        time.put("max_time", maxTime);
+        time.put("total_time", totalTime);
     }
     public static void writeAll(String filename) {
         JSONObject root = ModelFileReader.Read(filename);
@@ -91,7 +88,34 @@ public class ResultWriter {
         list.sort((element1, element2) ->
                 element2.getValue().getJSONObject("stats").getInt("wins") -
                         element1.getValue().getJSONObject("stats").getInt("wins")); // heb ik met behulp van AI geschreven
+
+        JSONObject history = ModelFileReader.Read("history.json");
+
         for (int i = 0; i < 5; i++ ) {
+
+            if (history != null) {
+                String parent = list.get(i).getValue().getJSONObject("settings").getString("parent");
+                JSONObject parentObj = history.getJSONObject(parent);
+
+                JSONObject parentSettings = parentObj.getJSONObject("settings");
+                JSONObject newSettings = list.get(i).getValue().getJSONObject("settings");
+                if (
+                        parentSettings.getDouble("mobility_diff_weight") == newSettings.getDouble("mobility_diff_weight")
+                        && parentSettings.getDouble("corner_diff_weight") == newSettings.getDouble("corner_diff_weight")
+                        && parentSettings.getDouble("stability_diff_weight") == newSettings.getDouble("stability_diff_weight")
+                        && parentSettings.getDouble("disc_diff_weight") == newSettings.getDouble("disc_diff_weight")
+                        && parentSettings.getInt("max_depth") == newSettings.getInt("max_depth")
+                ) {
+                    int parentTop5Count = parentObj.getJSONObject("stats").getInt("top_5_count");
+                    list.get(i).getValue().getJSONObject("stats").put("top_5_count", parentTop5Count + 1);
+                } else {
+                    list.get(i).getValue().getJSONObject("stats").put("top_5_count", 1);
+                }
+
+            } else {
+                list.get(i).getValue().getJSONObject("stats").put("top_5_count", 1);
+            }
+
             root.put(list.get(i).getKey(), list.get(i).getValue());
         }
         return root;
