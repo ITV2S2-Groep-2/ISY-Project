@@ -134,6 +134,15 @@ public class OthelloAI extends Player<OthelloTile> {
         this.stableTime = 0;
         this.afterTime = 0;
 
+        int tileCounter = 64;
+        for(int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
+                if (tiles[col][row] == OthelloTile.EMPTY) {
+                    tileCounter--;
+                }
+            }
+        }
+
         byte[] avm = getAvailableMoves2(tiles, this.symbol, this.otherSymbol, false);
 
         List<Future<MoveEvaluation>> futures = new ArrayList<>();
@@ -146,12 +155,14 @@ public class OthelloAI extends Player<OthelloTile> {
 //            int x = move[0];
 //            int y = move[1];
 
+            tileCounter++;
             OthelloTile[][] copiedBoard = copyBoard(tiles);
             copiedBoard[x][y] = symbol;
             flipTiles(copiedBoard, x, y, symbol);
 
+            final int tileCounterFinal = tileCounter;
             Callable<MoveEvaluation> task = () -> {
-                int moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false);
+                int moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false, tileCounterFinal);
                 return new MoveEvaluation(x, y, moveValue);
             };
             futures.add(executor.submit(task));
@@ -451,7 +462,7 @@ public class OthelloAI extends Player<OthelloTile> {
         double startTimeAfter = System.nanoTime();
 
         //heb je gewonnen of verloren?
-        if(boardFull(tiles)){
+        if(totalTiles == 64){
             if(discDiff > 0){
                 value += 1000;
             } else{
@@ -476,19 +487,20 @@ public class OthelloAI extends Player<OthelloTile> {
         return value;
     }
 
-    boolean boardFull(OthelloTile[][] tiles) {
-        for(int row = 0; row < boardSize; row++) {
-            for (int col = 0; col < boardSize; col++) {
-                if (tiles[col][row] == OthelloTile.EMPTY) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+//    boolean boardFull(OthelloTile[][] tiles) {
+//        for(int row = 0; row < boardSize; row++) {
+//            for (int col = 0; col < boardSize; col++) {
+//                if (tiles[col][row] == OthelloTile.EMPTY) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
 
-    public int minimax(OthelloTile[][] tiles, int depth, int alpha, int beta, boolean isMax, boolean depthIsDecreased){
-        boolean boardFull =  boardFull(tiles);
+    public int minimax(OthelloTile[][] tiles, int depth, int alpha, int beta, boolean isMax, boolean depthIsDecreased, int tileCounter){
+        boolean boardFull = (tileCounter == 64);
+
         byte[] availableMovesUpcoming = null;
         byte[] availableMovesOpponent = null;
 
@@ -523,7 +535,7 @@ public class OthelloAI extends Player<OthelloTile> {
                     return evaluateBoard(tiles, 0, 0);
                 }
 
-                int curVal = minimax(tiles, depth-1, alpha, beta, false, depthIsDecreased);
+                int curVal = minimax(tiles, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
                 highestVal= Math.max(highestVal, curVal);
 
             }
@@ -539,7 +551,8 @@ public class OthelloAI extends Player<OthelloTile> {
                 copiedBoard[x][y] = symbol;
                 flipTiles(copiedBoard, x, y, symbol);
 
-                int curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased);
+                tileCounter++;
+                int curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
 
                 highestVal= Math.max(highestVal, curVal);
                 alpha = Math.max(alpha, curVal);
@@ -564,8 +577,7 @@ public class OthelloAI extends Player<OthelloTile> {
                 if (!hasMoves(availableMovesUpcoming)) {
                     return evaluateBoard(tiles, 0, 0);
                 }
-
-                int curVal = minimax(tiles, depth-1, alpha, beta, true, depthIsDecreased);
+                int curVal = minimax(tiles, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
                 lowestVal= Math.min(lowestVal, curVal);
 
             }
@@ -581,7 +593,8 @@ public class OthelloAI extends Player<OthelloTile> {
                 copiedBoard[x][y] = symbol;
                 flipTiles(copiedBoard, x, y, symbol);
 
-                int curVal = minimax(copiedBoard, depth-1, alpha, beta, true, depthIsDecreased);
+                tileCounter++;
+                int curVal = minimax(copiedBoard, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
 
                 lowestVal= Math.min(lowestVal, curVal);
                 beta = Math.min(beta, curVal);
