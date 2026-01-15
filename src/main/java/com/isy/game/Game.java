@@ -49,7 +49,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
          */
         if (isOnline){
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
-                System.out.println(result);
+//                System.out.println(result);
 
                 if(result.toUpperCase().contains("ERR")){
 
@@ -126,8 +126,8 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         if(move == null){
             return false;
         }
-        System.out.println(Arrays.toString(move));
-        System.out.println(this.activeTurnPlayer.getSymbol());
+//        System.out.println(Arrays.toString(move));
+//        System.out.println(this.activeTurnPlayer.getSymbol());
         boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
         if (correctMove) {
             if(this.checkWin(move[0], move[1], this.activeTurnPlayer)){

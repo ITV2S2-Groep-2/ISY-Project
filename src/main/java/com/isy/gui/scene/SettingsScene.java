@@ -89,8 +89,8 @@ public class SettingsScene extends Scene {
         GameSettings gs = GameSettings.get();
         int portNumber = Integer.parseInt(portTextField.getText());
         gs.setGameSettings(hostNameTextField.getText(), portNumber);
-        System.out.println(gs.getHostName());
-        System.out.println(gs.getPortNumber());
+//        System.out.println(gs.getHostName());
+//        System.out.println(gs.getPortNumber());
 
         if (volumeSlider != null) {
             gs.setBackgroundVolume(volumeSlider.getValue());

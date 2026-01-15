@@ -24,7 +24,7 @@ public class OthelloHumanPlayer extends Player<OthelloTile> {
         //TODO: remove remote to probably game class
         if(move != null){
             if(board.getTile(move[0], move[1]) == OthelloTile.EMPTY || board.getTile(move[0], move[1]) == OthelloTile.POSSIBLE_MOVE){
-                System.out.println(Arrays.toString(move) + "SEND SERVER DATA NOW!!!");
+//                System.out.println(Arrays.toString(move) + "SEND SERVER DATA NOW!!!");
 
                 sendServerData(move);
             }

@@ -9,7 +9,6 @@ import com.isy.game.player.Player;
 import com.isy.server.Server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -39,7 +38,7 @@ public class OthelloAI extends Player<OthelloTile> {
         this.corner_diffWeight = cornerWeight;
         this.stability_diffWeight = stabilityWeight;
         this.disc_diffWeight = discWeight;
-        this.maxDepth = maxDepth;
+        this.maxDepth = 7;
         this.parentName = parentName;
     }
     public OthelloAI(String name, OthelloTile symbol, Server client){
@@ -100,16 +99,16 @@ public class OthelloAI extends Player<OthelloTile> {
             return null;
         }
 
-        double startTime = System.currentTimeMillis();
-        System.out.println("before best move " + startTime);
+//        double startTime = System.currentTimeMillis();
+//        System.out.println("before best move " + startTime);
         this.evalCount = 0;
 
         int[] move = getBestMove(tiles);
 
-        System.out.println("stable count: " + this.evalCount);
-        double endTime = System.currentTimeMillis();
-        System.out.println("after best move: " + Arrays.toString(move) + " " + endTime);
-        System.out.println("time in ms: " + (endTime - startTime));
+//        System.out.println("stable count: " + this.evalCount);
+//        double endTime = System.currentTimeMillis();
+//        System.out.println("after best move: " + Arrays.toString(move) + " " + endTime);
+//        System.out.println("time in ms: " + (endTime - startTime));
 
         return move;
     }
@@ -122,24 +121,27 @@ public class OthelloAI extends Player<OthelloTile> {
         this.stableTime = 0;
         this.afterTime = 0;
 
-        List<int[]> avm = this.availableMoves(tiles, this.symbol, this.otherSymbol);
+        byte[] avm = getAvailableMoves2(tiles, this.symbol, this.otherSymbol, false);
 
         List<Future<MoveEvaluation>> futures = new ArrayList<>();
 
-        for (int[] move : avm) {
+        for (byte move : avm) {
+            if (move == 0) break;
+
+            int x = ((move >> 4) & 0b00001111) - 1;
+            int y = (move & 0b00001111) - 1;
+//            int x = move[0];
+//            int y = move[1];
+
             OthelloTile[][] copiedBoard = copyBoard(tiles);
-            copiedBoard[move[0]][move[1]] = symbol;
-            flipTiles(copiedBoard, move, symbol);
+            copiedBoard[x][y] = symbol;
+            flipTiles(copiedBoard, x, y, symbol);
 
             Callable<MoveEvaluation> task = () -> {
                 int moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false);
-                return new MoveEvaluation(move, moveValue);
+                return new MoveEvaluation(x, y, moveValue);
             };
             futures.add(executor.submit(task));
-
-
-
-
         }
 
         try {
@@ -147,16 +149,16 @@ public class OthelloAI extends Player<OthelloTile> {
                 MoveEvaluation result = future.get(); // This blocks until the thread is done
                 if (result.score > bestValue) {
                     bestValue = result.score;
-                    bestMove = result.move;
+                    bestMove = new int[]{result.x, result.y};
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
-        System.out.println("before time: " + this.beforeTime);
-        System.out.println("stable time: " + this.stableTime);
-        System.out.println("after time: " + this.afterTime);
+//        System.out.println("before time: " + this.beforeTime);
+//        System.out.println("stable time: " + this.stableTime);
+//        System.out.println("after time: " + this.afterTime);
 
         return bestMove;
     }
@@ -472,44 +474,40 @@ public class OthelloAI extends Player<OthelloTile> {
         return true;
     }
 
-    List<int[]> availableMoves(OthelloTile[][] tiles, OthelloTile mySymbol, OthelloTile opponentSymbol){
-        return getAvailableMoves(tiles, mySymbol, opponentSymbol, false);
-    }
-
     public int minimax(OthelloTile[][] tiles, int depth, int alpha, int beta, boolean isMax, boolean depthIsDecreased){
         boolean boardFull =  boardFull(tiles);
 
-        List<int[]> availableMovesUpcoming = null;
-        List<int[]> availableMovesOpponent = null;
+        byte[] availableMovesUpcoming = null;
+        byte[] availableMovesOpponent = null;
 
         if (isMax) {
-            availableMovesUpcoming = getAvailableMoves(tiles, this.symbol, this.otherSymbol, false);
+            availableMovesUpcoming = getAvailableMoves2(tiles, this.symbol, this.otherSymbol, false);
         } else {
-            availableMovesOpponent = getAvailableMoves(tiles, this.otherSymbol, this.symbol, false);
+            availableMovesOpponent = getAvailableMoves2(tiles, this.otherSymbol, this.symbol, false);
         }
 
 
         if(boardFull || depth <= 0){
             if (!isMax) {
-                availableMovesUpcoming = getAvailableMoves(tiles, this.symbol, this.otherSymbol, false);
+                availableMovesUpcoming = getAvailableMoves2(tiles, this.symbol, this.otherSymbol, false);
             } else {
-                availableMovesOpponent = getAvailableMoves(tiles, this.otherSymbol, this.symbol, false);
+                availableMovesOpponent = getAvailableMoves2(tiles, this.otherSymbol, this.symbol, false);
             }
-            return evaluateBoard(tiles, availableMovesUpcoming.size(), availableMovesOpponent.size());
+            return evaluateBoard(tiles, availableMovesUpcoming.length, availableMovesOpponent.length);
         }
 
         if(isMax){
 
-            if (availableMovesUpcoming.size() > 10 && !depthIsDecreased) {
+            if (availableMovesUpcoming.length > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
 
             int highestVal = -10000;
 
-            if (availableMovesUpcoming.isEmpty()) {
-                availableMovesOpponent = getAvailableMoves(tiles, this.otherSymbol, this.symbol, false);
-                if (availableMovesOpponent.isEmpty()) {
+            if (hasMoves(availableMovesUpcoming)) {
+                availableMovesOpponent = getAvailableMoves2(tiles, this.otherSymbol, this.symbol, false);
+                if (hasMoves(availableMovesOpponent)) {
                     return evaluateBoard(tiles, 0, 0);
                 }
 
@@ -519,11 +517,15 @@ public class OthelloAI extends Player<OthelloTile> {
             }
 
 
-            for (int[] move : availableMovesUpcoming) {
+            for (byte move : availableMovesUpcoming) {
+                if (move == 0) break;
+
+                int x = ((move >> 4) & 0b00001111) - 1;
+                int y = (move & 0b00001111) - 1;
 
                 OthelloTile[][] copiedBoard = copyBoard(tiles);
-                copiedBoard[move[0]][move[1]] = symbol;
-                flipTiles(copiedBoard, move, symbol);
+                copiedBoard[x][y] = symbol;
+                flipTiles(copiedBoard, x, y, symbol);
 
                 int curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased);
 
@@ -538,16 +540,16 @@ public class OthelloAI extends Player<OthelloTile> {
         }
         else {
 
-            if (availableMovesOpponent.size() > 10 && !depthIsDecreased) {
+            if (availableMovesOpponent.length > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
 
             int lowestVal = 10000;
 
-            if (availableMovesOpponent.isEmpty()) {
-                availableMovesUpcoming = getAvailableMoves(tiles, this.otherSymbol, this.symbol, false);
-                if (availableMovesUpcoming.isEmpty()) {
+            if (hasMoves(availableMovesOpponent)) {
+                availableMovesUpcoming = getAvailableMoves2(tiles, this.otherSymbol, this.symbol, false);
+                if (hasMoves(availableMovesUpcoming)) {
                     return evaluateBoard(tiles, 0, 0);
                 }
 
@@ -557,11 +559,15 @@ public class OthelloAI extends Player<OthelloTile> {
             }
 
 
-            for (int[] move : availableMovesOpponent) {
+            for (byte move : availableMovesOpponent) {
+                if (move == 0) break;
+
+                int x = ((move >> 4) & 0b00001111) - 1;
+                int y = (move & 0b00001111) - 1;
 
                 OthelloTile[][] copiedBoard = copyBoard(tiles);
-                copiedBoard[move[0]][move[1]] = symbol;
-                flipTiles(copiedBoard, move, symbol);
+                copiedBoard[x][y] = symbol;
+                flipTiles(copiedBoard, x, y, symbol);
 
                 int curVal = minimax(copiedBoard, depth-1, alpha, beta, true, depthIsDecreased);
 
@@ -582,62 +588,138 @@ public class OthelloAI extends Player<OthelloTile> {
             new int[]{1, 1}, new int[]{-1, 1},
             new int[]{1, -1}, new int[]{-1, -1});
 
+    private static int BOARD_SIZED_SQUARED = boardSize * boardSize;
 
-    public static List<int[]> getAvailableMoves(OthelloTile[][] tiles, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour) {
-        ArrayList<int[]> availableMoves = new ArrayList<>();
-        boolean[][] addedCoords = new boolean[8][8];
+//    public static List<int[]> getAvailableMoves(OthelloTile[][] tiles, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour){
+//        ArrayList<int[]> availableMoves = new ArrayList<>();
+//
+//        byte[] moves = getAvailableMoves2(tiles, playerSymbol, opponentSymbol, reversiFirstFour);
+//
+//        for (byte move : moves) {
+//            if (move == 0) break;
+//
+//            int x = ((move >> 4) & 0b00001111) - 1;
+//            int y = (move & 0b00001111) - 1;
+//
+//            availableMoves.add(new int[]{x, y});
+//        }
+//
+//        return availableMoves;
+//    }
 
-        if (reversiFirstFour) {
-            return openingAvailableMoves(tiles);
-        }
+//    public static List<int[]> getAvailableMoves(OthelloTile[][] tiles, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour) {
+//        ArrayList<int[]> availableMoves = new ArrayList<>();
+//        long addedCoords = 0;
+//
+////        if (reversiFirstFour) {
+////            return openingAvailableMoves(tiles);
+////        }
+//
+//        int row = 0;
+//        int col = 0;
+//        for (int i = 0; i < BOARD_SIZED_SQUARED; i++) {
+//            if (tiles[row][col] == playerSymbol) {
+//                for (int[] direction : directions) {
+//                    int cX = row + direction[0];
+//                    int cY = col + direction[1];
+//
+//                    boolean foundOpponentSymbol = false;
+//                    while (cX >= 0 && cX < boardSize && cY >= 0 && cY < boardSize) {
+//                        if (tiles[cX][cY] == playerSymbol) {
+//                            break;
+//                        }
+//                        if (tiles[cX][cY] == opponentSymbol) {
+//                            foundOpponentSymbol = true;
+//                        }
+//                        if (tiles[cX][cY] == OthelloTile.EMPTY) {
+//                            if (foundOpponentSymbol) {
+//                                long r = 1L << (i + 1);
+//                                if ((r & addedCoords) == 0) {
+//                                    addedCoords |= r;
+//                                    availableMoves.add(new int[]{cX, cY});
+//                                }
+//                            }
+//                            break;
+//                        }
+//                        cX += direction[0];
+//                        cY += direction[1];
+//                    }
+//                }
+//            }
+//
+//            col++;
+//            if (col >= boardSize){
+//                col = 0;
+//                row++;
+//            }
+//        }
+//
+//        return availableMoves;
+//    }
 
-        for (int row = 0; row < boardSize; row++) {
-            for (int col = 0; col < boardSize; col++) {
-                if (tiles[row][col] == playerSymbol) {
+    public static boolean hasMoves(byte[] moves){
+        if (moves == null) return false;
+        return moves[0] != 0;
+    }
 
+    public static byte[] getAvailableMoves2(OthelloTile[][] tiles, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour) {
+//        ArrayList<int[]> availableMoves = new ArrayList<>();
+        byte[] availableMoves = new byte[BOARD_SIZED_SQUARED];
+        long addedCoords = 0;
 
-                    for (int[] direction : directions) {
-                        int cX = row + direction[0];
-                        int cY = col + direction[1];
+//        if (reversiFirstFour) {
+//            return openingAvailableMoves(tiles);
+//        }
 
-                        boolean foundOpponentSymbol = false;
-                        while (cX >= 0 && cX < boardSize && cY >= 0 && cY < boardSize) {
-                            if (tiles[cX][cY] == playerSymbol) {
-                                break;
-                            }
-                            if (tiles[cX][cY] == opponentSymbol) {
-                                foundOpponentSymbol = true;
-                            }
-                            if (tiles[cX][cY] == OthelloTile.EMPTY) {
-                                if (foundOpponentSymbol) {
+        int row = 0;
+        int col = 0;
+        int index = 0;
+        for (int i = 0; i < BOARD_SIZED_SQUARED; i++) {
+            if (tiles[row][col] == playerSymbol) {
+                for (int[] direction : directions) {
+                    int cX = row + direction[0];
+                    int cY = col + direction[1];
 
-                                    if (!addedCoords[cX][cY]) {
-                                        addedCoords[cX][cY] = true;
-                                        availableMoves.add(new int[]{cX, cY});
-                                    }
-
+                    boolean foundOpponentSymbol = false;
+                    while (cX >= 0 && cX < boardSize && cY >= 0 && cY < boardSize) {
+                        if (tiles[cX][cY] == playerSymbol) {
+                            break;
+                        } else if (tiles[cX][cY] == opponentSymbol) {
+                            foundOpponentSymbol = true;
+                        } else if (tiles[cX][cY] == OthelloTile.EMPTY) {
+                            if (foundOpponentSymbol) {
+                                long r = 1L << (i + 1);
+                                if ((r & addedCoords) == 0) {
+                                    addedCoords |= r;
+                                    availableMoves[index] = (byte) (((cX + 1) << 4) | (cY + 1));
+//                                    System.out.println(availableMoves[index] + "_" + tiles[cX][cY]);
+                                    index++;
                                 }
-                                break;
                             }
-
-                            cX += direction[0];
-                            cY += direction[1];
+                            break;
                         }
+                        cX += direction[0];
+                        cY += direction[1];
                     }
-
                 }
+            }
+
+            col++;
+            if (col >= boardSize){
+                col = 0;
+                row++;
             }
         }
 
         return availableMoves;
     }
 
+    private static final int[][] centerTiles = new int[][]{
+            {3, 3}, {3, 4}, {4, 3}, {4, 4}
+    };
 
     public static List<int[]> openingAvailableMoves(OthelloTile[][] tiles) {
         List<int[]> moves = new ArrayList<>();
-        int[][] centerTiles = new int[][]{
-                {3, 3}, {3, 4}, {4, 3}, {4, 4}
-        };
 
         for (int[] coord : centerTiles) {
             OthelloTile tile = tiles[coord[0]][coord[1]];
@@ -661,7 +743,7 @@ public class OthelloAI extends Player<OthelloTile> {
         return copy;
     }
 
-    public void flipTiles(OthelloTile[][] tiles, int[] move, OthelloTile symbol) {
+    public void flipTiles(OthelloTile[][] tiles, int xO, int yO, OthelloTile symbol) {
         ArrayList<Integer[]> tilesToFlip = new ArrayList<>();
         int[][] dirs = {
                 {1, 0},   // down
@@ -675,8 +757,8 @@ public class OthelloAI extends Player<OthelloTile> {
         };
 
         for (int[] d : dirs) {
-            int x = move[0];
-            int y = move[1];
+            int x = xO;
+            int y = yO;
 
             while (true) {
                 x += d[0];
@@ -694,7 +776,7 @@ public class OthelloAI extends Player<OthelloTile> {
                     break;
                 }
 
-                if (current != OthelloTile.EMPTY && current != symbol){
+                if (current != symbol){
                     tilesToFlip.add(new Integer[]{x,y});
                 }
 
@@ -715,10 +797,11 @@ public class OthelloAI extends Player<OthelloTile> {
 }
 
 class MoveEvaluation {
-    int[] move;
+    int x, y;
     int score;
-    MoveEvaluation(int[] move, int score) {
-        this.move = move;
+    MoveEvaluation(int x, int y, int score) {
+        this.x = x;
+        this.y = y;
         this.score = score;
     }
 }

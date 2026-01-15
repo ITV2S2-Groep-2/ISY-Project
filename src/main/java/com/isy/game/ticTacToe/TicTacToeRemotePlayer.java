@@ -22,7 +22,7 @@ public class TicTacToeRemotePlayer extends RemotePlayer<TicTacToeTile> {
 
         String serverMove = await(new Promise("^(?:ERR|SVR GAME MOVE).*"));
 
-        System.out.println("REMOTE MOVE: " + serverMove);
+//        System.out.println("REMOTE MOVE: " + serverMove);
 
         if(serverMove.toUpperCase().contains("ERR")){
             return null;

@@ -23,6 +23,8 @@ public class Main {
     public static Game runningGame = null;
 
     public static void main(String[] args) {
+        long start = System.nanoTime();
+
         String player1Name = "Base AI";
         String player2Name = "Test AI";
         if (args.length == 3) { // moet aangepast worden misschien in de toekomst
@@ -132,6 +134,9 @@ public class Main {
                 game.run();
                 long endTime = System.nanoTime();
                 long realTime = endTime - startTime;
+
+                System.out.println("AI TIME: " + realTime);
+
                 if (realTime < minTime) {
                     minTime = realTime;
                 }
@@ -149,6 +154,7 @@ public class Main {
         ResultWriter.writeAll("history.json");
         ResultWriter.writeTop5("top5.json");
 
+        System.out.println("Time: " + (System.nanoTime() - start));
 
         // window = new Window();
 

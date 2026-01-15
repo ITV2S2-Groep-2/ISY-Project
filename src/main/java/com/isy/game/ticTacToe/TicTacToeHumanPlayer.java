@@ -24,7 +24,7 @@ public class TicTacToeHumanPlayer extends Player<TicTacToeTile> {
 
         if(move != null){
             if(board.getTile(move[0], move[1]) == TicTacToeTile.EMPTY){
-                System.out.println(Arrays.toString(move) + "SEND SERVER DATA NOW!!!");
+//                System.out.println(Arrays.toString(move) + "SEND SERVER DATA NOW!!!");
 
                 sendServerData(move);
             }

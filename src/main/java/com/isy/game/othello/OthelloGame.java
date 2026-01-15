@@ -31,10 +31,9 @@ public class OthelloGame extends Game<OthelloTile> {
         int[] move = null;
 
         List<int[]> availableMoves = OthelloUtils.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol(), useReversiRules && this.getTurnCounter() <= 4);
-
-        for (int[] availableMove : availableMoves) {
-            System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
-        }
+//        for (int[] availableMove : availableMoves) {
+//            System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
+//        }
         if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
 
         this.renderBoard();
@@ -52,16 +51,14 @@ public class OthelloGame extends Game<OthelloTile> {
         if (move == null) {
             return false;
         }
-        System.out.println(Arrays.toString(move));
-        System.out.println(this.activeTurnPlayer.getSymbol());
+//        System.out.println(Arrays.toString(move));
+//        System.out.println(this.activeTurnPlayer.getSymbol());
 
         int[] finalMove = move;
-        boolean isAvailable = availableMoves.stream().anyMatch(val -> {
-            return val[0] == finalMove[0] && val[1] == finalMove[1];
-        });
+        boolean isAvailable = availableMoves.stream().anyMatch(val -> val[0] == finalMove[0] && val[1] == finalMove[1]);
 
         this.removeAvailableMovesFromBoard();
-        boolean correctMove = isAvailable ? this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol()) : false;
+        boolean correctMove = isAvailable && this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
         if (this.useReversiRules && this.turnCounter <= 4) {
             this.giveTurnOver();
@@ -79,7 +76,7 @@ public class OthelloGame extends Game<OthelloTile> {
              */
             if (this.board.isBoardFull()) {
                 int state = this.hasMoreTiles(this.activeTurnPlayer.getSymbol());
-                System.out.println(state);
+//                System.out.println(state);
                 switch (state) {
                     case 0:
                         return true;
@@ -96,7 +93,7 @@ public class OthelloGame extends Game<OthelloTile> {
 
                 if (availableMovesUpcoming.isEmpty() && availableMovesOpponent.isEmpty()) {
                     int state = this.hasMoreTiles(this.activeTurnPlayer.getSymbol());
-                    System.out.println(state);
+//                    System.out.println(state);
                     switch (state) {
                         case 0:
                             return true;
