@@ -24,12 +24,11 @@ public class Main {
     public static Window window;
     public static Game runningGame = null;
 
+    public static final int MAXDEPTH = 8;
+    public static final int MINDEPTH = 5;
+
     public static void main(String[] args) {
         long start = System.nanoTime();
-
-
-        final int MAXDEPTH = 8;
-        final int MINDEPTH = 5;
 
         JSONObject topmodel = ModelFileReader.Read("top5.json");
         // depth met cap 5 afronden
@@ -38,47 +37,24 @@ public class Main {
         if (topmodel == null) {
             OthelloAI baseModel = new OthelloAI("BASEMODEL", OthelloTile.PLAYER_1, null);
             models.add(baseModel);
+
+            double BaseMobility_diffWeight = baseModel.getMobility_diffWeight();
+            double BaseCorner_diffWeight = baseModel.getCorner_diffWeight();
+            double BaseStability_diffWeight = baseModel.getStability_diffWeight();
+            double BaseDisc_diffWeight = baseModel.getDisc_diffWeight();
+            int BaseMaxDepth = baseModel.getMaxDepth();
+            String parent = baseModel.getName();
+
             for (int i = 0; i < 23; i++) {
-                char[] PlusOrMinus = {'+', '-'};
-
-                double randomValueObWeight = baseModel.getMobility_diffWeight() * (r.nextDouble(5, 20) / 100);
-                double randomValueCornerWeight = baseModel.getCorner_diffWeight() * (r.nextDouble(5, 20) / 100);
-                double randomValueStabilityWeight = baseModel.getStability_diffWeight() * (r.nextDouble(5, 20) / 100);
-                double randomValueDiscWeight = baseModel.getDisc_diffWeight() * (r.nextDouble(5, 20) / 100);
-                double randomValueMaxDepth = baseModel.getMaxDepth() * (r.nextInt(5, 20) / 100.0);
-
-
-                randomValueObWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getMobility_diffWeight() + randomValueObWeight : baseModel.getMobility_diffWeight() - randomValueObWeight;
-                randomValueCornerWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getCorner_diffWeight() + randomValueCornerWeight : baseModel.getCorner_diffWeight() - randomValueCornerWeight;
-                randomValueStabilityWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getStability_diffWeight() + randomValueStabilityWeight : baseModel.getStability_diffWeight() - randomValueStabilityWeight;
-                randomValueDiscWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getDisc_diffWeight() + randomValueDiscWeight : baseModel.getDisc_diffWeight() - randomValueDiscWeight;
-                randomValueMaxDepth = (PlusOrMinus[r.nextInt(2)] == '+') ? baseModel.getMaxDepth() + randomValueMaxDepth : baseModel.getMaxDepth() - randomValueMaxDepth;
-
-
-                double roundObWeight = Math.round(randomValueObWeight * 100.0) / 100.0;
-                double roundCornerWeight = Math.round(randomValueCornerWeight * 100.0) / 100.0;
-                double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
-                double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
-                int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
-
-                if (roundMaxDepth < MINDEPTH) {
-                    roundMaxDepth = MINDEPTH;
-                } else if (roundMaxDepth > MAXDEPTH) {
-                    roundMaxDepth = MAXDEPTH;
-                }
-
-
-                UUID id = UUID.randomUUID();
-                String modelId = id.toString();
-
-                OthelloAI model = new OthelloAI(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModel.getName());
-                models.add(model);
+                OthelloAI newModel = newModel(BaseMobility_diffWeight, BaseCorner_diffWeight, BaseStability_diffWeight, BaseDisc_diffWeight, BaseMaxDepth, parent);
+                models.add(newModel);
             }
         }
         else {
             for (String baseModelName : topmodel.keySet()) {
                 JSONObject modelJson = topmodel.getJSONObject(baseModelName);
                 JSONObject settings = modelJson.getJSONObject("settings");
+
                 double BaseMobility_diffWeight = settings.getDouble("mobility_diffWeight");
                 double BaseCorner_diffWeight = settings.getDouble("corner_diffWeight");
                 double BaseStability_diffWeight = settings.getDouble("stability_diffWeight");
@@ -87,51 +63,16 @@ public class Main {
                 String parent = settings.getString("Parent");
                 OthelloAI baseModel = new OthelloAI(baseModelName, OthelloTile.PLAYER_1, null, BaseMobility_diffWeight,BaseCorner_diffWeight, BaseStability_diffWeight,  BaseDisc_diffWeight, BaseMaxDepth, parent );
                 models.add(baseModel);
+
                 for (int i = 0; i < 4; i++) {
-                    char[] PlusOrMinus = {'+', '-'};
-                    double randomValueObWeight = BaseMobility_diffWeight * (r.nextDouble(5, 20) / 100);
-                    double randomValueCornerWeight = BaseCorner_diffWeight * (r.nextDouble(5, 20) / 100);
-                    double randomValueStabilityWeight = BaseStability_diffWeight * (r.nextDouble(5, 20) / 100);
-                    double randomValueDiscWeight = BaseDisc_diffWeight * (r.nextDouble(5, 20) / 100);
-                    double randomValueMaxDepth =BaseMaxDepth * (r.nextInt(5, 20) / 100.0);
-
-
-                    randomValueObWeight = (PlusOrMinus[r.nextInt(2)] == '+') ?BaseMobility_diffWeight + randomValueObWeight : BaseMobility_diffWeight - randomValueObWeight;
-                    randomValueCornerWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseCorner_diffWeight + randomValueCornerWeight :BaseCorner_diffWeight - randomValueCornerWeight;
-                    randomValueStabilityWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseStability_diffWeight + randomValueStabilityWeight : BaseStability_diffWeight - randomValueStabilityWeight;
-                    randomValueDiscWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseDisc_diffWeight + randomValueDiscWeight : BaseDisc_diffWeight - randomValueDiscWeight;
-                    randomValueMaxDepth = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseMaxDepth + randomValueMaxDepth : BaseMaxDepth - randomValueMaxDepth;
-
-
-                    double roundObWeight = Math.round(randomValueObWeight * 100.0) / 100.0;
-                    double roundCornerWeight = Math.round(randomValueCornerWeight * 100.0) / 100.0;
-                    double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
-                    double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
-                    int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
-
-                    if (roundMaxDepth < MINDEPTH) {
-                        roundMaxDepth = MINDEPTH;
-                    } else if (roundMaxDepth > MAXDEPTH) {
-                        roundMaxDepth = MAXDEPTH;
-                    }
-
-                    UUID id = UUID.randomUUID();
-                    String modelId = id.toString();
-
-                    OthelloAI model = new OthelloAI(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModelName);
-                    models.add(model);
+                    OthelloAI newModel = newModel(BaseMobility_diffWeight, BaseCorner_diffWeight, BaseStability_diffWeight, BaseDisc_diffWeight, BaseMaxDepth, baseModelName);
+                    models.add(newModel);
                 }
 
 
             }
             // nu nog niks
         }
-//                for topmodel in file
-//                maak 4 variaties van model
-//                // zet bij de betreffende variatie de naam van de parent
-//                maak list van modellen
-
-        //zo kom je uit op 25 modellen totaal
 
         List<ModelRunner> modelRunnerList = new ArrayList<>();
         for( OthelloAI model : models) {
@@ -192,6 +133,42 @@ public class Main {
 
         // window = new Window();
 
+    }
+
+    public static OthelloAI newModel(double BaseMobility_diffWeight, double BaseCorner_diffWeight, double BaseStability_diffWeight, double BaseDisc_diffWeight, int BaseMaxDepth, String baseModelName){
+        Random r = new Random();
+        char[] PlusOrMinus = {'+', '-'};
+        double randomValueObWeight = BaseMobility_diffWeight * (r.nextDouble(5, 20) / 100);
+        double randomValueCornerWeight = BaseCorner_diffWeight * (r.nextDouble(5, 20) / 100);
+        double randomValueStabilityWeight = BaseStability_diffWeight * (r.nextDouble(5, 20) / 100);
+        double randomValueDiscWeight = BaseDisc_diffWeight * (r.nextDouble(5, 20) / 100);
+        double randomValueMaxDepth =BaseMaxDepth * (r.nextInt(5, 20) / 100.0);
+
+
+        randomValueObWeight = (PlusOrMinus[r.nextInt(2)] == '+') ?BaseMobility_diffWeight + randomValueObWeight : BaseMobility_diffWeight - randomValueObWeight;
+        randomValueCornerWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseCorner_diffWeight + randomValueCornerWeight :BaseCorner_diffWeight - randomValueCornerWeight;
+        randomValueStabilityWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseStability_diffWeight + randomValueStabilityWeight : BaseStability_diffWeight - randomValueStabilityWeight;
+        randomValueDiscWeight = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseDisc_diffWeight + randomValueDiscWeight : BaseDisc_diffWeight - randomValueDiscWeight;
+        randomValueMaxDepth = (PlusOrMinus[r.nextInt(2)] == '+') ? BaseMaxDepth + randomValueMaxDepth : BaseMaxDepth - randomValueMaxDepth;
+
+
+        double roundObWeight = Math.round(randomValueObWeight * 100.0) / 100.0;
+        double roundCornerWeight = Math.round(randomValueCornerWeight * 100.0) / 100.0;
+        double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
+        double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
+        int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
+
+        if (roundMaxDepth < MINDEPTH) {
+            roundMaxDepth = MINDEPTH;
+        } else if (roundMaxDepth > MAXDEPTH) {
+            roundMaxDepth = MAXDEPTH;
+        }
+
+        UUID id = UUID.randomUUID();
+        String modelId = id.toString();
+
+        OthelloAI model = new OthelloAI(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModelName);
+        return model;
     }
 
     static final int GAME_AMOUNT = 500;
