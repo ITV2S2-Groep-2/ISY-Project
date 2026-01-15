@@ -38,7 +38,7 @@ public class OthelloAI extends Player<OthelloTile> {
         this.corner_diffWeight = cornerWeight;
         this.stability_diffWeight = stabilityWeight;
         this.disc_diffWeight = discWeight;
-        this.maxDepth = 7;
+        this.maxDepth = maxDepth;
         this.parentName = parentName;
     }
     public OthelloAI(String name, OthelloTile symbol, Server client){

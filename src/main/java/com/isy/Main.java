@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.*;
 
 
 public class Main {
@@ -164,14 +165,17 @@ public class Main {
 
     }
 
-    static final int GAME_AMOUNT = 20;
+    static final int GAME_AMOUNT = 500;
+    static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
+        final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
+
         long avgTime = 0;
         long minTime = Long.MAX_VALUE;
         long maxTime = 0;
         long totalTime = 0;
         boolean finished = false;
-        OthelloAI model;
+        final OthelloAI model;
 
         public ModelRunner(OthelloAI model){
             this.model = model;
@@ -184,26 +188,51 @@ public class Main {
             minTime = Long.MAX_VALUE;
             maxTime = 0;
             ResultWriter.addModel(model);
-            for (int i = 0; i < GAME_AMOUNT; i++ ){
-                long startTime =  System.nanoTime();
-                OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
-                game.run();
-                long endTime = System.nanoTime();
-                long realTime = endTime - startTime;
 
-                System.out.println("AI TIME: " + realTime);
+            List<Future<GameResult>> games = new ArrayList<>();
 
-                if (realTime < minTime) {
-                    minTime = realTime;
-                }
-                if (realTime > maxTime) {
-                    maxTime = realTime;
-                }
-                totalTime += realTime;
+            for (int i = 0; i < GAME_AMOUNT; i++ ) {
+                final long startTime = System.nanoTime();
+                Callable<GameResult> task = () -> {
+                    OthelloGame game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                    game.run();
+                    long endTime = System.nanoTime();
+                    long realTime = endTime - startTime;
+
+                    return new GameResult(realTime);
+                };
+                games.add(executor.submit(task));
             }
+
+            try {
+                for (Future<GameResult> game : games) {
+                    GameResult result = game.get(); // This blocks until the thread is done
+
+                    long realTime = result.realTime;
+
+                    if (realTime < minTime) {
+                        minTime = realTime;
+                    }
+                    if (realTime > maxTime) {
+                        maxTime = realTime;
+                    }
+                    totalTime += realTime;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                finished = true;
+                e.printStackTrace();
+            }
+
             model.cleanup();
             avgTime = totalTime / GAME_AMOUNT;
             finished = true;
+        }
+    }
+
+    public static class GameResult{
+        long realTime;
+        public GameResult(long realTime){
+            this.realTime = realTime;
         }
     }
 
