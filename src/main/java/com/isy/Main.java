@@ -27,12 +27,9 @@ public class Main {
     public static void main(String[] args) {
         long start = System.nanoTime();
 
-        String player1Name = "Base AI";
-        String player2Name = "Test AI";
-        if (args.length == 3) { // moet aangepast worden misschien in de toekomst
-            player1Name = args[1];
-            player2Name = args[2];
-        }
+
+        final int MAXDEPTH = 8;
+        final int MINDEPTH = 5;
 
         JSONObject topmodel = ModelFileReader.Read("top5.json");
         // depth met cap 5 afronden
@@ -63,6 +60,13 @@ public class Main {
                 double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
                 double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
                 int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
+
+                if (roundMaxDepth < MINDEPTH) {
+                    roundMaxDepth = MINDEPTH;
+                } else if (roundMaxDepth > MAXDEPTH) {
+                    roundMaxDepth = MAXDEPTH;
+                }
+
 
                 UUID id = UUID.randomUUID();
                 String modelId = id.toString();
@@ -104,6 +108,13 @@ public class Main {
                     double roundStabilityWeight = Math.round(randomValueStabilityWeight * 100.0) / 100.0;
                     double roundValueDiscWeight = Math.round(randomValueDiscWeight * 100.0) / 100.0;
                     int roundMaxDepth =  (int) Math.round(randomValueMaxDepth);
+
+                    if (roundMaxDepth < MINDEPTH) {
+                        roundMaxDepth = MINDEPTH;
+                    } else if (roundMaxDepth > MAXDEPTH) {
+                        roundMaxDepth = MAXDEPTH;
+                    }
+
                     UUID id = UUID.randomUUID();
                     String modelId = id.toString();
 
@@ -153,10 +164,29 @@ public class Main {
         }
 
 
+        boolean isTheSame = true;
         // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
         System.out.println("Writing");
         ResultWriter.writeAll("history.json");
-        ResultWriter.writeTop5("top5.json");
+
+        JSONObject NewTop5 = ResultWriter.getTop5();
+
+        if (topmodel == null){
+            isTheSame = false;
+        } else {
+            for (String baseModelName : topmodel.keySet()) {
+                if (!NewTop5.has(baseModelName)){
+                    isTheSame = false;
+                }
+            }
+        }
+
+        if (!isTheSame) {
+            ResultWriter.writeTop5("top5.json");
+            System.out.println("Is not the same");
+        } else {
+            System.out.println("Is the same");
+        }
 
         System.out.println("Time: " + (System.nanoTime() - start));
 

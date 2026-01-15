@@ -83,7 +83,7 @@ public class ResultWriter {
             throw new RuntimeException(e);
         }
     }
-    public static void writeTop5(String filename) {
+    public static JSONObject getTop5() {
         JSONObject root = new JSONObject();
 
         ArrayList<Map.Entry<String, JSONObject>> list = new ArrayList<>(modelMap.entrySet());
@@ -94,7 +94,11 @@ public class ResultWriter {
         for (int i = 0; i < 5; i++ ) {
             root.put(list.get(i).getKey(), list.get(i).getValue());
         }
+        return root;
+    }
+    public static void writeTop5(String filename) {
 
+        JSONObject root = getTop5();
         try (FileWriter file = new FileWriter(filename)) {
             file.write(root.toString(4));
             System.out.println("JSON Object write to a File successfully");
