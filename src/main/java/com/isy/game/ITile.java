@@ -7,4 +7,7 @@ import javax.swing.*;
  */
 public interface ITile {
     void updateOnBoard(JButton jButton);
+
+    int size();
+    int index();
 }

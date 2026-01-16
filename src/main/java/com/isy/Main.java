@@ -24,8 +24,8 @@ public class Main {
     private static final Random r = new Random();
 
 
-    public static final int MAXDEPTH = 4;
-    public static final int MINDEPTH = 4;
+    public static final int MAXDEPTH = 5;
+    public static final int MINDEPTH = 5;
 
     public static boolean endCase = false;
 
@@ -190,8 +190,8 @@ public class Main {
         return model;
     }
 
-    static final int GAME_AMOUNT = 10;
-    static final int MAX_GAME_THREADS = 1;
+    static final int GAME_AMOUNT = 100;
+    static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
 
