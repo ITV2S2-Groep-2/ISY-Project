@@ -112,11 +112,11 @@ public class ResultWriter {
                 JSONObject parentSettings = parentObj.getJSONObject("settings");
                 JSONObject newSettings = list.get(i).getValue().getJSONObject("settings");
                 if (
-                        parentSettings.getDouble("mobility_diff_weight") == newSettings.getDouble("mobility_diff_weight")
-                        && parentSettings.getDouble("corner_diff_weight") == newSettings.getDouble("corner_diff_weight")
-                        && parentSettings.getDouble("stability_diff_weight") == newSettings.getDouble("stability_diff_weight")
-                        && parentSettings.getDouble("disc_diff_weight") == newSettings.getDouble("disc_diff_weight")
-                        && parentSettings.getInt("max_depth") == newSettings.getInt("max_depth")
+                        (Math.abs(parentSettings.getDouble("mobility_diff_weight") - newSettings.getDouble("mobility_diff_weight")) < 0.0001)
+                        && (Math.abs(parentSettings.getDouble("corner_diff_weight") - newSettings.getDouble("corner_diff_weight")) < 0.001)
+                        && (Math.abs(parentSettings.getDouble("stability_diff_weight") - newSettings.getDouble("stability_diff_weight")) < 0.001)
+                        && (Math.abs(parentSettings.getDouble("disc_diff_weight") - newSettings.getDouble("disc_diff_weight")) < 0.001)
+                        && (Math.abs(parentSettings.getInt("max_depth") - newSettings.getInt("max_depth")) < 0.001)
                 ) {
                     int parentTop5Count = parentObj.getJSONObject("stats").getInt("top_5_count");
                     list.get(i).getValue().getJSONObject("stats").put("top_5_count", parentTop5Count + 1);

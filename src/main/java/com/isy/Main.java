@@ -9,6 +9,7 @@ import com.isy.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,19 +21,23 @@ public class Main {
     public static Window window;
     public static Game runningGame = null;
 
-    public static final int MAXDEPTH = 5;
-    public static final int MINDEPTH = 5;
+    private static final Random r = new Random();
 
-    public static boolean endCase = true;
+
+    public static final int MAXDEPTH = 4;
+    public static final int MINDEPTH = 4;
+
+    public static boolean endCase = false;
 
     public static void main(String[] args) {
-        //while (!endCase) {
+        while (!endCase) {
+            ResultWriter.modelMap.clear();
+            System.out.println(LocalDateTime.now());
                 long start = System.nanoTime();
 
             JSONObject topmodel = ModelFileReader.Read("top5.json");
             // depth met cap 5 afronden
             ArrayList<OthelloAI> models = new ArrayList<OthelloAI>();
-            Random r = new Random();
             if (topmodel == null) {
                 OthelloAI baseModel = new OthelloAI("BASEMODEL", OthelloTile.PLAYER_1, null);
                 models.add(baseModel);
@@ -122,6 +127,7 @@ public class Main {
                 if (newTop5.getJSONObject(key).getJSONObject("stats").getInt("top_5_count") >= 5) {
                     System.out.println("ENDCASE BEHAALD STOPPEN MET TESTEN");
                     endCase = true;
+                    System.out.println(LocalDateTime.now());
                 }
             }
 
@@ -146,11 +152,10 @@ public class Main {
             System.out.println("Time: " + (System.nanoTime() - start));
 
             // window = new Window();
-        //}
+        }
     }
 
     public static OthelloAI newModel(double baseMobility_diffWeight, double baseCorner_diffWeight, double baseStability_diffWeight, double baseDisc_diffWeight, int baseMaxDepth, String baseModelName){
-        Random r = new Random();
         char[] plusOrMinus = {'+', '-'};
         double randomValueObWeight = baseMobility_diffWeight * (r.nextDouble(5, 20) / 100);
         double randomValueCornerWeight = baseCorner_diffWeight * (r.nextDouble(5, 20) / 100);
@@ -185,7 +190,7 @@ public class Main {
         return model;
     }
 
-    static final int GAME_AMOUNT = 100;
+    static final int GAME_AMOUNT = 500;
     static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
@@ -211,8 +216,7 @@ public class Main {
             List<Future<GameResult>> games = new ArrayList<>();
 
             for (int i = 0; i < GAME_AMOUNT; i++ ) {
-                final long startTime = System.nanoTime();
-                Callable<GameResult> task = getGameResultCallable(i, startTime);
+                Callable<GameResult> task = getGameResultCallable(i);
                 games.add(executor.submit(task));
             }
 
@@ -243,8 +247,10 @@ public class Main {
             this.executor.shutdown();
         }
 
-        private @NotNull Callable<GameResult> getGameResultCallable(int i, long startTime) {
+        private @NotNull Callable<GameResult> getGameResultCallable(int i) {
             Callable<GameResult> task = () -> {
+                final long startTime = System.nanoTime();
+
                 OthelloGame game;
                 if(i < GAME_AMOUNT / 2){
                     game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});

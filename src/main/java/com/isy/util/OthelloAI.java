@@ -19,7 +19,7 @@ public class OthelloAI extends Player<OthelloTile> {
     double corner_diffWeight = 25;
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
-    int maxDepth = 7;
+    int maxDepth = 4;
 
     final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
