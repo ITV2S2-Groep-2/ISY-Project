@@ -43,7 +43,7 @@ public enum OthelloTile implements ITile {
         jButton.setIcon(this.icon);
     }
 
-    public static OthelloTile[][] createBoard(int width, int height){
-        return new OthelloTile[width][height];
+    public static OthelloTile[] createBoard(int width, int height){
+        return new OthelloTile[width * height];
     }
 }

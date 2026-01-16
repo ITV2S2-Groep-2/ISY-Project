@@ -27,9 +27,8 @@ public class OthelloUtils {
             go over each direction (horizontal, vertical, diagonal) from given tiles
             find empty space directly behind opponents tile.
          */
-        OthelloTile[][] tiles = board.getTiles();
 
-        byte[] moves = getAvailableMoves2(tiles, playerSymbol, opponentSymbol, reversiFirstFour);
+        byte[] moves = getAvailableMoves2(board, playerSymbol, opponentSymbol, reversiFirstFour);
         for (byte move : moves) {
             if (move == 0) break;
 
@@ -38,39 +37,6 @@ public class OthelloUtils {
 
             availableMoves.add(new int[]{x, y});
         }
-
-//        for (int row = 0; row < board.getWidth(); row++) {
-//            for (int col = 0; col < board.getHeight(); col++) {
-//                if (tiles[row][col] == playerSymbol) {
-//
-//
-//                    for (int[] direction : directions) {
-//                        int cX = row + direction[0];
-//                        int cY = col + direction[1];
-//
-//                        boolean foundOpponentSymbol = false;
-//                        while (cX >= 0 && cX < board.getWidth() && cY >= 0 && cY < board.getHeight()) {
-//                            if (tiles[cX][cY] == playerSymbol) {
-//                                break;
-//                            }
-//                            if (tiles[cX][cY] == opponentSymbol) {
-//                                foundOpponentSymbol = true;
-//                            }
-//                            if (tiles[cX][cY] == OthelloTile.EMPTY) {
-//                                if (foundOpponentSymbol) {
-//                                    addUniqueCoords(availableMoves, new int[]{cX, cY});
-//                                }
-//                                break;
-//                            }
-//
-//                            cX += direction[0];
-//                            cY += direction[1];
-//                        }
-//                    }
-//
-//                }
-//            }
-//        }
 
         return availableMoves;
     }

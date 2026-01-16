@@ -30,7 +30,7 @@ public class Main {
     public static boolean endCase = false;
 
     public static void main(String[] args) {
-        while (!endCase) {
+//        while (!endCase) {
             ResultWriter.modelMap.clear();
             System.out.println(LocalDateTime.now());
                 long start = System.nanoTime();
@@ -152,7 +152,7 @@ public class Main {
             System.out.println("Time: " + (System.nanoTime() - start));
 
             // window = new Window();
-        }
+//        }
     }
 
     public static OthelloAI newModel(double baseMobility_diffWeight, double baseCorner_diffWeight, double baseStability_diffWeight, double baseDisc_diffWeight, int baseMaxDepth, String baseModelName){
@@ -190,8 +190,8 @@ public class Main {
         return model;
     }
 
-    static final int GAME_AMOUNT = 500;
-    static final int MAX_GAME_THREADS = 10;
+    static final int GAME_AMOUNT = 10;
+    static final int MAX_GAME_THREADS = 1;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
 

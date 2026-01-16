@@ -115,14 +115,14 @@ public class GameScene extends Scene {
     }
 
     public void reloadBoardValues() {
-        ITile[][] tiles = game.getBoard().getTiles();
-
-        for (int y = 0; y < game.getBoard().getHeight(); y++) {
-            for (int x = 0; x < game.getBoard().getWidth(); x++) {
-                tiles[x][y].updateOnBoard(this.boardButtons.get(x).get(y));
-                this.boardButtons.get(x).get(y).repaint();
-            }
-        }
+//        ITile[][] tiles = game.getBoard().getTiles();
+//
+//        for (int y = 0; y < game.getBoard().getHeight(); y++) {
+//            for (int x = 0; x < game.getBoard().getWidth(); x++) {
+//                tiles[x][y].updateOnBoard(this.boardButtons.get(x).get(y));
+//                this.boardButtons.get(x).get(y).repaint();
+//            }
+//        }
     }
 
     public void setPlayerNames(String player1Name, String player2Name, boolean iStart) {

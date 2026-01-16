@@ -20,7 +20,7 @@ public enum TicTacToeTile implements ITile {
         jButton.setText(this.toString());
     }
 
-    public static TicTacToeTile[][] createBoard(int width, int height){
-        return new TicTacToeTile[width][height];
+    public static TicTacToeTile[] createBoard(int width, int height){
+        return new TicTacToeTile[width * height];
     }
 }
