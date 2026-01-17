@@ -28,15 +28,6 @@ public enum OthelloTile implements ITile {
         }
     }
 
-    public int size(){
-        return 4;
-    }
-
-    @Override
-    public int index() {
-        return this.ordinal();
-    }
-
     @Override
     public void updateOnBoard(JButton jButton) {
         if ((this.imgHeight != jButton.getHeight() || this.imgWidth != jButton.getWidth()) && jButton.getHeight() > 0 && jButton.getWidth() > 0) {
