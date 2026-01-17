@@ -24,8 +24,17 @@ public enum OthelloTile implements ITile {
             this.img = ImageIO.read(getClass().getResource("/" + imagePath));
             this.icon = new ImageIcon(this.img);
         } catch (Exception e) {
-            System.out.println("othello tile image not found");
+//            System.out.println("othello tile image not found");
         }
+    }
+
+    public int size(){
+        return 4;
+    }
+
+    @Override
+    public int index() {
+        return this.ordinal();
     }
 
     @Override
@@ -43,7 +52,7 @@ public enum OthelloTile implements ITile {
         jButton.setIcon(this.icon);
     }
 
-    public static OthelloTile[][] createBoard(int width, int height){
-        return new OthelloTile[width][height];
+    public static OthelloTile[] createBoard(int width, int height){
+        return new OthelloTile[width * height];
     }
 }

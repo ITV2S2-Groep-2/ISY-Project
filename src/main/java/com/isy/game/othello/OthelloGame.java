@@ -32,10 +32,9 @@ public class OthelloGame extends Game<OthelloTile> {
         int[] move = null;
 
         List<int[]> availableMoves = OthelloUtils.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol(), useReversiRules && this.getTurnCounter() <= 4);
-
-        for (int[] availableMove : availableMoves) {
-            System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
-        }
+//        for (int[] availableMove : availableMoves) {
+//            System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
+//        }
         if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
 
         this.renderBoard();
@@ -55,15 +54,16 @@ public class OthelloGame extends Game<OthelloTile> {
         if (move == null) {
             return false;
         }
-        System.out.println(Arrays.toString(move));
-        System.out.println(this.activeTurnPlayer.getSymbol());
+//        System.out.println(Arrays.toString(move));
+//        System.out.println(this.activeTurnPlayer.getSymbol());
 
         int[] finalMove = move;
         boolean isAvailable = availableMoves.stream().anyMatch(val -> {
             return val[0] == finalMove[0] && val[1] == finalMove[1];
         });
 
-        boolean correctMove = isAvailable ? this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol()) : false;
+        this.removeAvailableMovesFromBoard();
+        boolean correctMove = isAvailable && this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
         if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
             this.activeTurnPlayer.sendServerData(move);
@@ -132,7 +132,7 @@ public class OthelloGame extends Game<OthelloTile> {
 
                 if (current == activeTurnPlayer.getSymbol()) {
                     for(Integer[] t : tilesToFlip){
-                        this.getBoard().setTile(t[0], t[1], activeTurnPlayer.getSymbol(), true);
+                        this.getBoard().setTile(t[0], t[1], activeTurnPlayer.getSymbol());
                     }
                     tilesToFlip.clear();
                     break;
@@ -151,7 +151,7 @@ public class OthelloGame extends Game<OthelloTile> {
         for (int row = 0; row < this.getBoard().getHeight(); row++) {
             for (int col = 0; col < this.getBoard().getWidth(); col++) {
                 if (this.getBoard().getTile(col, row) == OthelloTile.POSSIBLE_MOVE) {
-                    this.getBoard().setTile(col, row, OthelloTile.EMPTY, true);
+                    this.getBoard().setTile(col, row, OthelloTile.EMPTY);
                 }
             }
         }
@@ -165,8 +165,10 @@ public class OthelloGame extends Game<OthelloTile> {
 
         OthelloTile opponentTile = (OthelloTile) this.getOpponent().getSymbol();
 
-        for (OthelloTile[] row : this.getBoard().getTiles()) {
-            for (OthelloTile tile : row) {
+        for (int indexX = 0; indexX < this.getBoard().getWidth(); indexX++) {
+            for (int indexY = 0; indexY < this.board.getHeight(); indexY++) {
+                OthelloTile tile = this.board.getTile(indexX, indexY);
+
                 if (tile == p.getSymbol()) {
                     currentPlayerCount++;
                 } else if (tile == opponentTile){
@@ -184,6 +186,38 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         return false;
+    }
+
+    /*
+        counts tiles from type of symbol and compares to count of opponent
+        returns 0 for equal, 1 for more, 2 for less
+     */
+    public int hasMoreTiles(OthelloTile p) {
+        int currentPlayerCount = 0;
+        int opponentPlayerCount = 0;
+
+        OthelloTile opponentTile = (OthelloTile) this.getOpponent().getSymbol();
+
+        for (int indexX = 0; indexX < this.getBoard().getWidth(); indexX++) {
+            for (int indexY = 0; indexY < this.board.getHeight(); indexY++) {
+                OthelloTile tile = this.board.getTile(indexX, indexY);
+
+                if (tile == p) {
+                    currentPlayerCount++;
+                } else if (tile == opponentTile){
+                    opponentPlayerCount++;
+                }
+            }
+        }
+
+        if (currentPlayerCount > opponentPlayerCount) {
+            return 1;
+        }
+        if (opponentPlayerCount >  currentPlayerCount) {
+            return 2;
+        }
+
+        return 0;
     }
 
     public boolean getUseReversiRules() {

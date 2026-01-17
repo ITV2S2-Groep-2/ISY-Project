@@ -1,7 +1,7 @@
 package com.isy.game;
 
 public enum PlayerType {
-    HUMAN ("Human"), AI ("AI"), REMOTE ("Remote");
+    HUMAN ("Human"), AI ("AI"), REMOTE ("Remote"), RANDOMAI("RandomAI");
 
     public final String label;
 
@@ -14,6 +14,7 @@ public enum PlayerType {
             case "Human" -> PlayerType.HUMAN;
             case "AI" -> PlayerType.AI;
             case "Remote" -> PlayerType.REMOTE;
+            case "RandomAI" -> PlayerType.RANDOMAI;
             default -> null;
         };
     }

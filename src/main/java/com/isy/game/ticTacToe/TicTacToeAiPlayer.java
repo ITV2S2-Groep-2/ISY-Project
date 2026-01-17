@@ -30,7 +30,7 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
         }
 
         int[] move = getBestMove(tiles);
-        
+
         return move;
     }
 

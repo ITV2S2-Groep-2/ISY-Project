@@ -9,8 +9,12 @@ import com.isy.gui.scene.manager.Scene;
 import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
+import com.isy.util.OthelloRandomAI;
 import com.isy.util.PlayerEventManager;
 import com.isy.util.lang.LangHandler;
+
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import static com.isy.server.ServerUtils.asyncAwait;
 
@@ -45,7 +49,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
          */
         if (isOnline){
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
-                System.out.println(result);
+//                System.out.println(result);
 
                 if(result.toUpperCase().contains("ERR")){
 
