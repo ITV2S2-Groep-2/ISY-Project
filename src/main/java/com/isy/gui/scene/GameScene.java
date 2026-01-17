@@ -87,14 +87,12 @@ public class GameScene extends Scene {
     }
 
     public void reloadBoardValues() {
-//        ITile[][] tiles = game.getBoard().getTiles();
-//
-//        for (int y = 0; y < game.getBoard().getHeight(); y++) {
-//            for (int x = 0; x < game.getBoard().getWidth(); x++) {
-//                tiles[x][y].updateOnBoard(this.boardButtons.get(x).get(y));
-//                this.boardButtons.get(x).get(y).repaint();
-//            }
-//        }
+        for (int y = 0; y < game.getBoard().getHeight(); y++) {
+            for (int x = 0; x < game.getBoard().getWidth(); x++) {
+                game.getBoard().getTile(x, y).updateOnBoard(this.boardButtons.get(x).get(y));
+                this.boardButtons.get(x).get(y).repaint();
+            }
+        }
     }
 
     //TODO: FIX THIS SINCE THIS DOESNT DO ANYRHING RIGHT NOW OR IS COMPLETLY BROKEN

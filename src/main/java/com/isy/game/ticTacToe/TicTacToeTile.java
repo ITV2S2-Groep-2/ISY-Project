@@ -23,12 +23,12 @@ public enum TicTacToeTile implements ITile {
 
     @Override
     public int size() {
-        return 0;
+        return 3;
     }
 
     @Override
     public int index() {
-        return 0;
+        return this.ordinal();
     }
 
     public static TicTacToeTile[] createBoard(int width, int height){

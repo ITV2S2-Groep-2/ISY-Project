@@ -104,12 +104,11 @@ public class GameCreator {
             throw new RuntimeException("invalid game constructor", e);
         }
 
-        // Main.window.getManager().addScene(new GameScene(Main.window), true);
+         Main.window.getManager().addScene(new GameScene(Main.window), true);
 
-        // game.setRenderScene(Main.window.getManager().getScene("game"));
-        game.run();
-//        new Thread(game).start();
-        // Main.window.getManager().showScene("game");
+         game.setRenderScene(Main.window.getManager().getScene("game"));
+         new Thread(game).start();
+         Main.window.getManager().showScene("game");
     }
 
     public void startRemoteGame(boolean iStart) {

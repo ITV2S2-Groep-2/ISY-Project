@@ -31,7 +31,7 @@ public class Board<T extends Enum<T> & ITile> {
 
     private static final int SHIFT = 3;
     private int getIndex(int x, int y){
-        return (x << SHIFT) | y;
+        return x + (y * width);
     }
 
     /**

@@ -717,14 +717,14 @@ public class OthelloAI extends Player<OthelloTile> {
     public void cleanup() {
         executor.shutdown();
     }
-}
 
-class MoveEvaluation {
-    int x, y;
-    int score;
-    MoveEvaluation(int x, int y, int score) {
-        this.x = x;
-        this.y = y;
-        this.score = score;
+    private static class MoveEvaluation {
+        int x, y;
+        int score;
+        MoveEvaluation(int x, int y, int score) {
+            this.x = x;
+            this.y = y;
+            this.score = score;
+        }
     }
 }
