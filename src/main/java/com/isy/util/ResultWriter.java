@@ -132,13 +132,9 @@ public class ResultWriter {
         }
         return root;
     }
-    public static void writeTop5(String filename) {
-
-        JSONObject root = getTop5();
+    public static void writeTop5(String filename, JSONObject top5) {
         try (FileWriter file = new FileWriter(filename)) {
-            file.write(root.toString(4));
-            System.out.println("JSON Object write to a File successfully");
-            System.out.println("JSON Object: " + root);
+            file.write(top5.toString(4));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
