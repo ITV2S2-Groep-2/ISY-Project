@@ -5,7 +5,7 @@ import com.isy.game.Board;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.isy.util.OthelloAI.getAvailableMoves2;
+import static com.isy.game.othello.OthelloAI.getAvailableMoves2;
 
 public class OthelloUtils {
 

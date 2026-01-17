@@ -1,9 +1,6 @@
-package com.isy.util;
+package com.isy.game.othello;
 
 import com.isy.game.Game;
-import com.isy.game.othello.OthelloGame;
-import com.isy.game.othello.OthelloTile;
-import com.isy.game.othello.OthelloUtils;
 import com.isy.game.player.Player;
 import com.isy.server.Server;
 
@@ -29,12 +26,6 @@ public class OthelloRandomAI extends Player<OthelloTile> {
         }
 
         Random rand = new Random();
-        //        try {
-//            Thread.sleep(10);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-
         return availableMoves.get(rand.nextInt(availableMoves.size()));
     }
 

@@ -3,8 +3,8 @@ package com.isy.game;
 import com.isy.game.othello.*;
 import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.*;
-import com.isy.util.OthelloAI;
-import com.isy.util.OthelloRandomAI;
+import com.isy.game.othello.OthelloAI;
+import com.isy.game.othello.OthelloRandomAI;
 
 public enum GameType {
     TICTACTOE ("tic-tac-toe"), OTHELLO ("reversi");
