@@ -5,13 +5,16 @@ import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
+import com.isy.gui.scene.GameScene;
 import com.isy.util.GameSettings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OthelloGame extends Game<OthelloTile> {
     private boolean useReversiRules = false;
+    private final boolean[][] updatedTile;
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
@@ -23,6 +26,12 @@ public class OthelloGame extends Game<OthelloTile> {
             this.getBoard().setTile(4, 4, this.players[1].getSymbol());
             this.getBoard().setTile(3, 4, this.players[0].getSymbol());
             this.getBoard().setTile(4, 3, this.players[0].getSymbol());
+        }
+
+        this.updatedTile = new boolean[8][8];
+
+        for (boolean[] booleans : this.updatedTile) {
+            Arrays.fill(booleans, false);
         }
     }
 
@@ -106,6 +115,8 @@ public class OthelloGame extends Game<OthelloTile> {
                 {1, 1}    // down-right
         };
 
+        this.updatedTile[move[0]][move[1]] = true;
+
         for (int[] d : dirs) {
             int x = move[0];
             int y = move[1];
@@ -133,6 +144,7 @@ public class OthelloGame extends Game<OthelloTile> {
                 if (current == activeTurnPlayer.getSymbol()) {
                     for(Integer[] t : tilesToFlip){
                         this.getBoard().setTile(t[0], t[1], activeTurnPlayer.getSymbol());
+                        this.updatedTile[t[0]][t[1]] = true;
                     }
                     tilesToFlip.clear();
                     break;
@@ -218,6 +230,18 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         return 0;
+    }
+
+    @Override
+    public void renderBoard() {
+        super.renderBoard();
+        if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+            gs.setHighLights(this.updatedTile);
+        }
+
+        for (boolean[] booleans : this.updatedTile) {
+            Arrays.fill(booleans, false);
+        }
     }
 
     public boolean getUseReversiRules() {

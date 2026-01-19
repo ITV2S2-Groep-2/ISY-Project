@@ -2,6 +2,10 @@ package com.isy.util;
 
 import com.isy.gui.components.SoundUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class GameSettings {
     private static GameSettings instance;
     private final String defaultHostName = "127.0.0.1";
@@ -17,10 +21,35 @@ public class GameSettings {
     private boolean useReversiRules = false;
 
     public GameSettings(){
+        String home = System.getProperty("user.home");
+        final Path storagePath = Path.of(home, "ISY.txt");
+
         this.hostName = defaultHostName;
         this.portNumber = defaultPortNumber;
         this.backgroundVolume = convertToDB(defaultBackgroundVolume);
         this.effectsVolume = convertToDB(defaultEffectsVolume);
+
+        if(Files.exists(storagePath)){
+            try {
+                String storage = Files.readString(storagePath);
+
+                String[] items = storage.split("\n");
+                hostName = items[0];
+                portNumber = Integer.parseInt(items[1]);
+                backgroundVolume = Float.parseFloat(items[2]);
+                effectsVolume = Float.parseFloat(items[3]);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Files.writeString(storagePath, hostName + "\n" + portNumber + "\n" + backgroundVolume + "\n" + effectsVolume);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
     }
 
     public void setGameSettings(String hostName, int portNumber){
