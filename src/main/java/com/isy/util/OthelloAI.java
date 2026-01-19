@@ -612,53 +612,64 @@ public class OthelloAI extends Player<OthelloTile> {
     }
 
     public static byte[] getAvailableMoves2(Board<OthelloTile> board, OthelloTile playerSymbol, OthelloTile opponentSymbol, byte[] availableMoves) {
+        int index = 0;
+
+//        if (reversiFirstFour){
+//            for (int[] centerTile : centerTiles) {
+//                availableMoves[index] = (byte) (((centerTile[0] + 1) << 4) | (centerTile[1] + 1));
+//                index++;
+//            }
+//
+//            availableMoves[index] = 0;
+//            return availableMoves;
+//        }
+
         long addedCoords = 0;
 
-        int row = 0;
-        int col = 0;
-        int index = 0;
-        for (int i = 0; i < BOARD_SIZED_SQUARED; i++) {
-            if (board.getTile(i) == playerSymbol) {
-                for (int[] direction : directions) {
-                    int cX = row + direction[0];
-                    int cY = col + direction[1];
+        for (int row = 0; row < board.getWidth(); row++) {
+            for (int col = 0; col < board.getHeight(); col++) {
+                if (board.getTile(row, col) == playerSymbol) {
+                    for (int[] direction : directions) {
+                        int cX = row + direction[0];
+                        int cY = col + direction[1];
 
-                    boolean foundOpponentSymbol = false;
-                    while (cX >= 0 && cX < boardSize && cY >= 0 && cY < boardSize) {
-                        OthelloTile tile = board.getTile(cX, cY);
+                        boolean foundOpponentSymbol = false;
+                        while (cX >= 0 && cX < boardSize && cY >= 0 && cY < boardSize) {
+                            OthelloTile tile = board.getTile(cX, cY);
 
-                        if (tile == playerSymbol) {
-                            break;
-                        } else if (tile == opponentSymbol) {
-                            foundOpponentSymbol = true;
-                        } else if (tile == OthelloTile.EMPTY) {
-                            if (foundOpponentSymbol) {
-                                long r = 1L << (i + 1);
-                                if ((r & addedCoords) == 0) {
-                                    addedCoords |= r;
-                                    availableMoves[index] = (byte) (((cX + 1) << 4) | (cY + 1));
-                                    index++;
+                            if (tile == playerSymbol) {
+                                break;
+                            } else if (tile == opponentSymbol) {
+                                foundOpponentSymbol = true;
+                            } else if (tile == OthelloTile.EMPTY) {
+                                if (foundOpponentSymbol) {
+                                    int moveIndex = cX * boardSize + cY;
+                                    long r = 1L << moveIndex;
+                                    if ((r & addedCoords) == 0) {
+                                        addedCoords |= r;
+                                        availableMoves[index] = (byte) (((cX + 1) << 4) | (cY + 1));
+                                        int x = ((availableMoves[index] >> 4) & 0b00001111) - 1;
+                                        int y = (availableMoves[index] & 0b00001111) - 1;
+
+//                                        if (x != cX || y != cY)
+//                                            throw new RuntimeException("Incorrect byte for coords!: (" + x + ", " + y + ") and (" + cX + ", " + cY + ")");
+
+                                        index++;
+                                    }
                                 }
+                                break;
                             }
-                            break;
+                            cX += direction[0];
+                            cY += direction[1];
                         }
-                        cX += direction[0];
-                        cY += direction[1];
                     }
                 }
-            }
-
-            col++;
-            if (col >= boardSize){
-                col = 0;
-                row++;
             }
         }
 
         availableMoves[index] = 0;
         return availableMoves;
     }
-
     private static final int[][] centerTiles = new int[][]{
             {3, 3}, {3, 4}, {4, 3}, {4, 4}
     };
