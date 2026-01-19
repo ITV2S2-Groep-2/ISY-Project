@@ -45,7 +45,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
          */
         if (isOnline){
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
-                System.out.println(result);
+//                System.out.println(result);
 
                 if(result.toUpperCase().contains("ERR")){
 

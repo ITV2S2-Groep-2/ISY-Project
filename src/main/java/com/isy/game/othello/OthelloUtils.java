@@ -5,6 +5,8 @@ import com.isy.game.Board;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.isy.game.othello.OthelloAI.getAvailableMoves2;
+
 public class OthelloUtils {
 
     private static final List<int[]> directions = List.of(new int[]{1, 0}, new int[]{-1, 0},
@@ -25,39 +27,15 @@ public class OthelloUtils {
             go over each direction (horizontal, vertical, diagonal) from given tiles
             find empty space directly behind opponents tile.
          */
-        Enum<?>[][] tiles = board.getTiles();
 
-        for (int row = 0; row < board.getWidth(); row++) {
-            for (int col = 0; col < board.getHeight(); col++) {
-                if (tiles[row][col] == playerSymbol) {
+        byte[] moves = getAvailableMoves2(board, playerSymbol, opponentSymbol, reversiFirstFour);
+        for (byte move : moves) {
+            if (move == 0) break;
 
+            int x = ((move >> 4) & 0b00001111) - 1;
+            int y = (move & 0b00001111) - 1;
 
-                    for (int[] direction : directions) {
-                        int cX = row + direction[0];
-                        int cY = col + direction[1];
-
-                        boolean foundOpponentSymbol = false;
-                        while (cX >= 0 && cX < board.getWidth() && cY >= 0 && cY < board.getHeight()) {
-                            if (tiles[cX][cY] == playerSymbol) {
-                                break;
-                            }
-                            if (tiles[cX][cY] == opponentSymbol) {
-                                foundOpponentSymbol = true;
-                            }
-                            if (tiles[cX][cY] == OthelloTile.EMPTY) {
-                                if (foundOpponentSymbol) {
-                                    addUniqueCoords(availableMoves, new int[]{cX, cY});
-                                }
-                                break;
-                            }
-
-                            cX += direction[0];
-                            cY += direction[1];
-                        }
-                    }
-
-                }
-            }
+            availableMoves.add(new int[]{x, y});
         }
 
         return availableMoves;

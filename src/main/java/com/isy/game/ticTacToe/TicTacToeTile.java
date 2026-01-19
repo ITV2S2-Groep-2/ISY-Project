@@ -15,12 +15,23 @@ public enum TicTacToeTile implements ITile {
         return this.name();
     }
 
+
     @Override
     public void updateOnBoard(JButton jButton) {
         jButton.setText(this.toString());
     }
 
-    public static TicTacToeTile[][] createBoard(int width, int height){
-        return new TicTacToeTile[width][height];
+    @Override
+    public int size() {
+        return 3;
+    }
+
+    @Override
+    public int index() {
+        return this.ordinal();
+    }
+
+    public static TicTacToeTile[] createBoard(int width, int height){
+        return new TicTacToeTile[width * height];
     }
 }

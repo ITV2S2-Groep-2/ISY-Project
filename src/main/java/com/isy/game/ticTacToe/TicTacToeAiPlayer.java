@@ -20,8 +20,6 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
     public int[] getMove(Game<TicTacToeTile> game) {
         Board<TicTacToeTile> board = game.getBoard();
 
-        TicTacToeTile[][] tiles = board.getTiles();
-
         // Simuleer wachttijd omdat anders AI soms sneller zet dan de server je in de lobby kan zetten.
         try {
             Thread.sleep(250);
@@ -29,21 +27,19 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
             throw new RuntimeException(e);
         }
 
-        int[] move = getBestMove(tiles);
-        
-        return move;
+        return getBestMove(board);
     }
 
-    public int[] getBestMove(TicTacToeTile[][] tiles){
+    public int[] getBestMove(Board<TicTacToeTile> board){
         int[] bestMove = new int[]{-1, -1};
         int bestValue = Integer.MIN_VALUE;
 
         for(int col = 0; col < boardSize; col++){
             for(int row = 0; row < boardSize; row++){
-                if(tiles[col][row] == TicTacToeTile.EMPTY){
-                    tiles[col][row] = symbol;
-                    int moveValue = Minimax(tiles, maxDepth, false);
-                    tiles[col][row] = TicTacToeTile.EMPTY;
+                if(board.getTile(col, row) == TicTacToeTile.EMPTY){
+                    board.setTile(col, row, symbol);
+                    int moveValue = Minimax(board, maxDepth, false);
+                    board.setTile(col, row, TicTacToeTile.EMPTY);
                     if (moveValue > bestValue) {
                         bestMove[0] = col;
                         bestMove[1] = row;
@@ -56,15 +52,15 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
         return bestMove;
     }
 
-    public int evaluateBoard(TicTacToeTile[][] tiles){
+    public int evaluateBoard(Board<TicTacToeTile> board){
         int win = 3;
         int sumSymbol = 0;
         int sumOther = 0;
 
         for(int col = 0; col < boardSize; col++){
             for(int row = 0; row < boardSize; row++){
-                if(tiles[col][row] == symbol) { sumSymbol++; }
-                else if(tiles[col][row] == otherSymbol){ sumOther++; }
+                if(board.getTile(col, row) == symbol) { sumSymbol++; }
+                else if(board.getTile(col, row) == otherSymbol){ sumOther++; }
             }
 
             if(sumSymbol == win){ return 10; }
@@ -76,8 +72,8 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
 
         for(int row = 0; row < boardSize; row++){
             for(int col = 0; col < boardSize; col++){
-                if(tiles[col][row] == symbol) { sumSymbol++; }
-                else if(tiles[col][row] == otherSymbol){ sumOther++; }
+                if(board.getTile(col, row) == symbol) { sumSymbol++; }
+                else if(board.getTile(col, row) == otherSymbol){ sumOther++; }
             }
 
             if(sumSymbol == win){ return 10; }
@@ -88,8 +84,8 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
         }
 
         for(int i = 0; i < boardSize; i++){
-            if(tiles[i][i] == symbol) { sumSymbol++; }
-            else if(tiles[i][i] == otherSymbol){ sumOther++; }
+            if(board.getTile(i, i) == symbol) { sumSymbol++; }
+            else if(board.getTile(i, i) == otherSymbol){ sumOther++; }
         }
 
         if(sumSymbol == win){ return 10; }
@@ -100,8 +96,8 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
 
         int indexMax = boardSize - 1;
         for (int i = 0; i < boardSize; i++) {
-            if (tiles[i][indexMax - i] == symbol) sumSymbol++;
-            else if (tiles[i][indexMax - i] == otherSymbol) sumOther++;
+            if (board.getTile(i, indexMax - 1) == symbol) sumSymbol++;
+            else if (board.getTile(i, indexMax - 1) == otherSymbol) sumOther++;
         }
 
 
@@ -111,23 +107,16 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
         return 0;
     }
 
-    boolean boardFull(TicTacToeTile[][] tiles) {
-        for(int col = 0; col < boardSize; col++) {
-            for (int row = 0; row < boardSize; row++) {
-                if (tiles[col][row] == TicTacToeTile.EMPTY) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    boolean boardFull(Board<TicTacToeTile> board) {
+        return board.isBoardFull();
     }
 
-    public int Minimax(TicTacToeTile[][] tiles, int depth, boolean isMax){
-        int boardValue = evaluateBoard(tiles);
+    public int Minimax(Board<TicTacToeTile> board, int depth, boolean isMax){
+        int boardValue = evaluateBoard(board);
 
         // Terminal node (win/lose/draw) or max depth reached.
         if (Math.abs(boardValue) == 10 || depth == 0
-                || boardFull(tiles)) {
+                || boardFull(board)) {
             return boardValue;
         }
 
@@ -135,10 +124,10 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
             int highestVal = -10000;
             for(int col = 0; col < boardSize; col++){
                 for(int row = 0; row < boardSize; row++){
-                    if(tiles[col][row] == TicTacToeTile.EMPTY){
-                        tiles[col][row] = symbol;
-                        highestVal = Math.max(highestVal, Minimax(tiles, depth-1, false));
-                        tiles[col][row] = TicTacToeTile.EMPTY;
+                    if(board.getTile(col, row) == TicTacToeTile.EMPTY){
+                        board.setTile(col, row, symbol);
+                        highestVal = Math.max(highestVal, Minimax(board, depth-1, false));
+                        board.setTile(col, row, TicTacToeTile.EMPTY);
                     }
                 }
             }
@@ -148,10 +137,10 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
             int lowestVal = 10000;
             for(int col = 0; col < boardSize; col++){
                 for(int row = 0; row < boardSize; row++){
-                    if(tiles[col][row] == TicTacToeTile.EMPTY){
-                        tiles[col][row] = otherSymbol;
-                        lowestVal = Math.min(lowestVal, Minimax(tiles, depth-1, true));
-                        tiles[col][row] = TicTacToeTile.EMPTY;
+                    if(board.getTile(col, row) == TicTacToeTile.EMPTY){
+                        board.setTile(col, row, otherSymbol);
+                        lowestVal = Math.min(lowestVal, Minimax(board, depth-1, true));
+                        board.setTile(col, row, TicTacToeTile.EMPTY);
                     }
                 }
             }
