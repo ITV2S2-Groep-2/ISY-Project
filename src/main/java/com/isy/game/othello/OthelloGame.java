@@ -8,13 +8,12 @@ import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
 import com.isy.util.GameSettings;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class OthelloGame extends Game<OthelloTile> {
     private boolean useReversiRules = false;
-    private final boolean[][] updatedTile;
+    private final boolean[][] updatedTiles;
     private final int[] newTile;
 
     public OthelloGame(Player<OthelloTile>[] players) {
@@ -29,10 +28,10 @@ public class OthelloGame extends Game<OthelloTile> {
             this.getBoard().setTile(4, 3, this.players[0].getSymbol());
         }
 
-        this.updatedTile = new boolean[8][8];
+        this.updatedTiles = new boolean[this.getBoard().getWidth()][this.getBoard().getHeight()];
         this.newTile = new int[2];
 
-        for (boolean[] booleans : this.updatedTile) {
+        for (boolean[] booleans : this.updatedTiles) {
             Arrays.fill(booleans, false);
         }
     }
@@ -81,7 +80,9 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         if (correctMove) {
-            OthelloUtils.flipTiles(this.getBoard(), move[0], move[1], this.activeTurnPlayer.getSymbol());
+            newTile[0] = move[0];
+            newTile[1] = move[1];
+            OthelloUtils.flipTiles(this.getBoard(), move[0], move[1], this.activeTurnPlayer.getSymbol(), this.updatedTiles);
             if (this.checkWin(move[0], move[1], this.activeTurnPlayer)){
                 this.state = GameState.WON;
                 return false;
@@ -187,10 +188,10 @@ public class OthelloGame extends Game<OthelloTile> {
     public void renderBoard() {
         super.renderBoard();
         if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
-            gs.setHighLights(this.updatedTile, this.newTile);
+            gs.setHighLights(this.updatedTiles, this.newTile);
         }
 
-        for (boolean[] booleans : this.updatedTile) {
+        for (boolean[] booleans : this.updatedTiles) {
             Arrays.fill(booleans, false);
         }
     }

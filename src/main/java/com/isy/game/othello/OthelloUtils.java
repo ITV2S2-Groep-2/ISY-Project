@@ -9,10 +9,12 @@ public class OthelloUtils {
     public static int boardSize = 8;
     public static int BOARD_SIZED_SQUARED = boardSize * boardSize;
 
-    private static final List<int[]> directions = List.of(new int[]{1, 0}, new int[]{-1, 0},
+    private static final List<int[]> directions = List.of(
+            new int[]{1, 0}, new int[]{-1, 0},
             new int[]{0, 1}, new int[]{0, -1},
             new int[]{1, 1}, new int[]{-1, 1},
-            new int[]{1, -1}, new int[]{-1, -1});
+            new int[]{1, -1}, new int[]{-1, -1}
+    );
 
     public static List<int[]> getAvailableMoves(Board<OthelloTile> board, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour) {
         ArrayList<int[]> availableMoves = new ArrayList<>();
@@ -99,9 +101,14 @@ public class OthelloUtils {
         return availableMoves;
     }
 
-
     public static void flipTiles(Board<OthelloTile> board, int xO, int yO, OthelloTile symbol) {
+        flipTiles(board, xO, yO, symbol, null);
+    }
+
+
+    public static void flipTiles(Board<OthelloTile> board, int xO, int yO, OthelloTile symbol, boolean[][] updatedTiles) {
         ArrayList<Integer[]> tilesToFlip = new ArrayList<>();
+        if (updatedTiles != null) updatedTiles[xO][yO] = true;
 
         for (int[] d : directions) {
             int x = xO;
@@ -118,18 +125,19 @@ public class OthelloUtils {
 
                 OthelloTile current = board.getTile(x, y);
 
-                if (current == OthelloTile.EMPTY){
+                if (current == OthelloTile.EMPTY) {
                     tilesToFlip.clear();
                     break;
                 }
 
-                if (current != symbol){
-                    tilesToFlip.add(new Integer[]{x,y});
+                if (current != symbol) {
+                    tilesToFlip.add(new Integer[]{x, y});
                 }
 
                 if (current == symbol) {
-                    for(Integer[] t : tilesToFlip){
+                    for (Integer[] t : tilesToFlip) {
                         board.setTile(t[0], t[1], symbol);
+                        if (updatedTiles != null) updatedTiles[t[0]][t[1]] = true;
                     }
                     tilesToFlip.clear();
                     break;
