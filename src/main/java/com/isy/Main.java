@@ -126,11 +126,12 @@ public class Main {
             ResultWriter.writeAll("history.json");
 
             for (String key : newTop5.keySet()) {
-                if (newTop5.getJSONObject(key).getJSONObject("stats").getInt("top_5_count") >= 5) {
-                    System.out.println("ENDCASE BEHAALD STOPPEN MET TESTEN");
-                    endCase = true;
-                    System.out.println(LocalDateTime.now());
-                }
+//                if (newTop5.getJSONObject(key).getJSONObject("stats").getInt("top_5_count") >= 5) {
+//                    System.out.println("ENDCASE BEHAALD STOPPEN MET TESTEN");
+//                    endCase = true;
+//                    System.out.println(LocalDateTime.now());
+//                }
+                System.out.println(LocalDateTime.now());
             }
 
 
