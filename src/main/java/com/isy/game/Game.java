@@ -10,7 +10,6 @@ import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
-import com.isy.util.lang.LangHandler;
 
 import java.util.List;
 
@@ -87,11 +86,10 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
          */
         Main.window.getManager().addScene(new WinScene(Main.window));
         WinScene winScene = ((WinScene) Main.window.getManager().getScene("winScene"));
-        String playerName = this.activeTurnPlayer.getName();
 
         switch (this.state) {
-            case WON -> winScene.win(this.activeTurnPlayer, isOnline);
-            case LOST -> winScene.win(this.activeTurnPlayer == this.players[0] ? this.players[0] : this.players[1], isOnline);
+            case WON -> winScene.win(players[0], isOnline);
+            case LOST -> winScene.win(players[1], isOnline);
             case DRAW -> winScene.win(null, isOnline);
         }
 

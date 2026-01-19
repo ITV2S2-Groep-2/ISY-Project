@@ -8,7 +8,6 @@ import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
 import com.isy.util.GameSettings;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -113,12 +112,12 @@ public class OthelloGame extends Game<OthelloTile> {
     @Override
     public GameState checkWin(Player<OthelloTile> p, Player<OthelloTile> o) {
         if (this.getBoard().isBoardFull()
-            ||
-                (OthelloUtils.getAvailableMoves(getBoard(), p.getSymbol(), o.getSymbol(), useReversiRules && this.getTurnCounter() <= 3).isEmpty()
-                && OthelloUtils.getAvailableMoves(getBoard(), o.getSymbol(), p.getSymbol(), useReversiRules && this.getTurnCounter() <= 3).isEmpty()
+                ||
+                (OthelloUtils.getAvailableMoves(getBoard(), players[0].getSymbol(), players[1].getSymbol(), useReversiRules && this.getTurnCounter() <= 3).isEmpty()
+                        && OthelloUtils.getAvailableMoves(getBoard(), players[1].getSymbol(), players[0].getSymbol(), useReversiRules && this.getTurnCounter() <= 3).isEmpty()
                 )
         ) {
-            int state = this.hasMoreTiles(this.activeTurnPlayer.getSymbol());
+            int state = this.hasMoreTiles(players[0].getSymbol());
             switch (state) {
                 case 0:
                     this.state = GameState.DRAW;
@@ -142,7 +141,7 @@ public class OthelloGame extends Game<OthelloTile> {
         int currentPlayerCount = 0;
         int opponentPlayerCount = 0;
 
-        OthelloTile opponentTile = (OthelloTile) this.getOpponent().getSymbol();
+        OthelloTile opponentTile = players[1].getSymbol();
 
         for (int indexX = 0; indexX < this.getBoard().getWidth(); indexX++) {
             for (int indexY = 0; indexY < this.board.getHeight(); indexY++) {
