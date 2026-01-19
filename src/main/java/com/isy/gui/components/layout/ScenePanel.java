@@ -36,10 +36,4 @@ public class ScenePanel extends JPanel{
         }
     }
 
-//    public static JPanel createScenePanel() {
-//        JPanel panel = new JPanel();
-//        panel.setBackground(Style.sceneBackgroundColor);
-//        panel.setForeground(Style.primaryTextColor);
-//        return panel;
-//    }
 }

@@ -24,7 +24,7 @@ public enum OthelloTile implements ITile {
             this.img = ImageIO.read(getClass().getResource("/" + imagePath));
             this.icon = new ImageIcon(this.img);
         } catch (Exception e) {
-//            System.out.println("othello tile image not found");
+            System.out.println("othello tile image not found");
         }
     }
 
