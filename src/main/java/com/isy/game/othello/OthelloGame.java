@@ -42,18 +42,18 @@ public class OthelloGame extends Game<OthelloTile> {
 
         List<int[]> availableMoves = this.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), this.getOpponent().getSymbol());
 
-        if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
-
-        this.renderBoard();
-
         if (availableMoves.isEmpty()) {
             if (this.useReversiRules) {
                 this.state = GameState.LOST;
                 return true;
             }
+            if (this.checkWin(this.activeTurnPlayer, this.getOpponent()) != GameState.ONGOING) return true;
             this.giveTurnOver();
             return false;
         }
+
+        if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
+        this.renderBoard();
 
         move = this.activeTurnPlayer.getMove(this);
         this.removeAvailableMovesFromBoard();
@@ -70,31 +70,16 @@ public class OthelloGame extends Game<OthelloTile> {
         this.removeAvailableMovesFromBoard();
         boolean correctMove = isAvailable && this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
-        if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
-            this.activeTurnPlayer.sendServerData(move);
-        }
-
-        if (this.useReversiRules && this.turnCounter <= 4) {
-            this.giveTurnOver();
-            return false;
-        }
-
         if (correctMove) {
+            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) this.activeTurnPlayer.sendServerData(move);
+
             newTile[0] = move[0];
             newTile[1] = move[1];
             OthelloUtils.flipTiles(this.getBoard(), move[0], move[1], this.activeTurnPlayer.getSymbol(), this.updatedTiles);
-            if (this.checkWin(move[0], move[1], this.activeTurnPlayer)){
-                this.state = GameState.WON;
-                return false;
-            } else if (this.board.isBoardFull()) {
-                this.giveTurnOver();
-                if (this.checkWin(0,0, this.activeTurnPlayer)) {
-                    this.state = GameState.WON;
-                }
-                return true;
-            }
 
-            this.giveTurnOver();
+            this.checkWin(this.activeTurnPlayer, this.getOpponent());
+
+            if (this.state == GameState.ONGOING) this.giveTurnOver();
         }
 
         return false;
@@ -123,36 +108,30 @@ public class OthelloGame extends Game<OthelloTile> {
 
 
     @Override
-    public boolean checkWin(int x, int y, Player<OthelloTile> p) {
-        int currentPlayerCount = 0;
-        int opponentPlayerCount = 0;
-
-        OthelloTile opponentTile = (OthelloTile) this.getOpponent().getSymbol();
-
-        for (int indexX = 0; indexX < this.getBoard().getWidth(); indexX++) {
-            for (int indexY = 0; indexY < this.board.getHeight(); indexY++) {
-                OthelloTile tile = this.board.getTile(indexX, indexY);
-
-                if (tile == p.getSymbol()) {
-                    currentPlayerCount++;
-                } else if (tile == opponentTile){
-                    opponentPlayerCount++;
-                }
+    public GameState checkWin(Player<OthelloTile> p, Player<OthelloTile> o) {
+        if (this.getBoard().isBoardFull()
+            ||
+                (OthelloUtils.getAvailableMoves(getBoard(), p.getSymbol(), o.getSymbol(), useReversiRules && this.getTurnCounter() <= 3).isEmpty()
+                && OthelloUtils.getAvailableMoves(getBoard(), o.getSymbol(), p.getSymbol(), useReversiRules && this.getTurnCounter() <= 3).isEmpty()
+                )
+        ) {
+            int state = this.hasMoreTiles(this.activeTurnPlayer.getSymbol());
+            switch (state) {
+                case 0:
+                    this.state = GameState.DRAW;
+                    return GameState.DRAW;
+                case 1:
+                    this.state = GameState.WON;
+                    return GameState.WON;
+                case 2:
+                    this.state = GameState.LOST;
+                    return GameState.LOST;
             }
         }
-
-        if (opponentPlayerCount == 0) {
-            return true;
-        }
-
-        if (this.getBoard().isBoardFull()) {
-            return currentPlayerCount > opponentPlayerCount;
-        }
-
-        return false;
+        return GameState.ONGOING;
     }
 
-    /*
+    /**
         counts tiles from type of symbol and compares to count of opponent
         returns 0 for equal, 1 for more, 2 for less
      */

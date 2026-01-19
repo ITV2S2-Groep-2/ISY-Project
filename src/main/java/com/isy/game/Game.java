@@ -77,7 +77,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         this.renderBoard();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -86,13 +86,13 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             winscene handler
          */
         Main.window.getManager().addScene(new WinScene(Main.window));
-        if (this.state == GameState.WON){
-            String playerName = this.activeTurnPlayer.getName();
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
-        }else if(this.state == GameState.LOST){
-            ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
-        } else {
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
+        WinScene winScene = ((WinScene) Main.window.getManager().getScene("winScene"));
+        String playerName = this.activeTurnPlayer.getName();
+
+        switch (this.state) {
+            case WON -> winScene.win(playerName, isOnline);
+            case LOST -> winScene.lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
+            case DRAW -> winScene.win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
 
         this.cleanUp();
@@ -118,20 +118,10 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
                 isAvailable &&
                 this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
-
-        if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
-            this.activeTurnPlayer.sendServerData(move);
-        }
-
         if (correctMove) {
-            if(this.checkWin(move[0], move[1], this.activeTurnPlayer)){
-                this.state = GameState.WON;
-                return false;
-            } else if (this.board.isBoardFull()) {
-                return true;
-            }
-
-            this.giveTurnOver();
+            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) this.activeTurnPlayer.sendServerData(move);
+            this.checkWin(this.activeTurnPlayer, this.getOpponent());
+            if (this.state == GameState.ONGOING) this.giveTurnOver();
         }
 
         return false;
@@ -148,7 +138,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             T playerSymbol,
             T opponentSymbol);
 
-    public abstract boolean checkWin(int x, int y, Player<T> p);
+    public abstract GameState checkWin(Player<T> p, Player<T> o);
 
     public void setRenderScene(Scene scene){
         this.renderScene = scene;

@@ -87,14 +87,14 @@ public class GameCreator {
             Constructor<?>[] player1Constructors = player1Class.getDeclaredConstructors();
             for (Constructor<?> constructor : player1Constructors) {
                 if (constructor.getParameterCount() == 3) {
-                    player1 = (Player<?>) player1Constructors[0].newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
+                    player1 = (Player<?>) constructor.newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
                 }
             }
 
             Constructor<?>[] player2Constructors = player2Class.getDeclaredConstructors();
             for (Constructor<?> constructor : player2Constructors) {
                 if (constructor.getParameterCount() == 3) {
-                    player2 = (Player<?>) player2Constructors[0].newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
+                    player2 = (Player<?>) constructor.newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
                 }
             }
 
