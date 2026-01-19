@@ -28,6 +28,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
     Game<OthelloTile> game = null;
     boolean useReversiRules = false;
+    boolean reversiFirstFour = false;
 
     int[][] corners = {
             {0,0},
@@ -93,10 +94,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         OthelloGame othelloGame = (OthelloGame) game;
         Board<OthelloTile> board = game.getBoard();
 
-        useReversiRules = othelloGame.getUseReversiRules();
+        useReversiRules = othelloGame.getUseReversiRules() && game.getTurnCounter() <= 4;
+        reversiFirstFour = useReversiRules && game.getTurnCounter() <= 4;
 
         List<int[]> availableMoves = OthelloUtils.getAvailableMoves(game.getBoard(),
-                game.getActiveTurnPlayer().getSymbol(), game.getOpponent().getSymbol(), useReversiRules && game.getTurnCounter() <= 4);
+                game.getActiveTurnPlayer().getSymbol(), game.getOpponent().getSymbol(), reversiFirstFour);
 
         if (availableMoves.isEmpty()) {
             return null;
@@ -139,7 +141,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
         }
 
-        byte[] avm = OthelloUtils.getAvailableMovesBytes(board, this.symbol, this.otherSymbol, false);
+        byte[] avm = OthelloUtils.getAvailableMovesBytes(board, this.symbol, this.otherSymbol, reversiFirstFour);
 
         List<Future<MoveEvaluation>> futures = new ArrayList<>();
 
@@ -479,17 +481,17 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         byte[] availableMovesOpponent = new byte[BOARD_SIZED_SQUARED];
 
         if (isMax) {
-            OthelloUtils.getAvailableMovesCore(board, this.symbol, this.otherSymbol, availableMovesUpcoming, useReversiRules && game.getTurnCounter() <= 4);
+            OthelloUtils.getAvailableMovesCore(board, this.symbol, this.otherSymbol, availableMovesUpcoming, reversiFirstFour);
         } else {
-            OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, useReversiRules && game.getTurnCounter() <= 4);
+            OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
         }
 
 
         if(boardFull || depth <= 0){
             if (!isMax) {
-                OthelloUtils.getAvailableMovesCore(board, this.symbol, this.otherSymbol, availableMovesUpcoming, useReversiRules && game.getTurnCounter() <= 4);
+                OthelloUtils.getAvailableMovesCore(board, this.symbol, this.otherSymbol, availableMovesUpcoming, reversiFirstFour);
             } else {
-                OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, useReversiRules && game.getTurnCounter() <= 4);
+                OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
             }
             return evaluateBoard(board, availableMovesUpcoming.length, availableMovesOpponent.length);
         }
@@ -504,7 +506,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             int highestVal = -10000;
 
             if (!hasMoves(availableMovesUpcoming)) {
-                OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, useReversiRules && game.getTurnCounter() <= 4);
+                OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
                 if (!hasMoves(availableMovesOpponent)) {
                     return evaluateBoard(board, 0, 0);
                 }
@@ -547,7 +549,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             int lowestVal = 10000;
 
             if (!hasMoves(availableMovesOpponent)) {
-                OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesUpcoming, useReversiRules && game.getTurnCounter() <= 4);
+                OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesUpcoming, reversiFirstFour);
                 if (!hasMoves(availableMovesUpcoming)) {
                     return evaluateBoard(board, 0, 0);
                 }

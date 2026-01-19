@@ -17,10 +17,6 @@ public class OthelloUtils {
     public static List<int[]> getAvailableMoves(Board<OthelloTile> board, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour) {
         ArrayList<int[]> availableMoves = new ArrayList<>();
 
-        if (reversiFirstFour) {
-            return openingAvailableMoves(board);
-        }
-
         /*
             loop over each tile of given player
             go over each direction (horizontal, vertical, diagonal) from given tiles
@@ -41,7 +37,6 @@ public class OthelloUtils {
 
     public static byte[] getAvailableMovesBytes(Board<OthelloTile> board, OthelloTile playerSymbol, OthelloTile opponentSymbol, boolean reversiFirstFour) {
         byte[] availableMoves = new byte[BOARD_SIZED_SQUARED];
-
         return getAvailableMovesCore(board, playerSymbol, opponentSymbol, availableMoves, reversiFirstFour);
     }
 
@@ -54,10 +49,10 @@ public class OthelloUtils {
 
         if (reversiFirstFour){
             for (int[] centerTile : centerTiles) {
+                if (board.getTile(centerTile[0], centerTile[1]) != OthelloTile.EMPTY && board.getTile(centerTile[0], centerTile[1]) != OthelloTile.POSSIBLE_MOVE) continue;
                 availableMoves[index] = (byte) (((centerTile[0] + 1) << 4) | (centerTile[1] + 1));
                 index++;
             }
-
             availableMoves[index] = 0;
             return availableMoves;
         }
@@ -86,11 +81,6 @@ public class OthelloUtils {
                                     if ((r & addedCoords) == 0) {
                                         addedCoords |= r;
                                         availableMoves[index] = (byte) (((cX + 1) << 4) | (cY + 1));
-                                        int x = ((availableMoves[index] >> 4) & 0b00001111) - 1;
-                                        int y = (availableMoves[index] & 0b00001111) - 1;
-
-                                        if (x != cX || y != cY)
-                                            throw new RuntimeException("Incorrect byte for coords!: (" + x + ", " + y + ") and (" + cX + ", " + cY + ")");
 
                                         index++;
                                     }
@@ -109,19 +99,6 @@ public class OthelloUtils {
         return availableMoves;
     }
 
-    public static List<int[]> openingAvailableMoves(Board<OthelloTile> board) {
-        List<int[]> moves = new ArrayList<>();
-        int[][] centerTiles = new int[][]{ new int[]{3, 3}, new int[]{3, 4}, new int[]{4, 3}, new int[]{4, 4}};
-
-        for (int[] coord : centerTiles) {
-            OthelloTile tile = board.getTile(coord[0], coord[1]);
-            if (tile != OthelloTile.PLAYER_1 && tile != OthelloTile.PLAYER_2) {
-                moves.add(coord);
-            }
-        }
-
-        return moves;
-    }
 
     public static void flipTiles(Board<OthelloTile> board, int xO, int yO, OthelloTile symbol) {
         ArrayList<Integer[]> tilesToFlip = new ArrayList<>();
