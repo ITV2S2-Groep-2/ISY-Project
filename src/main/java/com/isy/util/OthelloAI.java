@@ -241,24 +241,26 @@ public class OthelloAI extends Player<OthelloTile> {
                 //hoef je niet te checken voor x en c want je krijgt er geen extra pluspunten voor
             }
 
-            //check voor x en c corner sides en geef harde minpunten voor het hebben van deze zonder de corner te hebben
-            int directionX = 1;
-            int directionY = 1;
-            if(x != 0){
-                directionX = -1;
-            }
-            if(y != 0){
-                directionY = -1;
-            }
+            if(board.getTile(x, y) != symbol) {
+                //check voor x en c corner sides en geef harde minpunten voor het hebben van deze zonder de corner te hebben
+                int directionX = 1;
+                int directionY = 1;
+                if (x != 0) {
+                    directionX = -1;
+                }
+                if (y != 0) {
+                    directionY = -1;
+                }
 
-            if(board.getTile(x + directionX, y) == symbol){
-                cPunishments++;
-            }
-            if(board.getTile(x, y + directionY) == symbol){
-                cPunishments++;
-            }
-            if(board.getTile(x + directionX, y + directionY) == symbol){
-                xPunishments++;
+                if (board.getTile(x + directionX, y) == symbol) {
+                    cPunishments++;
+                }
+                if (board.getTile(x, y + directionY) == symbol) {
+                    cPunishments++;
+                }
+                if (board.getTile(x + directionX, y + directionY) == symbol) {
+                    xPunishments++;
+                }
             }
         }
 
@@ -475,7 +477,7 @@ public class OthelloAI extends Player<OthelloTile> {
                 (cornerDiff * corner_diffWeight) +
                 (stableDiscDiff * stability_diffWeight) +
                 (discDiff * disc_diffWeight * discPhase) -
-                (cPunishments + xPunishments * -corner_diffWeight));
+                ((cPunishments + xPunishments) * corner_diffWeight));
 
         double endTimeAfter = System.nanoTime();
         this.afterTime += endTimeAfter - startTimeAfter;
