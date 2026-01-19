@@ -1,6 +1,7 @@
 package com.isy.game;
 
 import com.isy.Main;
+import com.isy.game.othello.OthelloRemotePlayer;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
@@ -48,13 +49,19 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
                 if(result.toUpperCase().contains("ERR")){
 
-                }else if(result.toUpperCase().contains("WIN")){
-                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
-                    this.setState(GameState.WON);
+                } else if(result.toUpperCase().contains("WIN")) {
+                    if (this.players[0] instanceof OthelloRemotePlayer) {
+                        this.state = GameState.LOST;
+                    } else {
+                        this.state = GameState.WON;
+                    }
                     PlayerEventManager.get().stop();
-                }else if(result.toUpperCase().contains("LOSS")) {
-                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
-                    this.setState(GameState.LOST);
+                } else if (result.toUpperCase().contains("LOSS")) {
+                    if (this.players[0] instanceof OthelloRemotePlayer) {
+                        this.state = GameState.WON;
+                    } else {
+                        this.state = GameState.LOST;
+                    }
                     PlayerEventManager.get().stop();
                 }
             });
