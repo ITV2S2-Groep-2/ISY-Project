@@ -142,7 +142,7 @@ public class Main {
                 }
             }
 
-            ResultWriter.writeTop5("top5.json", newTop5);
+            ResultWriter.writeTop5("top5.json");
             if (!isTheSame) {
                 System.out.println("Is not the same");
             } else {

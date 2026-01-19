@@ -58,6 +58,7 @@ public class ResultWriter {
         JSONObject stats = model.getJSONObject("stats");
         stats.put("losses", stats.getInt("losses") + 1);
     }
+
     public static void addDraw(String modelName) {
         JSONObject model = modelMap.get(modelName);
         JSONObject stats = model.getJSONObject("stats");
@@ -78,6 +79,7 @@ public class ResultWriter {
         time.put("total_move_time", totalMoveTime);
 
     }
+
     public static void writeAll(String filename) {
         JSONObject root = ModelFileReader.Read(filename);
         if (root == null) {
@@ -92,6 +94,7 @@ public class ResultWriter {
             throw new RuntimeException(e);
         }
     }
+
     public static JSONObject getTop5() {
         JSONObject root = new JSONObject();
 
@@ -103,7 +106,7 @@ public class ResultWriter {
 
         JSONObject history = ModelFileReader.Read("history.json");
 
-        for (int i = 0; i < 5; i++ ) {
+        for (int i = 0; i < 5; i++) {
 
             if (history != null) {
                 String parent = list.get(i).getValue().getJSONObject("settings").getString("parent");
@@ -113,10 +116,10 @@ public class ResultWriter {
                 JSONObject newSettings = list.get(i).getValue().getJSONObject("settings");
                 if (
                         (Math.abs(parentSettings.getDouble("mobility_diff_weight") - newSettings.getDouble("mobility_diff_weight")) < 0.0001)
-                        && (Math.abs(parentSettings.getDouble("corner_diff_weight") - newSettings.getDouble("corner_diff_weight")) < 0.001)
-                        && (Math.abs(parentSettings.getDouble("stability_diff_weight") - newSettings.getDouble("stability_diff_weight")) < 0.001)
-                        && (Math.abs(parentSettings.getDouble("disc_diff_weight") - newSettings.getDouble("disc_diff_weight")) < 0.001)
-                        && (Math.abs(parentSettings.getInt("max_depth") - newSettings.getInt("max_depth")) < 0.001)
+                                && (Math.abs(parentSettings.getDouble("corner_diff_weight") - newSettings.getDouble("corner_diff_weight")) < 0.001)
+                                && (Math.abs(parentSettings.getDouble("stability_diff_weight") - newSettings.getDouble("stability_diff_weight")) < 0.001)
+                                && (Math.abs(parentSettings.getDouble("disc_diff_weight") - newSettings.getDouble("disc_diff_weight")) < 0.001)
+                                && (Math.abs(parentSettings.getInt("max_depth") - newSettings.getInt("max_depth")) < 0.001)
                 ) {
                     int parentTop5Count = parentObj.getJSONObject("stats").getInt("top_5_count");
                     list.get(i).getValue().getJSONObject("stats").put("top_5_count", parentTop5Count + 1);
@@ -132,11 +135,17 @@ public class ResultWriter {
         }
         return root;
     }
-    public static void writeTop5(String filename, JSONObject top5) {
+
+    public static void writeTop5(String filename) {
+
+        JSONObject root = getTop5();
         try (FileWriter file = new FileWriter(filename)) {
-            file.write(top5.toString(4));
+            file.write(root.toString(4));
+            System.out.println("JSON Object write to a File successfully");
+            System.out.println("JSON Object: " + root);
         } catch (IOException e) {
             throw new RuntimeException(e);
+
         }
     }
 }
