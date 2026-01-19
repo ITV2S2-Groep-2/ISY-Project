@@ -653,7 +653,8 @@ public class OthelloAI extends Player<OthelloTile> {
                             foundOpponentSymbol = true;
                         } else if (tile == OthelloTile.EMPTY) {
                             if (foundOpponentSymbol) {
-                                long r = 1L << (i + 1);
+                                int moveIndex = cX * boardSize + cY;
+                                long r = 1L << moveIndex;
                                 if ((r & addedCoords) == 0) {
                                     addedCoords |= r;
                                     availableMoves[index] = (byte) (((cX + 1) << 4) | (cY + 1));
