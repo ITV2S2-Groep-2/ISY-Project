@@ -123,4 +123,42 @@ public class OthelloUtils {
         return moves;
     }
 
+    public static void flipTiles(Board<OthelloTile> board, int xO, int yO, OthelloTile symbol) {
+        ArrayList<Integer[]> tilesToFlip = new ArrayList<>();
+
+        for (int[] d : directions) {
+            int x = xO;
+            int y = yO;
+
+            while (true) {
+                x += d[0];
+                y += d[1];
+
+                if (x < 0 || x >= board.getWidth() || y < 0 || y >= board.getHeight()) {
+                    tilesToFlip.clear();
+                    break;
+                }
+
+                OthelloTile current = board.getTile(x, y);
+
+                if (current == OthelloTile.EMPTY){
+                    tilesToFlip.clear();
+                    break;
+                }
+
+                if (current != symbol){
+                    tilesToFlip.add(new Integer[]{x,y});
+                }
+
+                if (current == symbol) {
+                    for(Integer[] t : tilesToFlip){
+                        board.setTile(t[0], t[1], symbol);
+                    }
+                    tilesToFlip.clear();
+                    break;
+                }
+            }
+        }
+    }
+
 }
