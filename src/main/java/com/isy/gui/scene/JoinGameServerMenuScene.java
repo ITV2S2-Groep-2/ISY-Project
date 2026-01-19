@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.game.GameType;
+import com.isy.gui.components.layout.ContentBox;
 import com.isy.gui.scene.manager.Scene;
 import com.isy.server.await.Promise;
 import com.isy.server.Server;
@@ -21,45 +22,41 @@ import static com.isy.server.ServerUtils.playerToMovePattern;
 import static com.isy.server.ServerUtils.asyncAwait;
 import static com.isy.server.ServerUtils.await;
 
-//TODO: FIX UI TO USE NEW SYSTEM
 public class JoinGameServerMenuScene extends Scene {
     private String ownName;
     private JButton joinButton;
     private JLabel waitingLabel;
     private JLabel errorLabel;
 
-    @Deprecated
-    private final GridBagConstraints constraints;
-
     public JoinGameServerMenuScene(Window window) {
         super("joinGameServerMenuScene", window);
-        this.constraints = generateConstrains();
         this.getScenePanel().setLayout(new GridBagLayout());
     }
 
     @Override
     public void init() {
-        JPanel panel = this.getScenePanel();
+        ContentBox content = new ContentBox(getScenePanel(), BoxLayout.Y_AXIS);
 
-        panel.add(Header.createHeader("waiting.tournament.header"));
-        panel.add(Box.createVerticalStrut(10));
+        content.add(Header.createHeader("waiting.tournament.header"), 10);
 
         JLabel info = Label.createLabel("directly.subscribe.label");
-        panel.add(info);
+        info.setAlignmentX(Component.CENTER_ALIGNMENT);
+        content.add(info, 10);
 
-        panel.add(UIButton.createButton("leave.server.button", this::goLeaveServer), getConstraints());
+        content.add(UIButton.createButton("leave.server.button", this::goLeaveServer), 10);
 
         joinButton = UIButton.createButton("subscribe.server.button");
-        panel.add(joinButton, getConstraints());
+        content.add(joinButton, 10);
 
         waitingLabel = Label.createLabel("waiting.match.label");
         waitingLabel.setVisible(false);
-        panel.add(waitingLabel, getConstraints());
+        waitingLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        content.add(waitingLabel, 10);
 
         errorLabel = Label.createLabel("error.message.server.label", "null");
         errorLabel.setForeground(Color.RED);
         errorLabel.hide();
-        panel.add(errorLabel);
+        content.add(errorLabel, 10);
 
         joinButton.addActionListener(this::onJoinButtonClicked);
     }
@@ -117,22 +114,5 @@ public class JoinGameServerMenuScene extends Scene {
             waitingLabel.setVisible(false);
         });
     }
-
-    @Deprecated
-    public GridBagConstraints generateConstrains(){
-        GridBagConstraints gd = new GridBagConstraints();
-        gd.gridx = 0;
-        gd.fill = GridBagConstraints.NONE;
-        gd.anchor = GridBagConstraints.CENTER;
-        gd.insets = new Insets(5, 0, 5, 0);
-
-        return gd;
-    }
-
-    @Deprecated
-    public GridBagConstraints getConstraints() {
-        return constraints;
-    }
-
 }
 

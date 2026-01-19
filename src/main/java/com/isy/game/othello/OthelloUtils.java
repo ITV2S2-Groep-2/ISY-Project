@@ -3,6 +3,7 @@ package com.isy.game.othello;
 import com.isy.game.Board;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OthelloUtils {
@@ -108,7 +109,13 @@ public class OthelloUtils {
 
     public static void flipTiles(Board<OthelloTile> board, int xO, int yO, OthelloTile symbol, boolean[][] updatedTiles) {
         ArrayList<Integer[]> tilesToFlip = new ArrayList<>();
-        if (updatedTiles != null) updatedTiles[xO][yO] = true;
+        if (updatedTiles != null) {
+            for (boolean[] booleans : updatedTiles) {
+                Arrays.fill(booleans, false);
+            }
+
+            updatedTiles[xO][yO] = true;
+        }
 
         for (int[] d : directions) {
             int x = xO;

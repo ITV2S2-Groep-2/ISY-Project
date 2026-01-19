@@ -29,6 +29,10 @@ public class FlexBox {
         }
     }
 
+    public void clear(){
+        this.contentPanel.removeAll();
+    }
+
     public JPanel getComponent() {
         return contentPanel;
     }

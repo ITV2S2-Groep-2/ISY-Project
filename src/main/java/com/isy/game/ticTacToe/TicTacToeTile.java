@@ -31,6 +31,11 @@ public enum TicTacToeTile implements ITile {
         return this.ordinal();
     }
 
+    @Override
+    public void createDisplayIcon(JLabel label) {
+        label.setText("(" + this + ") " + label.getText());
+    }
+
     public static TicTacToeTile[] createBoard(int width, int height){
         return new TicTacToeTile[width * height];
     }

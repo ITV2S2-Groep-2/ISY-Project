@@ -169,10 +169,6 @@ public class OthelloGame extends Game<OthelloTile> {
         if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
             gs.setHighLights(this.updatedTiles, this.newTile);
         }
-
-        for (boolean[] booleans : this.updatedTiles) {
-            Arrays.fill(booleans, false);
-        }
     }
 
     public boolean getUseReversiRules() {

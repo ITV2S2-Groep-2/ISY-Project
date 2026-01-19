@@ -90,9 +90,9 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         String playerName = this.activeTurnPlayer.getName();
 
         switch (this.state) {
-            case WON -> winScene.win(playerName, isOnline);
-            case LOST -> winScene.lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
-            case DRAW -> winScene.win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
+            case WON -> winScene.win(this.activeTurnPlayer, isOnline);
+            case LOST -> winScene.win(this.activeTurnPlayer == this.players[0] ? this.players[0] : this.players[1], isOnline);
+            case DRAW -> winScene.win(null, isOnline);
         }
 
         this.cleanUp();
@@ -140,9 +140,10 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
     public abstract GameState checkWin(Player<T> p, Player<T> o);
 
-    public void setRenderScene(Scene scene){
+    public void setRenderScene(GameScene scene){
         this.renderScene = scene;
         scene.initGame(this);
+        scene.setPlayerNames(this.players[0], this.players[1]);
     }
 
     public Scene getRenderScene(){

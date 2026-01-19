@@ -15,6 +15,7 @@ public enum OthelloTile implements ITile {
     private int imgHeight;
 
     private Icon icon;
+    private Icon finalIcon;
 
     OthelloTile(String imagePath){
         this.imgWidth = 32;
@@ -23,6 +24,7 @@ public enum OthelloTile implements ITile {
         try {
             this.img = ImageIO.read(getClass().getResource("/" + imagePath));
             this.icon = new ImageIcon(this.img);
+            this.finalIcon = new ImageIcon(this.img.getScaledInstance(this.imgWidth, this.imgHeight, Image.SCALE_SMOOTH));
         } catch (Exception e) {
             System.out.println("othello tile image not found");
         }
@@ -35,6 +37,11 @@ public enum OthelloTile implements ITile {
     @Override
     public int index() {
         return this.ordinal();
+    }
+
+    @Override
+    public void createDisplayIcon(JLabel label) {
+        label.setIcon(this.finalIcon);
     }
 
     @Override

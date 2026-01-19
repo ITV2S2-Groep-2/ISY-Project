@@ -16,10 +16,8 @@ game.reversi.header=Othello
 directly.subscribe.label=Abonneer je in plaats daarvan direct op een spel!
 waiting.match.label=Wachten op een wedstrijd!
 win_scene.win_label=%s won!
-win_scene.lose_label=%s verloor!
-win_scene.person.you=Jij
-win_scene.person.nobody=Niemand
-player.name.display=[%s] %s(jij) VS [%s] %s(tegenstander)
+win_scene.draw=It's a draw
+game.player_label.versus=VS
 
 game.reversi.use_reversi_rules=Gebruik de regelset van Reservi.
 game.volume.label=Volume:

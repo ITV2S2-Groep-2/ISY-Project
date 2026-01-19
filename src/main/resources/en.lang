@@ -16,10 +16,8 @@ game.reversi.header=Othello
 directly.subscribe.label=Instead directly subscribe to a game!
 waiting.match.label=Waiting for match!
 win_scene.win_label=%s Won!
-win_scene.lose_label=%s Lost!
-win_scene.person.you=You
-win_scene.person.nobody=Nobody
-player.name.display=[%s] %s(You) VS [%s] %s(Opponent)
+win_scene.draw=It's a draw
+game.player_label.versus=VS
 
 game.reversi.use_reversi_rules=Use the Reversi ruleset.
 game.volume.label=Volume:

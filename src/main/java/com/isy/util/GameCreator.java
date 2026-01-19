@@ -114,7 +114,7 @@ public class GameCreator {
 
          Main.window.getManager().addScene(new GameScene(Main.window), true);
 
-         game.setRenderScene(Main.window.getManager().getScene("game"));
+         game.setRenderScene((GameScene) Main.window.getManager().getScene("game"));
          new Thread(game).start();
          Main.window.getManager().showScene("game");
     }
@@ -149,7 +149,6 @@ public class GameCreator {
         Main.window.getManager().addScene(new GameScene(Main.window), true);
         GameScene gs = (GameScene) Main.window.getManager().getScene("game");
         game.setRenderScene(gs);
-        gs.setPlayerNames(player1Name, player2Name, iStart);
 
         new Thread(game).start();
         Main.window.getManager().showScene("game");

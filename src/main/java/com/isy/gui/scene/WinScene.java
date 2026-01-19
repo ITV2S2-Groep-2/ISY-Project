@@ -1,6 +1,7 @@
 package com.isy.gui.scene;
 
 import com.isy.Main;
+import com.isy.game.player.Player;
 import com.isy.gui.Window;
 import com.isy.gui.components.Header;
 import com.isy.gui.components.input.UIButton;
@@ -70,15 +71,17 @@ public class WinScene extends Scene {
         }).start();
     }
 
-    public void win(String playerName, boolean online){
+    public void win(Player<?> player, boolean online){
         this.online = online;
         this.getWindow().getManager().showScene(this.getName());
-        title.setText(LangHandler.get().translate("win_scene.win_label", playerName));
-    }
 
-    public void lost(String playerName, boolean online){
-        this.online = online;
-        this.getWindow().getManager().showScene(this.getName());
-        title.setText(LangHandler.get().translate("win_scene.lose_label", playerName));
+        title.setIcon(null);
+
+        if (player == null){
+            title.setText(LangHandler.get().translate("win_scene.draw"));
+        } else{
+            title.setText(LangHandler.get().translate("win_scene.win_label", player.getName()));
+            player.getSymbol().createDisplayIcon(title);
+        }
     }
 }
