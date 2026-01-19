@@ -98,10 +98,10 @@ public class GameScene extends Scene {
         }
     }
 
-    public void setHighLights(boolean[][] updatedTiles){
+    public void setHighLights(boolean[][] updatedTiles, int[] newTile){
         for (int y = 0; y < game.getBoard().getHeight(); y++) {
             for (int x = 0; x < game.getBoard().getWidth(); x++) {
-                BoardTile.setHighLight(this.boardButtons.get(x).get(y), updatedTiles[x][y]);
+                BoardTile.setHighLight(this.boardButtons.get(x).get(y), updatedTiles[x][y], newTile[0] == x && newTile[1] == y);
                 this.boardButtons.get(x).get(y).repaint();
             }
         }

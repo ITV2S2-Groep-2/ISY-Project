@@ -34,7 +34,8 @@ public class BoardTile {
         return addStyle(button);
     }
 
-    public static void setHighLight(JButton button, boolean highlight){
-        button.setBackground(highlight ? Style.highlightBackgroundColor : Style.primaryComponentBackgroundColor);
+    public static void setHighLight(JButton button, boolean highlight, boolean newlyAdded){
+        button.setBackground(highlight ? (newlyAdded ? Style.extraHighlightBackgroundColor : Style.highlightBackgroundColor) :
+                Style.primaryComponentBackgroundColor);
     }
 }

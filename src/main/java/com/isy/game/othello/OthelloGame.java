@@ -15,6 +15,7 @@ import java.util.List;
 public class OthelloGame extends Game<OthelloTile> {
     private boolean useReversiRules = false;
     private final boolean[][] updatedTile;
+    private final int[] newTile;
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
@@ -29,6 +30,7 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         this.updatedTile = new boolean[8][8];
+        this.newTile = new int[2];
 
         for (boolean[] booleans : this.updatedTile) {
             Arrays.fill(booleans, false);
@@ -116,6 +118,8 @@ public class OthelloGame extends Game<OthelloTile> {
         };
 
         this.updatedTile[move[0]][move[1]] = true;
+        newTile[0] = move[0];
+        newTile[1] = move[1];
 
         for (int[] d : dirs) {
             int x = move[0];
@@ -236,7 +240,7 @@ public class OthelloGame extends Game<OthelloTile> {
     public void renderBoard() {
         super.renderBoard();
         if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
-            gs.setHighLights(this.updatedTile);
+            gs.setHighLights(this.updatedTile, this.newTile);
         }
 
         for (boolean[] booleans : this.updatedTile) {
