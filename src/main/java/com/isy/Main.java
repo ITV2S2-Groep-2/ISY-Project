@@ -190,8 +190,8 @@ public class Main {
         return model;
     }
 
-    static final int GAME_AMOUNT = 200;
-    static final int MAX_GAME_THREADS = 20;
+    static final int GAME_AMOUNT = 500;
+    static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
 

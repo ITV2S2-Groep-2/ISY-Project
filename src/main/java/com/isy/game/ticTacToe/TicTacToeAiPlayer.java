@@ -20,21 +20,21 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
     public int[] getMove(Game<TicTacToeTile> game) {
         Board<TicTacToeTile> board = game.getBoard();
 
-        TicTacToeTile[][] tiles = board.getTiles();
-
-        // Simuleer wachttijd omdat anders AI soms sneller zet dan de server je in de lobby kan zetten.
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        int[] move = getBestMove(tiles);
-
-        if(this.client != null){
-            sendServerData(move);
-        }
-        return move;
+//        TicTacToeTile[][] tiles = board.getTiles();
+//
+//        // Simuleer wachttijd omdat anders AI soms sneller zet dan de server je in de lobby kan zetten.
+//        try {
+//            Thread.sleep(250);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        int[] move = getBestMove(tiles);
+//
+//        if(this.client != null){
+//            sendServerData(move);
+//        }
+        return new int[1];
     }
 
     public int[] getBestMove(TicTacToeTile[][] tiles){

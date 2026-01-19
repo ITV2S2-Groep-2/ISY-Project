@@ -29,14 +29,13 @@ public class OthelloRandomAI extends Player<OthelloTile> {
         }
 
         Random rand = new Random();
-        int[] randomMove = availableMoves.get(rand.nextInt(availableMoves.size()));
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        //        try {
+//            Thread.sleep(10);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        return randomMove;
+        return availableMoves.get(rand.nextInt(availableMoves.size()));
     }
 
 }
