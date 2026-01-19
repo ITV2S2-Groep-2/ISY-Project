@@ -92,7 +92,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         // Main.window.getManager().addScene(new WinScene(Main.window));
 
         if (this.state == GameState.WON){
-            if (this.activeTurnPlayer instanceof OthelloRandomAI) {
+            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
                 ResultWriter.addLoss(getOpponent().getName());
             } else {
                 ResultWriter.addWin(this.activeTurnPlayer.getName());
@@ -100,7 +100,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
             // ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
         }else if(this.state == GameState.LOST){
-            if (this.activeTurnPlayer instanceof OthelloRandomAI) {
+            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
                 ResultWriter.addWin(getOpponent().getName());
             } else {
                 ResultWriter.addLoss(this.activeTurnPlayer.getName());
@@ -108,7 +108,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
             // ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
         } else {
-            if (this.activeTurnPlayer instanceof OthelloRandomAI) {
+            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
                 ResultWriter.addDraw(getOpponent().getName());
             } else {
                 ResultWriter.addDraw(this.activeTurnPlayer.getName());

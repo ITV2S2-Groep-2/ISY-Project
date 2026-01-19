@@ -49,24 +49,36 @@ public class ResultWriter {
 
     public static void addWin(String modelName) {
         JSONObject model = modelMap.get(modelName);
+        if(model == null){
+            return;
+        }
         JSONObject stats = model.getJSONObject("stats");
         stats.put("wins", stats.getInt("wins") + 1);
     }
 
     public static void addLoss(String modelName) {
         JSONObject model = modelMap.get(modelName);
+        if(model == null){
+            return;
+        }
         JSONObject stats = model.getJSONObject("stats");
         stats.put("losses", stats.getInt("losses") + 1);
     }
 
     public static void addDraw(String modelName) {
         JSONObject model = modelMap.get(modelName);
+        if(model == null){
+            return;
+        }
         JSONObject stats = model.getJSONObject("stats");
         stats.put("draws", stats.getInt("draws") + 1);
     }
 
     public static void addTime(String modelName, long avgTime, long minTime, long maxTime, long totalTime, long avgMoveTime, long minMoveTime, long maxMoveTime, long totalMoveTime) {
         JSONObject model = modelMap.get(modelName);
+        if(model == null){
+            return;
+        }
         JSONObject time = model.getJSONObject("time");
         time.put("avg_time", avgTime);
         time.put("min_time", minTime);
@@ -106,8 +118,13 @@ public class ResultWriter {
 
         JSONObject history = ModelFileReader.Read("history.json");
 
-        for (int i = 0; i < 5; i++) {
+        int testSize = list.size();
+        if(testSize > 5) testSize = 5;
 
+        for (int i = 0; i < testSize; i++) {
+            if(list.get(i) == null){
+                break;
+            }
             if (history != null) {
                 String parent = list.get(i).getValue().getJSONObject("settings").getString("parent");
                 JSONObject parentObj = history.getJSONObject(parent);

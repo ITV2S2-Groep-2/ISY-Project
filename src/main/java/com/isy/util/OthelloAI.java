@@ -460,9 +460,9 @@ public class OthelloAI extends Player<OthelloTile> {
         //heb je gewonnen of verloren?
         if(totalTiles == 64){
             if(discDiff > 0){
-                value += 1000;
+                value += 10000;
             } else{
-                value -= 1000;
+                value -= 10000;
             }
         }
 

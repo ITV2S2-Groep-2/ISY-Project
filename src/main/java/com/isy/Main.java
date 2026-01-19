@@ -28,17 +28,24 @@ public class Main {
     public static final int MINDEPTH = 4;
 
     public static boolean endCase = false;
+    public static boolean oneVone = false;
+
+    public static OthelloAI testAI = new OthelloAI("testAI", OthelloTile.PLAYER_1, null, 5, 25, 10, 1, 5, "testAI");
+    public static OthelloAI opponent = new OthelloAI("Opponent", OthelloTile.PLAYER_2, null, 5, 25, 10, 1, 2, "Opponent");
 
     public static void main(String[] args) {
         while (!endCase) {
             ResultWriter.modelMap.clear();
             System.out.println(LocalDateTime.now());
-                long start = System.nanoTime();
+            long start = System.nanoTime();
 
             JSONObject topmodel = ModelFileReader.Read("top5.json");
             // depth met cap 5 afronden
             ArrayList<OthelloAI> models = new ArrayList<OthelloAI>();
-            if (topmodel == null) {
+            if(oneVone){
+                models.add(testAI);
+            }
+            else if (topmodel == null) {
                 OthelloAI baseModel = new OthelloAI("BASEMODEL", OthelloTile.PLAYER_1, null);
                 models.add(baseModel);
 
@@ -74,12 +81,8 @@ public class Main {
                         OthelloAI newModel = newModel(baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName);
                         models.add(newModel);
                     }
-
-
                 }
-                // nu nog niks
             }
-
             List<ModelRunner> modelRunnerList = new ArrayList<>();
             for (OthelloAI model : models) {
                 ResultWriter.addModel(model);
@@ -87,7 +90,6 @@ public class Main {
                 modelRunnerList.add(runner);
                 new Thread(runner).start();
             }
-
             boolean allFinished = false;
 
             while (!allFinished) {
@@ -149,9 +151,8 @@ public class Main {
                 System.out.println("Is the same");
             }
 
-            System.out.println("Time: " + (System.nanoTime() - start));
 
-            // window = new Window();
+            System.out.println("Time: " + (System.nanoTime() - start));
         }
     }
 
@@ -241,6 +242,10 @@ public class Main {
             }
 
             model.cleanup();
+            if(oneVone) {
+                opponent.cleanup();
+                endCase = true;
+            }
             avgTime = totalTime / GAME_AMOUNT;
             finished = true;
 
@@ -253,10 +258,12 @@ public class Main {
 
                 OthelloGame game;
                 if(i < GAME_AMOUNT / 2){
-                    game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                    if(!oneVone) game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                    else game = new OthelloGame(new Player[]{model, opponent});
                 }
                 else {
-                    game = new OthelloGame(new Player[]{new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null), model});
+                    if(!oneVone) game = new OthelloGame(new Player[]{new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null), model});
+                    else game = new OthelloGame(new Player[]{opponent, model});
                 }
                 game.run();
 
