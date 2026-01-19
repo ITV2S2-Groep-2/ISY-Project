@@ -94,6 +94,8 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         } else {
             ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
         }
+
+        this.cleanUp();
     };
 
     public boolean handleSingleTurn() {
@@ -189,5 +191,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
     public void run() {
         gameLoop();
     }
+
+    public void cleanUp() {}
 
 }

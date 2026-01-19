@@ -199,4 +199,12 @@ public class OthelloGame extends Game<OthelloTile> {
     public boolean getUseReversiRules() {
         return this.useReversiRules;
     }
+
+    public void cleanUp() {
+        for (Player p : this.players) {
+            if (p instanceof OthelloAIPlayer ai) {
+                ai.cleanup();
+            }
+        }
+    }
 }
