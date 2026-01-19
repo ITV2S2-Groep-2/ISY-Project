@@ -85,10 +85,18 @@ public class GameCreator {
         Player<?> player2 = null;
         try {
             Constructor<?>[] player1Constructors = player1Class.getDeclaredConstructors();
-            player1 = (Player<?>) player1Constructors[0].newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
+            for (Constructor<?> constructor : player1Constructors) {
+                if (constructor.getParameterCount() == 3) {
+                    player1 = (Player<?>) player1Constructors[0].newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
+                }
+            }
 
             Constructor<?>[] player2Constructors = player2Class.getDeclaredConstructors();
-            player2 = (Player<?>) player2Constructors[0].newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
+            for (Constructor<?> constructor : player2Constructors) {
+                if (constructor.getParameterCount() == 3) {
+                    player2 = (Player<?>) player2Constructors[0].newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
+                }
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("invalid player constructor", e);
