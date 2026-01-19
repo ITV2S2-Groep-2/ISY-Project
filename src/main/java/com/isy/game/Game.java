@@ -12,6 +12,8 @@ import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
 import com.isy.util.lang.LangHandler;
 
+import java.util.List;
+
 import static com.isy.server.ServerUtils.asyncAwait;
 
 public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
@@ -45,8 +47,6 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
          */
         if (isOnline){
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
-//                System.out.println(result);
-
                 if(result.toUpperCase().contains("ERR")){
 
                 }else if(result.toUpperCase().contains("WIN")){
@@ -106,7 +106,16 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             return false;
         }
 
-        boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+        List<int[]> availableMoves = getAvailableMoves(this.getBoard(), this.activeTurnPlayer.getSymbol(), this.getOpponent().getSymbol());
+        int[] finalMove = move;
+        boolean isAvailable = availableMoves.stream().anyMatch(val -> {
+            return val[0] == finalMove[0] && val[1] == finalMove[1];
+        });
+
+        boolean correctMove =
+                isAvailable &&
+                this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+
 
         if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
             this.activeTurnPlayer.sendServerData(move);
@@ -132,6 +141,10 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         }
     }
 
+    public abstract List<int[]> getAvailableMoves(
+            Board<T> board,
+            T playerSymbol,
+            T opponentSymbol);
 
     public abstract boolean checkWin(int x, int y, Player<T> p);
 

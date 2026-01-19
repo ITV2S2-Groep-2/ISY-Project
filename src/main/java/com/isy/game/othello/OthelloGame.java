@@ -8,7 +8,6 @@ import com.isy.game.ticTacToe.GameState;
 import com.isy.util.GameSettings;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OthelloGame extends Game<OthelloTile> {
@@ -31,10 +30,8 @@ public class OthelloGame extends Game<OthelloTile> {
     public boolean handleSingleTurn() {
         int[] move = null;
 
-        List<int[]> availableMoves = OthelloUtils.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), (OthelloTile) this.getOpponent().getSymbol(), useReversiRules && this.getTurnCounter() <= 4);
-//        for (int[] availableMove : availableMoves) {
-//            System.out.println("available move: " + availableMove[0] + ", " + availableMove[1]);
-//        }
+        List<int[]> availableMoves = this.getAvailableMoves(getBoard(), this.activeTurnPlayer.getSymbol(), this.getOpponent().getSymbol());
+
         if (this.activeTurnPlayer instanceof OthelloHumanPlayer) this.addAvailableMovesToBoard(availableMoves);
 
         this.renderBoard();
@@ -54,8 +51,6 @@ public class OthelloGame extends Game<OthelloTile> {
         if (move == null) {
             return false;
         }
-//        System.out.println(Arrays.toString(move));
-//        System.out.println(this.activeTurnPlayer.getSymbol());
 
         int[] finalMove = move;
         boolean isAvailable = availableMoves.stream().anyMatch(val -> {
@@ -91,6 +86,11 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         return false;
+    }
+
+    @Override
+    public List<int[]> getAvailableMoves(Board<OthelloTile> board, OthelloTile playerSymbol, OthelloTile opponentSymbol) {
+        return OthelloUtils.getAvailableMoves(board, playerSymbol, opponentSymbol, this.useReversiRules && this.getTurnCounter() <= 4);
     }
 
     public void flipTiles(int[] move) {

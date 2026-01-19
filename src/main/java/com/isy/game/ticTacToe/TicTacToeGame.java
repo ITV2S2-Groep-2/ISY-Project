@@ -4,12 +4,29 @@ import com.isy.game.Board;
 import com.isy.game.player.Player;
 import com.isy.game.Game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TicTacToeGame extends Game<TicTacToeTile> {
 
     public TicTacToeGame(Player<TicTacToeTile>[] players) {
         super(new Board<>(3, 3, TicTacToeTile.EMPTY, TicTacToeTile::createBoard), players);
     }
 
+
+    @Override
+    public List<int[]> getAvailableMoves(Board<TicTacToeTile> board, TicTacToeTile playerSymbol, TicTacToeTile opponentSymbol) {
+        List<int[]> am = new ArrayList<>();
+
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                if (board.getTile(x, y) == TicTacToeTile.EMPTY) {
+                    am.add(new int[]{x, y});
+                }
+            }
+        }
+        return am;
+    }
 
     @Override
     public boolean checkWin(int x, int y, Player<TicTacToeTile> p) {

@@ -3,8 +3,7 @@ package com.isy.game;
 import com.isy.game.othello.*;
 import com.isy.game.player.Player;
 import com.isy.game.ticTacToe.*;
-import com.isy.game.othello.OthelloAI;
-import com.isy.game.othello.OthelloRandomAI;
+import com.isy.game.othello.OthelloAIPlayer;
 
 public enum GameType {
     TICTACTOE ("tic-tac-toe"), OTHELLO ("reversi");
@@ -41,17 +40,11 @@ public enum GameType {
             }
             case AI -> {
                 return switch (gameType) {
-                    case TICTACTOE -> TicTacToeAiPlayer.class;
-                    case OTHELLO -> OthelloAI.class;
+                    case TICTACTOE -> TicTacToeAIPlayer.class;
+                    case OTHELLO -> OthelloAIPlayer.class;
                     default -> null;
                 };
             }
-//            case RANDOMAI -> {
-//                return switch (gameType) {
-//                    case OTHELLO -> OthelloRandomAI.class;
-//                    default -> null;
-//                };
-//            }
 
             case REMOTE -> {
                 return switch (gameType) {
