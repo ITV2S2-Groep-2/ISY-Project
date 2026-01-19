@@ -8,6 +8,7 @@ import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
 import com.isy.util.GameSettings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class OthelloGame extends Game<OthelloTile> {
     private boolean useReversiRules = false;
     private final boolean[][] updatedTiles;
     private final int[] newTile;
+    public static String[][] aiMoves = new String[8][8];
+    public static final boolean DEBUG = true;
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
@@ -168,6 +171,17 @@ public class OthelloGame extends Game<OthelloTile> {
         super.renderBoard();
         if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
             gs.setHighLights(this.updatedTiles, this.newTile);
+        }
+
+        if (DEBUG){
+            for (int row = 0; row < this.getBoard().getHeight(); row++) {
+                for (int col = 0; col < this.getBoard().getWidth(); col++) {
+                    if (aiMoves[row][col] != null) {
+                        String aiMove = aiMoves[row][col];
+                        ((GameScene) this.getRenderScene()).setValue(row, col, aiMove);
+                    }
+                }
+            }
         }
     }
 

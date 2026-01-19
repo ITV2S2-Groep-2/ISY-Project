@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.isy.server.ServerUtils.await;
 
@@ -132,5 +133,10 @@ public class GameScene extends Scene {
 
     private void sendMessage(ActionEvent actionEvent, String message) {
         await(new Promise().setCommand("message " + message));
+    }
+
+    public void setValue(int x, int y, String value) {
+        if(!Objects.equals(value, "")) this.boardButtons.get(x).get(y).setIcon(null);
+        this.boardButtons.get(x).get(y).setText(value);
     }
 }

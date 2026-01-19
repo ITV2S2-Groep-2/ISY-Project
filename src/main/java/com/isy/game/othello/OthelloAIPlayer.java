@@ -6,9 +6,11 @@ import com.isy.game.player.Player;
 import com.isy.server.Server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.BOARD_SIZED_SQUARED;
 import static com.isy.game.othello.OthelloUtils.boardSize;
 
@@ -164,6 +166,10 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             futures.add(executor.submit(task));
         }
 
+        for (String[] aiMove : aiMoves) {
+            Arrays.fill(aiMove, "");
+        }
+
         try {
             for (Future<MoveEvaluation> future : futures) {
                 MoveEvaluation result = future.get(); // This blocks until the thread is done
@@ -171,6 +177,8 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                     bestValue = result.score;
                     bestMove = new int[]{result.x, result.y};
                 }
+
+                aiMoves[result.x][result.y] = result.score + "";
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
