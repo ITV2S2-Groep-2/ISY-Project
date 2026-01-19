@@ -474,7 +474,7 @@ public class OthelloAI extends Player<OthelloTile> {
         double discPhase = phase;
 
         value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
-                (cornerDiff * corner_diffWeight) +
+                (myCorner * corner_diffWeight) +
                 (stableDiscDiff * stability_diffWeight) +
                 (discDiff * disc_diffWeight * discPhase) -
                 ((cPunishments + xPunishments) * corner_diffWeight));
