@@ -45,8 +45,6 @@ public enum OthelloTile implements ITile {
             int smallestSide = this.imgHeight < this.imgWidth ? this.imgHeight : this.imgWidth;
             Image image = this.img.getScaledInstance(smallestSide, smallestSide, Image.SCALE_SMOOTH);
             this.icon = new ImageIcon(image);
-        } else {
-            jButton.setIcon(this.icon);
         }
 
         jButton.setIcon(this.icon);

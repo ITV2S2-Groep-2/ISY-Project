@@ -69,9 +69,12 @@ public class GameScene extends Scene {
         this.game = game;
 
         GridLayout layout = new GridLayout(this.game.getBoard().getHeight(), this.game.getBoard().getWidth());
+        layout.setHgap(2);
+        layout.setVgap(2);
         gridPanel.setSize(this.game.getBoard().getHeight() * 100, this.game.getBoard().getWidth() * 100);
         gridPanel.setLayout(layout);
         gridPanel.removeAll();
+        gridPanel.setOpaque(false);
 
         for (int x = 0; x < game.getBoard().getHeight(); x++) {
             this.boardButtons.add(new ArrayList<>());
@@ -90,6 +93,15 @@ public class GameScene extends Scene {
         for (int y = 0; y < game.getBoard().getHeight(); y++) {
             for (int x = 0; x < game.getBoard().getWidth(); x++) {
                 game.getBoard().getTile(x, y).updateOnBoard(this.boardButtons.get(x).get(y));
+                this.boardButtons.get(x).get(y).repaint();
+            }
+        }
+    }
+
+    public void setHighLights(boolean[][] updatedTiles, int[] newTile){
+        for (int y = 0; y < game.getBoard().getHeight(); y++) {
+            for (int x = 0; x < game.getBoard().getWidth(); x++) {
+                BoardTile.setHighLight(this.boardButtons.get(x).get(y), updatedTiles[x][y], newTile[0] == x && newTile[1] == y);
                 this.boardButtons.get(x).get(y).repaint();
             }
         }

@@ -5,13 +5,17 @@ import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
+import com.isy.gui.scene.GameScene;
 import com.isy.util.GameSettings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OthelloGame extends Game<OthelloTile> {
     private boolean useReversiRules = false;
+    private final boolean[][] updatedTile;
+    private final int[] newTile;
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
@@ -23,6 +27,13 @@ public class OthelloGame extends Game<OthelloTile> {
             this.getBoard().setTile(4, 4, this.players[1].getSymbol());
             this.getBoard().setTile(3, 4, this.players[0].getSymbol());
             this.getBoard().setTile(4, 3, this.players[0].getSymbol());
+        }
+
+        this.updatedTile = new boolean[8][8];
+        this.newTile = new int[2];
+
+        for (boolean[] booleans : this.updatedTile) {
+            Arrays.fill(booleans, false);
         }
     }
 
@@ -170,6 +181,18 @@ public class OthelloGame extends Game<OthelloTile> {
         }
 
         return 0;
+    }
+
+    @Override
+    public void renderBoard() {
+        super.renderBoard();
+        if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+            gs.setHighLights(this.updatedTile, this.newTile);
+        }
+
+        for (boolean[] booleans : this.updatedTile) {
+            Arrays.fill(booleans, false);
+        }
     }
 
     public boolean getUseReversiRules() {
