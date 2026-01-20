@@ -470,11 +470,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         double mobilityPhase = (1 - phase);
         double discPhase = phase;
 
-        value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
+        value += (mobilityDiff * mobility_diffWeight * mobilityPhase) +
                 (cornerDiff * corner_diffWeight) +
                 (stableDiscDiff * stability_diffWeight) +
                 (discDiff * disc_diffWeight * discPhase) -
-                (punishments * corner_diffWeight));
+                (punishments * corner_diffWeight);
 
         double endTimeAfter = System.nanoTime();
         this.afterTime += endTimeAfter - startTimeAfter;
