@@ -1,16 +1,16 @@
 package com.isy.game;
 
-import com.isy.Main;
+import com.isy.game.othello.OthelloRandomAI;
 import com.isy.game.othello.OthelloRemotePlayer;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
 import com.isy.gui.scene.manager.Scene;
-import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
+import com.isy.util.ResultWriter;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         this.client = Server.getInstance();
     }
 
-    public void setState(GameState state){
+    public void setState(GameState state) {
         this.state = state;
     }
 
@@ -45,11 +45,11 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         /*
             online game state check
          */
-        if (isOnline){
+        if (isOnline) {
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
-                if(result.toUpperCase().contains("ERR")){
+                if (result.toUpperCase().contains("ERR")) {
 
-                } else if(result.toUpperCase().contains("WIN")) {
+                } else if (result.toUpperCase().contains("WIN")) {
                     if (this.players[0] instanceof OthelloRemotePlayer) {
                         this.state = GameState.LOST;
                     } else {
@@ -91,17 +91,26 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         /*
             winscene handler
          */
-        Main.window.getManager().addScene(new WinScene(Main.window));
-        WinScene winScene = ((WinScene) Main.window.getManager().getScene("winScene"));
-
-        switch (this.state) {
-            case WON -> winScene.win(players[0], isOnline);
-            case LOST -> winScene.win(players[1], isOnline);
-            case DRAW -> winScene.win(null, isOnline);
+        if (this.state == GameState.WON) {
+            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
+                ResultWriter.addLoss(getOpponent().getName());
+            } else {
+                ResultWriter.addWin(this.activeTurnPlayer.getName());
+            }
+        } else if (this.state == GameState.LOST) {
+            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
+                ResultWriter.addWin(getOpponent().getName());
+            } else {
+                ResultWriter.addLoss(this.activeTurnPlayer.getName());
+            }
+        } else {
+            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
+                ResultWriter.addDraw(getOpponent().getName());
+            } else {
+                ResultWriter.addDraw(this.activeTurnPlayer.getName());
+            }
         }
-
-        this.cleanUp();
-    };
+    }
 
     public boolean handleSingleTurn() {
         int[] move = null;
@@ -109,7 +118,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         this.renderBoard();
 
         move = this.activeTurnPlayer.getMove(this);
-        if(move == null){
+        if (move == null) {
             return false;
         }
 
@@ -121,10 +130,11 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
         boolean correctMove =
                 isAvailable &&
-                this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+                        this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
         if (correctMove) {
-            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) this.activeTurnPlayer.sendServerData(move);
+            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>))
+                this.activeTurnPlayer.sendServerData(move);
             this.checkWin(this.activeTurnPlayer, this.getOpponent());
             if (this.state == GameState.ONGOING) this.giveTurnOver();
         }
@@ -145,13 +155,13 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
 
     public abstract GameState checkWin(Player<T> p, Player<T> o);
 
-    public void setRenderScene(GameScene scene){
+    public void setRenderScene(GameScene scene) {
         this.renderScene = scene;
         scene.initGame(this);
         scene.setPlayerNames(this.players[0], this.players[1]);
     }
 
-    public Scene getRenderScene(){
+    public Scene getRenderScene() {
         return this.renderScene;
     }
 
@@ -192,6 +202,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         return state;
     }
 
-    public void cleanUp() {}
+    public void cleanUp() {
+    }
 
 }

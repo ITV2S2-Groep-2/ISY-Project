@@ -5,7 +5,6 @@ import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
-import com.isy.gui.scene.GameScene;
 import com.isy.util.GameSettings;
 
 import java.util.Arrays;
@@ -73,7 +72,8 @@ public class OthelloGame extends Game<OthelloTile> {
         boolean correctMove = isAvailable && this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
         if (correctMove) {
-            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) this.activeTurnPlayer.sendServerData(move);
+            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>))
+                this.activeTurnPlayer.sendServerData(move);
 
             newTile[0] = move[0];
             newTile[1] = move[1];
@@ -134,8 +134,8 @@ public class OthelloGame extends Game<OthelloTile> {
     }
 
     /**
-        counts tiles from type of symbol and compares to count of opponent
-        returns 0 for equal, 1 for more, 2 for less
+     * counts tiles from type of symbol and compares to count of opponent
+     * returns 0 for equal, 1 for more, 2 for less
      */
     public int hasMoreTiles(OthelloTile p) {
         int currentPlayerCount = 0;
@@ -149,7 +149,7 @@ public class OthelloGame extends Game<OthelloTile> {
 
                 if (tile == p) {
                     currentPlayerCount++;
-                } else if (tile == opponentTile){
+                } else if (tile == opponentTile) {
                     opponentPlayerCount++;
                 }
             }
@@ -158,7 +158,7 @@ public class OthelloGame extends Game<OthelloTile> {
         if (currentPlayerCount > opponentPlayerCount) {
             return 1;
         }
-        if (opponentPlayerCount >  currentPlayerCount) {
+        if (opponentPlayerCount > currentPlayerCount) {
             return 2;
         }
 
@@ -167,21 +167,21 @@ public class OthelloGame extends Game<OthelloTile> {
 
     @Override
     public void renderBoard() {
-        super.renderBoard();
-        if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
-            gs.setHighLights(this.updatedTiles, this.newTile);
-        }
-
-        if (DEBUG){
-            for (int row = 0; row < this.getBoard().getHeight(); row++) {
-                for (int col = 0; col < this.getBoard().getWidth(); col++) {
-                    if (aiMoves[row][col] != null) {
-                        String aiMove = aiMoves[row][col];
-                        ((GameScene) this.getRenderScene()).setValue(row, col, aiMove);
-                    }
-                }
-            }
-        }
+//        super.renderBoard();
+//        if (this.getRenderScene() != null && this.getRenderScene() instanceof GameScene gs) {
+//            gs.setHighLights(this.updatedTiles, this.newTile);
+//        }
+//
+//        if (DEBUG){
+//            for (int row = 0; row < this.getBoard().getHeight(); row++) {
+//                for (int col = 0; col < this.getBoard().getWidth(); col++) {
+//                    if (aiMoves[row][col] != null) {
+//                        String aiMove = aiMoves[row][col];
+//                        ((GameScene) this.getRenderScene()).setValue(row, col, aiMove);
+//                    }
+//                }
+//            }
+//        }
     }
 
     public boolean getUseReversiRules() {
