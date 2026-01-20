@@ -10,13 +10,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static com.isy.Main.debugger;
 import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.BOARD_SIZED_SQUARED;
 import static com.isy.game.othello.OthelloUtils.boardSize;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 5, CORNER = 25, STABILITY = 10, DISC = 1;
-    public static final int DEPTH = 4;
+    public static final double MOBILITY = 8.16, CORNER = 30.71, STABILITY = 29, DISC = 5.47;
+    public static final int DEPTH = 6;
 
     String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
@@ -91,6 +92,8 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
     @Override
     public int[] getMove(Game<OthelloTile> gameArg) {
+        debugger.removeAll();
+
         long startTime = System.nanoTime();
         game = gameArg;
         OthelloGame othelloGame = (OthelloGame) game;
@@ -540,6 +543,8 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
                 tileCounter++;
                 int curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
+
+
 
                 highestVal= Math.max(highestVal, curVal);
                 alpha = Math.max(alpha, curVal);

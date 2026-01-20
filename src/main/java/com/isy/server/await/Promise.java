@@ -72,6 +72,8 @@ public class Promise{
                     break;
                 }
 
+                System.out.println(current.getMessage());
+
                 while (current.getNext() == null){
                     if (this.secondaryBreakStatement.get()) return null;
                     Thread.sleep(ServerUtils.waitTime);

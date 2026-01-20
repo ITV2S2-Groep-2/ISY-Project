@@ -16,7 +16,7 @@ public class OthelloGame extends Game<OthelloTile> {
     private final boolean[][] updatedTiles;
     private final int[] newTile;
     public static String[][] aiMoves = new String[8][8];
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     public OthelloGame(Player<OthelloTile>[] players) {
         super(new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard), players);
