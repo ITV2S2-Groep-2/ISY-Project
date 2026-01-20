@@ -188,6 +188,10 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         gameLoop();
     }
 
+    public GameState getState() {
+        return state;
+    }
+
     public void cleanUp() {}
 
 }
