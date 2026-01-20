@@ -6,9 +6,11 @@ import com.isy.game.player.Player;
 import com.isy.server.Server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
@@ -143,15 +145,21 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 }
             }
         }
+        int availableDepth = 64 - tileCounter;
+
         byte[] avm = OthelloUtils.getAvailableMovesBytes(board, this.symbol, this.otherSymbol, reversiFirstFour);
-        
+
+        for (String[] aiMove : aiMoves) {
+            Arrays.fill(aiMove, "");
+        }
+
         long moveDeadlineTime = 0;
         long maxMoveTime = 8_500_000_000L;
         moveDeadlineTime = System.nanoTime() + maxMoveTime;
 
         int startingDepth = 4;
         if (iterativeDeepening) startingDepth = this.maxDepth;
-        while (System.nanoTime() < moveDeadlineTime && startingDepth < 70) {
+        while (System.nanoTime() < moveDeadlineTime && startingDepth <= availableDepth + 5) { // + 5 overhead for possible skipped moves
             System.out.println("depth: " + startingDepth);
             int[] bestMoveOfCurrentDepth = null;
             double bestValueOfCurrentDepth = Integer.MIN_VALUE;
@@ -188,6 +196,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                         bestMoveOfCurrentDepth = new int[]{result.x, result.y};
                     }
 
+                    aiMoves[result.x][result.y] = result.score + "";
                 }
             } catch (TimeoutException e) {
                 break;
