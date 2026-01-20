@@ -15,12 +15,13 @@ import static com.isy.game.othello.OthelloUtils.BOARD_SIZED_SQUARED;
 import static com.isy.game.othello.OthelloUtils.boardSize;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 5, CORNER = 25, STABILITY = 10, DISC = 1;
-    public static final int DEPTH = 4;
+    public static final double MOBILITY = -5, CORNER = 10, PUNISHMENT = 12, STABILITY = 5, DISC = -1;
+    public static final int DEPTH = 8;
 
     String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
     double corner_diffWeight = 25;
+    double punishment_weight = 25;
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
     int maxDepth;
@@ -55,13 +56,14 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     double afterTime = 0;
 
     public OthelloAIPlayer(String name, OthelloTile symbol, Server client){
-        this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null);
+        this(name, symbol, client, MOBILITY, PUNISHMENT, CORNER, STABILITY, DISC, DEPTH, null);
     }
 
-    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
+    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double punishmentWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
         super(name, symbol, client);
         this.mobility_diffWeight = mobWeight;
         this.corner_diffWeight = cornerWeight;
+        this.punishment_weight = punishmentWeight;
         this.stability_diffWeight = stabilityWeight;
         this.disc_diffWeight = discWeight;
         this.maxDepth = maxDepth;
@@ -222,8 +224,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         int myCorner = 0;
         int otherCorner = 0;
 
-        int cPunishments = 0;
-        int xPunishments = 0;
+        int punishments = 0;
 
         for (int[] c : corners){
             int x = c[0];
@@ -240,7 +241,6 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 //hoef je niet te checken voor x en c want je krijgt er geen extra pluspunten voor
             }
 
-
             if (board.getTile(x, y) != symbol) {
                 //check voor x en c corner sides en geef harde minpunten voor het hebben van deze zonder de corner te hebben
                 int directionX = 1;
@@ -253,18 +253,19 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 }
 
                 if (board.getTile(x + directionX, y) == symbol) {
-                    cPunishments++;
+                    punishments++;
                 }
                 if (board.getTile(x, y + directionY) == symbol) {
-                    cPunishments++;
+                    punishments++;
                 }
                 if (board.getTile(x + directionX, y + directionY) == symbol) {
-                    xPunishments++;
+                    punishments++;
                 }
             }
         }
 
-        int cornerDiff = myCorner - otherCorner;
+//        int cornerDiff = myCorner - otherCorner;
+        punishments += otherCorner;
 
         double endTimeBefore = System.nanoTime();
         this.beforeTime += endTimeBefore - startTimeBefore;
@@ -452,7 +453,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
         }
 
-        int stableDiscDiff = myStableDiscs - otherStableDiscs;
+        punishments += otherStableDiscs;
 
         double endTimeStable = System.nanoTime();
         this.stableTime += endTimeStable - startTimeStable;
@@ -475,9 +476,9 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
         value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
                 (myCorner * corner_diffWeight) +
-                (stableDiscDiff * stability_diffWeight) +
+                (myStableDiscs * stability_diffWeight) +
                 (discDiff * disc_diffWeight * discPhase) -
-                ((cPunishments + xPunishments) * corner_diffWeight));
+                (punishments * punishment_weight));
 
         double endTimeAfter = System.nanoTime();
         this.afterTime += endTimeAfter - startTimeAfter;
