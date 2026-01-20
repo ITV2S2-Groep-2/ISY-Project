@@ -513,12 +513,12 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             } else {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
             }
-            return evaluateBoard(board, availableMovesUpcoming.length, availableMovesOpponent.length);
+            return evaluateBoard(board, board.getAmount(this.symbol.index()), board.getAmount(this.otherSymbol.index()));
         }
 
         if(isMax){
 
-            if (availableMovesUpcoming.length > 10 && !depthIsDecreased) {
+            if (board.getAmount(this.symbol.index()) > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
@@ -561,7 +561,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         }
         else {
 
-            if (availableMovesOpponent.length > 10 && !depthIsDecreased) {
+            if (board.getAmount(this.otherSymbol.index()) > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
