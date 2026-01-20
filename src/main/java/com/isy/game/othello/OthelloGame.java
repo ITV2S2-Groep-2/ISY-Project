@@ -1,15 +1,21 @@
 package com.isy.game.othello;
 
+import com.isy.Main;
 import com.isy.game.Board;
 import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
 import com.isy.gui.scene.GameScene;
+import com.isy.gui.scene.WinScene;
+import com.isy.server.await.Promise;
 import com.isy.util.GameSettings;
+import com.isy.util.PlayerEventManager;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.isy.server.ServerUtils.asyncAwait;
 
 public class OthelloGame extends Game<OthelloTile> {
     private boolean useReversiRules = false;
@@ -36,6 +42,117 @@ public class OthelloGame extends Game<OthelloTile> {
         for (boolean[] booleans : this.updatedTiles) {
             Arrays.fill(booleans, false);
         }
+    }
+
+    @Override
+    public void gameLoop() {
+        boolean isOnline = this.client != null;
+
+        /*
+            online game state check
+         */
+        if (isOnline){
+            asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
+                if(result.toUpperCase().contains("ERR")){
+
+                } else if(result.toUpperCase().contains("WIN")) {
+                    if (this.players[0] instanceof OthelloRemotePlayer) {
+                        this.state = GameState.LOST;
+                    } else {
+                        this.state = GameState.WON;
+                    }
+                    PlayerEventManager.get().stop();
+                } else if (result.toUpperCase().contains("LOSS")) {
+                    if (this.players[0] instanceof OthelloRemotePlayer) {
+                        this.state = GameState.WON;
+                    } else {
+                        this.state = GameState.LOST;
+                    }
+                    PlayerEventManager.get().stop();
+                }
+            });
+        }
+
+
+        /*
+            turn handler
+         */
+        while (this.state == GameState.ONGOING) {
+            this.turnCounter++;
+            boolean cancel = this.handleSingleTurn();
+            if (cancel) {
+                break;
+            }
+        }
+
+
+        this.renderBoard();
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        OthelloAIPlayer winningPlayer = null;
+
+        switch (this.state) {
+            case WON, DRAW, ONGOING -> winningPlayer = (OthelloAIPlayer) players[0];
+            case LOST -> winningPlayer = (OthelloAIPlayer) players[1];
+        }
+
+        System.out.println("WINNER");
+        printPlayerStat(winningPlayer);
+        System.out.println("LOSER");
+        printPlayerStat((OthelloAIPlayer) (winningPlayer == players[0] ? players[1] : players[0]));
+
+        OthelloAIPlayer.CORNER = winningPlayer.corner_diffWeight;
+        OthelloAIPlayer.MOBILITY = winningPlayer.mobility_diffWeight;
+        OthelloAIPlayer.STABILITY = winningPlayer.stability_diffWeight;
+        OthelloAIPlayer.DISC = winningPlayer.disc_diffWeight;
+
+        this.players = new Player[2];
+        this.players[0] = new OthelloAIPlayer("winner", OthelloTile.PLAYER_1, null);
+
+        OthelloAIPlayer.CORNER += (Math.random() * 4) - 2;
+        OthelloAIPlayer.MOBILITY += (Math.random() * 4) - 2;
+        OthelloAIPlayer.STABILITY += (Math.random() * 4) - 2;
+        OthelloAIPlayer.DISC += (Math.random() * 4) - 2;
+
+        OthelloAIPlayer.CORNER = Math.abs(OthelloAIPlayer.CORNER);
+        OthelloAIPlayer.MOBILITY = Math.abs(OthelloAIPlayer.MOBILITY);
+        OthelloAIPlayer.STABILITY = Math.abs(OthelloAIPlayer.STABILITY);
+        OthelloAIPlayer.DISC = Math.abs(OthelloAIPlayer.DISC);
+
+        this.players[1] = new OthelloAIPlayer("variant", OthelloTile.PLAYER_2, null);
+
+        this.board = new Board<>(8, 8, OthelloTile.EMPTY, OthelloTile::createBoard);
+
+        this.useReversiRules = GameSettings.get().getUseReversiRules() && this.client == null;
+
+        if (!this.useReversiRules) {
+            this.getBoard().setTile(3, 3, this.players[1].getSymbol());
+            this.getBoard().setTile(4, 4, this.players[1].getSymbol());
+            this.getBoard().setTile(3, 4, this.players[0].getSymbol());
+            this.getBoard().setTile(4, 3, this.players[0].getSymbol());
+        }
+
+        for (boolean[] booleans : this.updatedTiles) {
+            Arrays.fill(booleans, false);
+        }
+
+        this.state = GameState.ONGOING;
+        this.turnCounter = 0;
+        ((GameScene) this.getRenderScene()).setPlayerNames(players[0], players[1]);
+        gameLoop();
+    };
+
+    private void printPlayerStat(OthelloAIPlayer player){
+        System.out.println("Name: " + player.getName());
+        System.out.println("Corner: " + player.corner_diffWeight);
+        System.out.println("Disc: " + player.disc_diffWeight);
+        System.out.println("Mob: " + player.mobility_diffWeight);
+        System.out.println("Stab: " + player.stability_diffWeight);
     }
 
     @Override

@@ -14,14 +14,14 @@ import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 3, CORNER = 40, STABILITY = 20, DISC = 1;
-    public static final int DEPTH = 8;
+    public static double MOBILITY = 0, CORNER = 0, STABILITY = 0, DISC = 1;
+    public static int DEPTH = 5;
 
     String parentName = "BASEMODEL";
-    double mobility_diffWeight = 5;
-    double corner_diffWeight = 25;
-    double stability_diffWeight = 10;
-    double disc_diffWeight = 1;
+    public double mobility_diffWeight = 5;
+    public double corner_diffWeight = 25;
+    public double stability_diffWeight = 10;
+    public double disc_diffWeight = 1;
     int maxDepth;
 
     OthelloTile symbol = getSymbol();
@@ -116,11 +116,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         if (currMoveTime > this.maxMoveTime) this.maxMoveTime = currMoveTime;
         this.totalMoveTime += currMoveTime;
 
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Thread.sleep(50);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return move;
     }

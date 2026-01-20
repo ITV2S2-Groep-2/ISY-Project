@@ -18,8 +18,8 @@ import static com.isy.server.ServerUtils.asyncAwait;
 
 public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
     private Scene renderScene;
-    protected final Board<T> board;
-    protected final Player<T>[] players;
+    protected Board<T> board;
+    protected Player<T>[] players;
     protected Player<T> activeTurnPlayer;
     protected GameState state;
     protected Server client;
