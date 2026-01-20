@@ -102,6 +102,14 @@ public class OthelloUtils {
         return availableMoves;
     }
 
+    public static int availableMovesCount(byte[] avm){
+        for (int i = 0; i < avm.length; i++) {
+            if (avm[i] == 0) return i;
+        }
+
+        return avm.length;
+    }
+
     public static void flipTiles(Board<OthelloTile> board, int xO, int yO, OthelloTile symbol) {
         flipTiles(board, xO, yO, symbol, null);
     }
