@@ -26,135 +26,137 @@ public class Main {
     private static final Random r = new Random();
 
 
-    public static final int MAXDEPTH = 5;
-    public static final int MINDEPTH = 5;
+    public static final int MAXDEPTH = 4;
+    public static final int MINDEPTH = 4;
 
     public static boolean endCase = false;
+    public static boolean oneVone = false;
+
+    public static OthelloAIPlayer testAI = new OthelloAIPlayer("testAI", OthelloTile.PLAYER_1, null, 5, 25, 10, 1, 5, "testAI");
+    public static OthelloAIPlayer opponent = new OthelloAIPlayer("Opponent", OthelloTile.PLAYER_2, null, 5, 25, 10, 1, 2, "Opponent");
 
     public static void main(String[] args) {
-//        while (!endCase) {
-        ResultWriter.modelMap.clear();
-        System.out.println(LocalDateTime.now());
-        long start = System.nanoTime();
+        while (!endCase) {
+            ResultWriter.modelMap.clear();
+            System.out.println(LocalDateTime.now());
+            long start = System.nanoTime();
 
-        JSONObject topmodel = ModelFileReader.Read("top5.json");
-        // depth met cap 5 afronden
-        ArrayList<OthelloAIPlayer> models = new ArrayList<OthelloAIPlayer>();
-        if (topmodel == null) {
-            OthelloAIPlayer baseModel = new OthelloAIPlayer("BASEMODEL", OthelloTile.PLAYER_1, null);
-            models.add(baseModel);
-
-            double baseMobility_diffWeight = baseModel.getMobility_diffWeight();
-            double baseCorner_diffWeight = baseModel.getCorner_diffWeight();
-            double baseStability_diffWeight = baseModel.getStability_diffWeight();
-            double baseDisc_diffWeight = baseModel.getDisc_diffWeight();
-            int baseMaxDepth = baseModel.getMaxDepth();
-            String parent = baseModel.getName();
-
-            for (int i = 0; i < 23; i++) {
-                OthelloAIPlayer newModel = newModel(baseMobility_diffWeight, baseCorner_diffWeight, baseStability_diffWeight, baseDisc_diffWeight, baseMaxDepth, parent);
-                models.add(newModel);
+            JSONObject topmodel = ModelFileReader.Read("top5.json");
+            // depth met cap 5 afronden
+            ArrayList<OthelloAIPlayer> models = new ArrayList<OthelloAIPlayer>();
+            if(oneVone){
+                models.add(testAI);
             }
-        } else {
-            for (String baseModelName : topmodel.keySet()) {
-                JSONObject modelJson = topmodel.getJSONObject(baseModelName);
-                JSONObject settings = modelJson.getJSONObject("settings");
-
-                double baseMobilityDiffWeight = settings.getDouble("mobility_diff_weight");
-                double baseCornerDiffWeight = settings.getDouble("corner_diff_weight");
-                double baseStabilityDiffWeight = settings.getDouble("stability_diff_weight");
-                double baseDiscDiffWeight = settings.getDouble("disc_diff_weight");
-                int baseMaxDepth = settings.getInt("max_depth");
-                String parent = settings.getString("parent");
-                UUID id = UUID.randomUUID();
-                String modelId = id.toString();
-
-                OthelloAIPlayer baseModel = new OthelloAIPlayer(modelId, OthelloTile.PLAYER_1, null, baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName);
+            else if (topmodel == null) {
+                OthelloAIPlayer baseModel = new OthelloAIPlayer("BASEMODEL", OthelloTile.PLAYER_1, null);
                 models.add(baseModel);
 
-                for (int i = 0; i < 4; i++) {
-                    OthelloAIPlayer newModel = newModel(baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName);
+                double baseMobility_diffWeight = baseModel.getMobility_diffWeight();
+                double baseCorner_diffWeight = baseModel.getCorner_diffWeight();
+                double baseStability_diffWeight = baseModel.getStability_diffWeight();
+                double baseDisc_diffWeight = baseModel.getDisc_diffWeight();
+                int baseMaxDepth = baseModel.getMaxDepth();
+                String parent = baseModel.getName();
+
+                for (int i = 0; i < 23; i++) {
+                    OthelloAIPlayer newModel = newModel(baseMobility_diffWeight, baseCorner_diffWeight, baseStability_diffWeight, baseDisc_diffWeight, baseMaxDepth, parent);
                     models.add(newModel);
                 }
+            } else {
+                for (String baseModelName : topmodel.keySet()) {
+                    JSONObject modelJson = topmodel.getJSONObject(baseModelName);
+                    JSONObject settings = modelJson.getJSONObject("settings");
 
+                    double baseMobilityDiffWeight = settings.getDouble("mobility_diff_weight");
+                    double baseCornerDiffWeight = settings.getDouble("corner_diff_weight");
+                    double baseStabilityDiffWeight = settings.getDouble("stability_diff_weight");
+                    double baseDiscDiffWeight = settings.getDouble("disc_diff_weight");
+                    int baseMaxDepth = settings.getInt("max_depth");
+                    String parent = settings.getString("parent");
+                    UUID id = UUID.randomUUID();
+                    String modelId = id.toString();
 
+                    OthelloAIPlayer baseModel = new OthelloAIPlayer(modelId, OthelloTile.PLAYER_1, null, baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName);
+                    models.add(baseModel);
+
+                    for (int i = 0; i < 4; i++) {
+                        OthelloAIPlayer newModel = newModel(baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName);
+                        models.add(newModel);
+                    }
+                }
             }
-            // nu nog niks
-        }
+            List<ModelRunner> modelRunnerList = new ArrayList<>();
+            for (OthelloAIPlayer model : models) {
+                ResultWriter.addModel(model);
+                ModelRunner runner = new ModelRunner(model);
+                modelRunnerList.add(runner);
+                new Thread(runner).start();
+            }
+            boolean allFinished = false;
 
-        List<ModelRunner> modelRunnerList = new ArrayList<>();
-        for (OthelloAIPlayer model : models) {
-            ResultWriter.addModel(model);
-            ModelRunner runner = new ModelRunner(model);
-            modelRunnerList.add(runner);
-            new Thread(runner).start();
-        }
+            while (!allFinished) {
+                allFinished = true;
 
-        boolean allFinished = false;
+                for (ModelRunner modelRunner : modelRunnerList) {
+                    if (!modelRunner.finished) {
+                        allFinished = false;
+                        break;
+                    }
+                }
 
-        while (!allFinished) {
-            allFinished = true;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
             for (ModelRunner modelRunner : modelRunnerList) {
-                if (!modelRunner.finished) {
-                    allFinished = false;
-                    break;
-                }
+                ResultWriter.addTime(
+                        modelRunner.model.getName(),
+                        modelRunner.avgTime, modelRunner.minTime, modelRunner.maxTime, modelRunner.totalTime,
+                        modelRunner.model.totalMoveTime / modelRunner.model.moveCount, modelRunner.model.minMoveTime, modelRunner.model.maxMoveTime, modelRunner.model.totalMoveTime
+                );
             }
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
-        for (ModelRunner modelRunner : modelRunnerList) {
-            ResultWriter.addTime(
-                    modelRunner.model.getName(),
-                    modelRunner.avgTime, modelRunner.minTime, modelRunner.maxTime, modelRunner.totalTime,
-                    modelRunner.model.totalMoveTime / modelRunner.model.moveCount, modelRunner.model.minMoveTime, modelRunner.model.maxMoveTime, modelRunner.model.totalMoveTime
-            );
-        }
+            boolean isTheSame = true;
+            // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
+            System.out.println("Writing");
 
+            JSONObject newTop5 = ResultWriter.getTop5();
+            ResultWriter.writeAll("history.json");
 
-        boolean isTheSame = true;
-        // krijg nu een error maar starks als ik die top5 maak op bassis van models uit het bestand werkt het wel. (verwijder top5.json)
-        System.out.println("Writing");
-
-        JSONObject newTop5 = ResultWriter.getTop5();
-        ResultWriter.writeAll("history.json");
-
-        for (String key : newTop5.keySet()) {
-            if (newTop5.getJSONObject(key).getJSONObject("stats").getInt("top_5_count") >= 5) {
-                System.out.println("ENDCASE BEHAALD STOPPEN MET TESTEN");
-                endCase = true;
+            for (String key : newTop5.keySet()) {
+//                if (newTop5.getJSONObject(key).getJSONObject("stats").getInt("top_5_count") >= 5) {
+//                    System.out.println("ENDCASE BEHAALD STOPPEN MET TESTEN");
+//                    endCase = true;
+//                    System.out.println(LocalDateTime.now());
+//                }
                 System.out.println(LocalDateTime.now());
             }
-        }
 
 
-        if (topmodel == null) {
-            isTheSame = false;
-        } else {
-            for (String baseModelName : topmodel.keySet()) {
-                if (!newTop5.has(baseModelName)) {
-                    isTheSame = false;
+            if (topmodel == null) {
+                isTheSame = false;
+            } else {
+                for (String baseModelName : topmodel.keySet()) {
+                    if (!newTop5.has(baseModelName)) {
+                        isTheSame = false;
+                    }
                 }
             }
+
+            ResultWriter.writeTop5("top5.json");
+            if (!isTheSame) {
+                System.out.println("Is not the same");
+            } else {
+                System.out.println("Is the same");
+            }
+
+
+            System.out.println("Time: " + (System.nanoTime() - start));
         }
-
-        ResultWriter.writeTop5("top5.json");
-        if (!isTheSame) {
-            System.out.println("Is not the same");
-        } else {
-            System.out.println("Is the same");
-        }
-
-        System.out.println("Time: " + (System.nanoTime() - start));
-
-        // window = new Window();
-//        }
     }
 
     public static OthelloAIPlayer newModel(double baseMobility_diffWeight, double baseCorner_diffWeight, double baseStability_diffWeight, double baseDisc_diffWeight, int baseMaxDepth, String baseModelName){
@@ -192,7 +194,7 @@ public class Main {
         return model;
     }
 
-    static final int GAME_AMOUNT = 100;
+    static final int GAME_AMOUNT = 500;
     static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);
@@ -243,6 +245,10 @@ public class Main {
             }
 
             model.cleanup();
+            if(oneVone) {
+                opponent.cleanup();
+                endCase = true;
+            }
             avgTime = totalTime / GAME_AMOUNT;
             finished = true;
 
@@ -255,10 +261,12 @@ public class Main {
 
                 OthelloGame game;
                 if(i < GAME_AMOUNT / 2){
-                    game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                    if(!oneVone) game = new OthelloGame(new Player[]{model, new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null)});
+                    else game = new OthelloGame(new Player[]{model, opponent});
                 }
                 else {
-                    game = new OthelloGame(new Player[]{new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null), model});
+                    if(!oneVone) game = new OthelloGame(new Player[]{new OthelloRandomAI("RandomAI", OthelloTile.PLAYER_2, null), model});
+                    else game = new OthelloGame(new Player[]{opponent, model});
                 }
                 game.run();
 
