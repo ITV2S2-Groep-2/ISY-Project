@@ -57,7 +57,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null);
     }
 
-    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName) {
+    public OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName) {
         super(name, symbol, client);
         this.mobility_diffWeight = mobWeight;
         this.corner_diffWeight = cornerWeight;
