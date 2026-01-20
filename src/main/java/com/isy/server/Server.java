@@ -46,8 +46,6 @@ public class Server {
                 while (!current.isStillValid() && current.getNext() != null){
                     current = current.getNext();
                 }
-
-//                System.out.println("SERVER:" + line);
             }
         } catch (IOException e) {}
     }

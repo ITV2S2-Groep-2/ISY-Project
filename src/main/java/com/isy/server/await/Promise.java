@@ -59,7 +59,6 @@ public class Promise{
 
         try {
             while (current.getMessage() != null) {
-//                System.out.println("PROMISE: " + accept.pattern() + ", " + current.getMessage());
 
                 if (current.getMessage().matches(accept) && current.isStillValid()){
                     break;

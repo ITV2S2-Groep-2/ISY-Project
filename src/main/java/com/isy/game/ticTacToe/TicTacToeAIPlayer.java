@@ -5,8 +5,8 @@ import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.server.Server;
 
-public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
-    public TicTacToeAiPlayer(String name, TicTacToeTile symbol, Server client){
+public class TicTacToeAIPlayer extends Player<TicTacToeTile> {
+    public TicTacToeAIPlayer(String name, TicTacToeTile symbol, Server client){
         super(name, symbol, client);
     }
 

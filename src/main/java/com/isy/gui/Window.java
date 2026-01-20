@@ -27,6 +27,7 @@ public class Window {
         //Create and set up the window.
         JFrame frame = new JFrame("Games client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(1000, 880));
 
         try {
             Image img = ImageIO.read(getClass().getResource("/icon.png"));
@@ -39,7 +40,7 @@ public class Window {
         frame.add(this.manager.generatePanel(), BorderLayout.CENTER);
 
         //Display the window.
-        frame.setSize(1000, 800); // Groter gemaakt voor othello
+        frame.setSize(1000, 880); // Groter gemaakt voor othello
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

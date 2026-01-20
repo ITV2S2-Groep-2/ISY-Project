@@ -1,6 +1,8 @@
 package com.isy.gui.scene;
 
-import com.isy.game.ITile;
+import com.isy.game.player.Player;
+import com.isy.gui.components.PlayerLabel;
+import com.isy.gui.components.layout.FlexBox;
 import com.isy.gui.scene.manager.Scene;
 import com.isy.server.await.Promise;
 import com.isy.game.Game;
@@ -11,7 +13,6 @@ import com.isy.gui.Window;
 import com.isy.gui.components.BoardTile;
 import com.isy.gui.components.Label;
 import com.isy.util.ResizeBoardListener;
-import com.isy.util.lang.LangHandler;
 import com.isy.gui.components.input.UIButton;
 import com.isy.gui.components.input.TextField;
 
@@ -20,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.isy.server.ServerUtils.await;
 
@@ -27,7 +29,9 @@ public class GameScene extends Scene {
     private final List<List<JButton>> boardButtons;
 
     private JPanel gridPanel;
-    private JLabel playerNameLabel;
+    private FlexBox playerFlexBox;
+    private PlayerLabel player1Label;
+    private PlayerLabel player2Label;
     private Game<?> game;
 
     public GameScene(Window window) {
@@ -40,16 +44,15 @@ public class GameScene extends Scene {
         JPanel scenePanel = this.getScenePanel();
         scenePanel.setLayout(new FlowLayout());
 
+        playerFlexBox = new FlexBox(BoxLayout.X_AXIS);
+        scenePanel.add(playerFlexBox.getComponent());
+        scenePanel.add(Box.createHorizontalStrut(10000));
+
         JButton forfeitButton = UIButton.createButton("game.general.forfeit.button", this::goForfeit);
         forfeitButton.setPreferredSize(new Dimension(128, 32));
         scenePanel.add(forfeitButton);
-
-        playerNameLabel = Label.createLabel("");
-        playerNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        scenePanel.add(playerNameLabel);
         scenePanel.add(Box.createHorizontalStrut(10000));
+
         gridPanel = new JPanel();
         scenePanel.add(gridPanel);
         scenePanel.add(Box.createHorizontalStrut(10000));
@@ -64,14 +67,16 @@ public class GameScene extends Scene {
         this.gridPanel.addComponentListener(new ResizeBoardListener(this));
     }
 
-    @Override
     public void initGame(Game<?> game){
         this.game = game;
 
         GridLayout layout = new GridLayout(this.game.getBoard().getHeight(), this.game.getBoard().getWidth());
+        layout.setHgap(2);
+        layout.setVgap(2);
         gridPanel.setSize(this.game.getBoard().getHeight() * 100, this.game.getBoard().getWidth() * 100);
         gridPanel.setLayout(layout);
         gridPanel.removeAll();
+        gridPanel.setOpaque(false);
 
         for (int x = 0; x < game.getBoard().getHeight(); x++) {
             this.boardButtons.add(new ArrayList<>());
@@ -93,14 +98,30 @@ public class GameScene extends Scene {
                 this.boardButtons.get(x).get(y).repaint();
             }
         }
+
+        player1Label.setActiveTurnPlayer(game.getActiveTurnPlayer());
+        player2Label.setActiveTurnPlayer(game.getActiveTurnPlayer());
     }
 
-    //TODO: FIX THIS SINCE THIS DOESNT DO ANYRHING RIGHT NOW OR IS COMPLETLY BROKEN
-    public void setPlayerNames(String player1Name, String player2Name, boolean iStart) {
-        if (playerNameLabel != null) {
-            playerNameLabel.setText(LangHandler.get().translate("player.name.display", iStart ? "X" : "O", player1Name, !iStart ? "X" : "O", player2Name));
-            playerNameLabel.repaint();
+    public void setHighLights(boolean[][] updatedTiles, int[] newTile){
+        for (int y = 0; y < game.getBoard().getHeight(); y++) {
+            for (int x = 0; x < game.getBoard().getWidth(); x++) {
+                BoardTile.setHighLight(this.boardButtons.get(x).get(y), updatedTiles[x][y], newTile[0] == x && newTile[1] == y);
+                this.boardButtons.get(x).get(y).repaint();
+            }
         }
+    }
+
+    public void setPlayerNames(Player<?> player1, Player<?> player2) {
+        this.playerFlexBox.clear();
+
+        player1Label = new PlayerLabel(player1);
+        player2Label = new PlayerLabel(player2);
+
+        this.playerFlexBox.add(player1Label.getLabel(), 10);
+        this.playerFlexBox.add(Label.createLabel("game.player_label.versus"), 10);
+        this.playerFlexBox.add(player2Label.getLabel(), 10);
+        this.playerFlexBox.getComponent().repaint();
     }
 
     private void goForfeit(ActionEvent actionEvent) {
@@ -112,5 +133,10 @@ public class GameScene extends Scene {
 
     private void sendMessage(ActionEvent actionEvent, String message) {
         await(new Promise().setCommand("message " + message));
+    }
+
+    public void setValue(int x, int y, String value) {
+        if(!Objects.equals(value, "")) this.boardButtons.get(x).get(y).setIcon(null);
+        this.boardButtons.get(x).get(y).setText(value);
     }
 }

@@ -66,24 +66,6 @@ public class Board<T extends Enum<T> & ITile> {
 
         return true;
     }
-//
-//    /**
-//     * Set Tile at given location
-//     * @param x x location of tile, min of 0 and max of 2
-//     * @param y y location of tile, min of 0 and max of 2
-//     * @param tile the Tile you want the location to be
-//     * @param overrideCheck boolean to skip the empty tile check
-//     * @return True if tile has been successfully set, returns false when the tile at the location specified was not empty(can't override tiles in tic tac toe)
-//     */
-//    public boolean setTile(int x, int y, T tile, boolean overrideCheck){
-//        if (!overrideCheck) {
-//            if (getTile(x, y) != this.emptyTile)
-//                return false;
-//        }
-//
-//
-//        return true;
-//    }
 
     public boolean isBoardFull(){
         for (T tile : this.tiles) {

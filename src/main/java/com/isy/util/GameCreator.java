@@ -85,10 +85,18 @@ public class GameCreator {
         Player<?> player2 = null;
         try {
             Constructor<?>[] player1Constructors = player1Class.getDeclaredConstructors();
-            player1 = (Player<?>) player1Constructors[0].newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
+            for (Constructor<?> constructor : player1Constructors) {
+                if (constructor.getParameterCount() == 3) {
+                    player1 = (Player<?>) constructor.newInstance(player1Name, GameType.getPlayerTileValue(0, gameType), null);
+                }
+            }
 
             Constructor<?>[] player2Constructors = player2Class.getDeclaredConstructors();
-            player2 = (Player<?>) player2Constructors[0].newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
+            for (Constructor<?> constructor : player2Constructors) {
+                if (constructor.getParameterCount() == 3) {
+                    player2 = (Player<?>) constructor.newInstance(player2Name, GameType.getPlayerTileValue(1, gameType), null);
+                }
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("invalid player constructor", e);
@@ -106,7 +114,7 @@ public class GameCreator {
 
          Main.window.getManager().addScene(new GameScene(Main.window), true);
 
-         game.setRenderScene(Main.window.getManager().getScene("game"));
+         game.setRenderScene((GameScene) Main.window.getManager().getScene("game"));
          new Thread(game).start();
          Main.window.getManager().showScene("game");
     }
@@ -141,7 +149,6 @@ public class GameCreator {
         Main.window.getManager().addScene(new GameScene(Main.window), true);
         GameScene gs = (GameScene) Main.window.getManager().getScene("game");
         game.setRenderScene(gs);
-        gs.setPlayerNames(player1Name, player2Name, iStart);
 
         new Thread(game).start();
         Main.window.getManager().showScene("game");
