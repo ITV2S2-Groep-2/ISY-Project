@@ -6,16 +6,16 @@ import com.isy.game.player.Player;
 import com.isy.server.Server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
     public static final double MOBILITY = 3, CORNER = 40, STABILITY = 20, DISC = 1;
-    public static final int DEPTH = 8;
+    public static final int DEPTH = 2;
+
+    public static final boolean iterativeDeepening = false;
 
     String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
@@ -130,7 +130,6 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
     public int[] getBestMove(Board<OthelloTile> board) {
         int[] bestMove = new int[]{-1, -1};
-        double bestValue = Integer.MIN_VALUE;
 
         this.beforeTime = 0;
         this.stableTime = 0;
@@ -144,46 +143,66 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 }
             }
         }
-
         byte[] avm = OthelloUtils.getAvailableMovesBytes(board, this.symbol, this.otherSymbol, reversiFirstFour);
+        
+        long moveDeadlineTime = 0;
+        long maxMoveTime = 8_500_000_000L;
+        moveDeadlineTime = System.nanoTime() + maxMoveTime;
 
-        List<Future<MoveEvaluation>> futures = new ArrayList<>();
+        int startingDepth = 4;
+        if (iterativeDeepening) startingDepth = this.maxDepth;
+        while (System.nanoTime() < moveDeadlineTime && startingDepth < 70) {
+            System.out.println("depth: " + startingDepth);
+            int[] bestMoveOfCurrentDepth = null;
+            double bestValueOfCurrentDepth = Integer.MIN_VALUE;
+            List<Future<MoveEvaluation>> futures = new ArrayList<>();
 
-        for (byte move : avm) {
-            if (move == 0) break;
+            for (byte move : avm) {
+                if (move == 0) break;
+                if (System.nanoTime() > moveDeadlineTime) break;
 
-            int x = ((move >> 4) & 0b00001111) - 1;
-            int y = (move & 0b00001111) - 1;
+                int x = ((move >> 4) & 0b00001111) - 1;
+                int y = (move & 0b00001111) - 1;
 
-            tileCounter++;
-            Board<OthelloTile> copiedBoard = board.copyBoard();
-            copiedBoard.setTile(x, y, symbol);
-            OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
+                Board<OthelloTile> copiedBoard = board.copyBoard();
+                copiedBoard.setTile(x, y, symbol);
+                OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
 
-            final int tileCounterFinal = tileCounter;
-            Callable<MoveEvaluation> task = () -> {
-                double moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false, tileCounterFinal);
-                return new MoveEvaluation(x, y, moveValue);
-            };
-            futures.add(executor.submit(task));
-        }
-
-        for (String[] aiMove : aiMoves) {
-            Arrays.fill(aiMove, "");
-        }
-
-        try {
-            for (Future<MoveEvaluation> future : futures) {
-                MoveEvaluation result = future.get(); // This blocks until the thread is done
-                if (result.score > bestValue) {
-                    bestValue = result.score;
-                    bestMove = new int[]{result.x, result.y};
-                }
-
-                aiMoves[result.x][result.y] = result.score + "";
+                final int tileCounterFinal = tileCounter;
+                final int startingDepthFinal = startingDepth;
+                Callable<MoveEvaluation> task = () -> {
+                    double moveValue = minimax(copiedBoard, startingDepthFinal, -100000, 100000, false, false, tileCounterFinal + 1);
+                    return new MoveEvaluation(x, y, moveValue);
+                };
+                futures.add(executor.submit(task));
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+
+            if (System.nanoTime() > moveDeadlineTime) break;
+            try {
+                for (Future<MoveEvaluation> future : futures) {
+                    if (!(moveDeadlineTime - System.nanoTime() > 1000))
+                        throw new TimeoutException(); // padding to avoid negative timeout to future .get()
+                    MoveEvaluation result = future.get(moveDeadlineTime - System.nanoTime(), TimeUnit.NANOSECONDS); // This blocks until the thread is done or timeout
+                    if (result.score > bestValueOfCurrentDepth) {
+                        bestValueOfCurrentDepth = result.score;
+                        bestMoveOfCurrentDepth = new int[]{result.x, result.y};
+                    }
+
+                }
+            } catch (TimeoutException e) {
+                break;
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("bestMoveOfCurrentDepth: " + bestMoveOfCurrentDepth[0] + ", " + bestMoveOfCurrentDepth[1]);
+            System.out.println("bestValueOfCurrentDepth: " + bestValueOfCurrentDepth);
+            System.out.println("time left ms?: " + ((moveDeadlineTime - System.nanoTime()) / 1_000_000));
+
+            bestMove = bestMoveOfCurrentDepth;
+
+            startingDepth++;
+            if (!iterativeDeepening) break;
         }
 
         return bestMove;
