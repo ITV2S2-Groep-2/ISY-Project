@@ -15,7 +15,7 @@ import static com.isy.game.othello.OthelloUtils.BOARD_SIZED_SQUARED;
 import static com.isy.game.othello.OthelloUtils.boardSize;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = -5, CORNER = 10, PUNISHMENT = 12, STABILITY = 5, DISC = -1;
+    public static final double MOBILITY = 15, CORNER = 70, PUNISHMENT = 100, STABILITY = 0, DISC = 15;
     public static final int DEPTH = 8;
 
     String parentName = "BASEMODEL";
@@ -474,11 +474,19 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         double mobilityPhase = (1 - phase);
         double discPhase = phase;
 
-        value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
-                (myCorner * corner_diffWeight) +
-                (myStableDiscs * stability_diffWeight) +
-                (discDiff * disc_diffWeight * discPhase) -
-                (punishments * punishment_weight));
+//        value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
+//                (myCorner * corner_diffWeight) +
+//                (myStableDiscs * stability_diffWeight) +
+//                (discDiff * disc_diffWeight * discPhase) -
+//                (punishments * punishment_weight));
+
+        //TODO: NEW BOARD FINAL VALUE
+        double coinDiff = (double) (myTiles - otherTiles) / (myTiles + otherTiles) * 100d;
+        double choiceDiff = (double) (myMobility - otherMobility) / (myMobility + otherMobility) * 100d;
+        double cornerDiff = (double) (myCorner - otherCorner) / (myCorner + otherCorner) * 100d;
+
+        //TODO: NEW BOARD FINAL VALUE
+        value += (int) ((0.15  * coinDiff) + (0.15 * choiceDiff) + (0.7 * cornerDiff));
 
         double endTimeAfter = System.nanoTime();
         this.afterTime += endTimeAfter - startTimeAfter;
