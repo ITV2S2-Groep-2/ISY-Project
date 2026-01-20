@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import static com.isy.game.othello.OthelloGame.aiMoves;
-import static com.isy.game.othello.OthelloUtils.BOARD_SIZED_SQUARED;
-import static com.isy.game.othello.OthelloUtils.boardSize;
+import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
     public static final double MOBILITY = 15, CORNER = 70, PUNISHMENT = 100, STABILITY = 0, DISC = 15;
@@ -513,12 +512,12 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             } else {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
             }
-            return evaluateBoard(board, board.getAmount(this.symbol.index()), board.getAmount(this.otherSymbol.index()));
+            return evaluateBoard(board, availableMovesCount(availableMovesUpcoming), availableMovesCount(availableMovesOpponent));
         }
 
         if(isMax){
 
-            if (board.getAmount(this.symbol.index()) > 10 && !depthIsDecreased) {
+            if (availableMovesCount(availableMovesUpcoming) > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
@@ -561,7 +560,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         }
         else {
 
-            if (board.getAmount(this.otherSymbol.index()) > 10 && !depthIsDecreased) {
+            if (availableMovesCount(availableMovesOpponent) > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
