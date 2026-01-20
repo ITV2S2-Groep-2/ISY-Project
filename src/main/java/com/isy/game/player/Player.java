@@ -44,7 +44,7 @@ public abstract class Player<T extends Enum<T> & ITile> {
      */
     public int formatClientMove(int[] move){
         int[] dimensions = GameType.getBoardDimensionsByGameType(GameCreator.getCurrentInstance().getGameType());
-        return move[0] + (move[1] * dimensions[0]);
+        return move[1] + (move[0] * dimensions[1]);
     }
 
     /**
@@ -54,8 +54,8 @@ public abstract class Player<T extends Enum<T> & ITile> {
      */
     public int[] formatServerMove(int move){
         int[] dimensions = GameType.getBoardDimensionsByGameType(GameCreator.getCurrentInstance().getGameType());
-        int row = move % dimensions[0];
-        int col = move / dimensions[0];
+        int col = move % dimensions[0];
+        int row = move / dimensions[0];
         return new int[]{row, col};
     }
 }
