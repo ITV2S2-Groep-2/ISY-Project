@@ -14,7 +14,7 @@ import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 15, CORNER = 70, STABILITY = 0, DISC = 15;
+    public static final double MOBILITY = 3, CORNER = 40, STABILITY = 20, DISC = 1;
     public static final int DEPTH = 8;
 
     String parentName = "BASEMODEL";
@@ -127,7 +127,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
     public int[] getBestMove(Board<OthelloTile> board){
         int[] bestMove = new int[]{-1, -1};
-        int bestValue = Integer.MIN_VALUE;
+        double bestValue = Integer.MIN_VALUE;
 
         this.beforeTime = 0;
         this.stableTime = 0;
@@ -159,7 +159,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
             final int tileCounterFinal = tileCounter;
             Callable<MoveEvaluation> task = () -> {
-                int moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false, tileCounterFinal);
+                double moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false, tileCounterFinal);
                 return new MoveEvaluation(x, y, moveValue);
             };
             futures.add(executor.submit(task));
@@ -190,12 +190,12 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         return 1L << (x | (y << 3));
     }
 
-    public int evaluateBoard(Board<OthelloTile> board, int myMobility, int otherMobility){
+    public double evaluateBoard(Board<OthelloTile> board, int myMobility, int otherMobility){
         this.evalCount++;
 
         double startTimeBefore = System.nanoTime();
 
-        int value = 0;
+        double value = 0;
 
         if(useReversiRules){
             //als een pass een loss is:
@@ -482,7 +482,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         return value;
     }
 
-    public int minimax(Board<OthelloTile> board, int depth, int alpha, int beta, boolean isMax, boolean depthIsDecreased, int tileCounter){
+    public double minimax(Board<OthelloTile> board, int depth, double alpha, double beta, boolean isMax, boolean depthIsDecreased, int tileCounter){
         boolean boardFull = (tileCounter == 64);
 
         byte[] availableMovesUpcoming = new byte[BOARD_SIZED_SQUARED];
@@ -511,7 +511,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 depthIsDecreased = true;
             }
 
-            int highestVal = -10000;
+            double highestVal = -10000;
 
             if (!hasMoves(availableMovesUpcoming)) {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
@@ -519,7 +519,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                     return evaluateBoard(board, 0, 0);
                 }
 
-                int curVal = minimax(board, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
+                double curVal = minimax(board, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
                 highestVal= Math.max(highestVal, curVal);
 
             }
@@ -536,7 +536,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
 
                 tileCounter++;
-                int curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
+                double curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
 
                 highestVal= Math.max(highestVal, curVal);
                 alpha = Math.max(alpha, curVal);
@@ -554,14 +554,14 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 depthIsDecreased = true;
             }
 
-            int lowestVal = 10000;
+            double lowestVal = 10000;
 
             if (!hasMoves(availableMovesOpponent)) {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesUpcoming, reversiFirstFour);
                 if (!hasMoves(availableMovesUpcoming)) {
                     return evaluateBoard(board, 0, 0);
                 }
-                int curVal = minimax(board, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
+                double curVal = minimax(board, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
                 lowestVal= Math.min(lowestVal, curVal);
 
             }
@@ -578,7 +578,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
 
                 tileCounter++;
-                int curVal = minimax(copiedBoard, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
+                double curVal = minimax(copiedBoard, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
 
                 lowestVal= Math.min(lowestVal, curVal);
                 beta = Math.min(beta, curVal);
@@ -604,8 +604,8 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
     private static class MoveEvaluation {
         int x, y;
-        int score;
-        MoveEvaluation(int x, int y, int score) {
+        double score;
+        MoveEvaluation(int x, int y, double score) {
             this.x = x;
             this.y = y;
             this.score = score;
