@@ -14,13 +14,12 @@ import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 15, CORNER = 70, PUNISHMENT = 100, STABILITY = 0, DISC = 15;
+    public static final double MOBILITY = 15, CORNER = 70, STABILITY = 0, DISC = 15;
     public static final int DEPTH = 8;
 
     String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
     double corner_diffWeight = 25;
-    double punishment_weight = 25;
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
     int maxDepth;
@@ -55,14 +54,13 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     double afterTime = 0;
 
     public OthelloAIPlayer(String name, OthelloTile symbol, Server client){
-        this(name, symbol, client, MOBILITY, PUNISHMENT, CORNER, STABILITY, DISC, DEPTH, null);
+        this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null);
     }
 
-    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double punishmentWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
+    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
         super(name, symbol, client);
         this.mobility_diffWeight = mobWeight;
         this.corner_diffWeight = cornerWeight;
-        this.punishment_weight = punishmentWeight;
         this.stability_diffWeight = stabilityWeight;
         this.disc_diffWeight = discWeight;
         this.maxDepth = maxDepth;
@@ -263,8 +261,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
         }
 
-//        int cornerDiff = myCorner - otherCorner;
-        punishments += otherCorner;
+        int cornerDiff = myCorner - otherCorner;
 
         double endTimeBefore = System.nanoTime();
         this.beforeTime += endTimeBefore - startTimeBefore;
@@ -452,7 +449,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
         }
 
-        punishments += otherStableDiscs;
+        int stableDiscDiff = myStableDiscs - otherStableDiscs;
 
         double endTimeStable = System.nanoTime();
         this.stableTime += endTimeStable - startTimeStable;
@@ -473,19 +470,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         double mobilityPhase = (1 - phase);
         double discPhase = phase;
 
-//        value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
-//                (myCorner * corner_diffWeight) +
-//                (myStableDiscs * stability_diffWeight) +
-//                (discDiff * disc_diffWeight * discPhase) -
-//                (punishments * punishment_weight));
-
-        //TODO: NEW BOARD FINAL VALUE
-        double coinDiff = (double) (myTiles - otherTiles) / (myTiles + otherTiles) * 100d;
-        double choiceDiff = (double) (myMobility - otherMobility) / (myMobility + otherMobility) * 100d;
-        double cornerDiff = (double) (myCorner - otherCorner) / (myCorner + otherCorner) * 100d;
-
-        //TODO: NEW BOARD FINAL VALUE
-        value += (int) ((0.15  * coinDiff) + (0.15 * choiceDiff) + (0.7 * cornerDiff));
+        value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
+                (cornerDiff * corner_diffWeight) +
+                (stableDiscDiff * stability_diffWeight) +
+                (discDiff * disc_diffWeight * discPhase) -
+                (punishments * corner_diffWeight));
 
         double endTimeAfter = System.nanoTime();
         this.afterTime += endTimeAfter - startTimeAfter;
