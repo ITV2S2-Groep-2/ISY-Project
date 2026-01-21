@@ -153,14 +153,18 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             Arrays.fill(aiMove, "");
         }
 
+        long previousDepthDuration = 0;
         long moveDeadlineTime = 0;
         long maxMoveTime = 8_500_000_000L;
         moveDeadlineTime = System.nanoTime() + maxMoveTime;
 
         int startingDepth = 4;
         if (iterativeDeepening) startingDepth = this.maxDepth;
-        while (System.nanoTime() < moveDeadlineTime && startingDepth <= availableDepth + 5) { // + 5 overhead for possible skipped moves
+
+        while (System.nanoTime() < moveDeadlineTime && startingDepth <= availableDepth + 5 && (moveDeadlineTime - System.nanoTime() > previousDepthDuration)) { // + 5 overhead for possible skipped moves
             System.out.println("depth: " + startingDepth);
+            long startOfDepthRemainingDuration = moveDeadlineTime - System.nanoTime();
+
             int[] bestMoveOfCurrentDepth = null;
             double bestValueOfCurrentDepth = Integer.MIN_VALUE;
             List<Future<MoveEvaluation>> futures = new ArrayList<>();
@@ -210,6 +214,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
             bestMove = bestMoveOfCurrentDepth;
 
+            previousDepthDuration = startOfDepthRemainingDuration - (moveDeadlineTime - System.nanoTime());
             startingDepth++;
             if (!iterativeDeepening) break;
         }
