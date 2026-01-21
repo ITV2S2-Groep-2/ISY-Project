@@ -3,7 +3,8 @@ package com.isy.util;
 import com.isy.game.othello.OthelloAIPlayer;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,23 +51,36 @@ public class ResultWriter {
 
     public static void addWin(String modelName) {
         JSONObject model = modelMap.get(modelName);
+        if (model == null) {
+            return;
+        }
         JSONObject stats = model.getJSONObject("stats");
         stats.put("wins", stats.getInt("wins") + 1);
     }
 
     public static void addLoss(String modelName) {
         JSONObject model = modelMap.get(modelName);
+        if (model == null) {
+            return;
+        }
         JSONObject stats = model.getJSONObject("stats");
         stats.put("losses", stats.getInt("losses") + 1);
     }
+
     public static void addDraw(String modelName) {
         JSONObject model = modelMap.get(modelName);
+        if (model == null) {
+            return;
+        }
         JSONObject stats = model.getJSONObject("stats");
         stats.put("draws", stats.getInt("draws") + 1);
     }
 
     public static void addTime(String modelName, long avgTime, long minTime, long maxTime, long totalTime, long avgMoveTime, long minMoveTime, long maxMoveTime, long totalMoveTime) {
         JSONObject model = modelMap.get(modelName);
+        if (model == null) {
+            return;
+        }
         JSONObject time = model.getJSONObject("time");
         time.put("avg_time", avgTime);
         time.put("min_time", minTime);
@@ -79,6 +93,7 @@ public class ResultWriter {
         time.put("total_move_time", totalMoveTime);
 
     }
+
     public static void writeAll(String filename) {
         JSONObject root = ModelFileReader.Read(filename);
         if (root == null) {
@@ -93,6 +108,7 @@ public class ResultWriter {
             throw new RuntimeException(e);
         }
     }
+
     public static JSONObject getTop5() {
         JSONObject root = new JSONObject();
 
@@ -104,8 +120,13 @@ public class ResultWriter {
 
         JSONObject history = ModelFileReader.Read("history.json");
 
-        for (int i = 0; i < 5; i++ ) {
+        int testSize = list.size();
+        if (testSize > 5) testSize = 5;
 
+        for (int i = 0; i < testSize; i++) {
+            if (list.get(i) == null) {
+                break;
+            }
             if (history != null) {
                 String parent = list.get(i).getValue().getJSONObject("settings").getString("parent");
                 JSONObject parentObj = history.getJSONObject(parent);
@@ -133,6 +154,7 @@ public class ResultWriter {
         }
         return root;
     }
+
     public static void writeTop5(String filename) {
 
         JSONObject root = getTop5();
@@ -142,6 +164,7 @@ public class ResultWriter {
             System.out.println("JSON Object: " + root);
         } catch (IOException e) {
             throw new RuntimeException(e);
+
         }
     }
 }
