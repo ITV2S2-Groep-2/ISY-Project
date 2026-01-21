@@ -14,7 +14,7 @@ import static com.isy.game.othello.OthelloGame.aiMoves;
 import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 3, CORNER = 40, STABILITY = 20, DISC = 1;
+    public static final double MOBILITY = 5, CORNER = 25, STABILITY = 10, DISC = 1;
     public static final int DEPTH = 2;
 
     public static final boolean iterativeDeepening = false;
