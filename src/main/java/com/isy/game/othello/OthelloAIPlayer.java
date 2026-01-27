@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import static com.isy.game.othello.OthelloGame.aiMoves;
-import static com.isy.game.othello.OthelloUtils.BOARD_SIZED_SQUARED;
-import static com.isy.game.othello.OthelloUtils.boardSize;
+import static com.isy.game.othello.OthelloUtils.*;
 
 public class OthelloAIPlayer extends Player<OthelloTile> {
-    public static final double MOBILITY = 5, CORNER = 25, STABILITY = 10, DISC = 1;
-    public static final int DEPTH = 4;
+    public static final double MOBILITY = 3, CORNER = 40, STABILITY = 20, DISC = 1;
+    public static final int DEPTH = 2;
+    public static final boolean ITERATIVE_DEEPENING = true;
 
     String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
@@ -24,6 +24,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
     int maxDepth;
+    public boolean iterativeDeepening = false;
 
     OthelloTile symbol = getSymbol();
     OthelloTile otherSymbol = (symbol == OthelloTile.PLAYER_1) ? OthelloTile.PLAYER_2 : OthelloTile.PLAYER_1;
@@ -33,10 +34,10 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     boolean reversiFirstFour = false;
 
     int[][] corners = {
-            {0,0},
+            {0, 0},
             {0, boardSize - 1},
             {boardSize - 1, 0},
-            {boardSize -1, boardSize - 1}
+            {boardSize - 1, boardSize - 1}
     };
 
     final ExecutorService executor = Executors.newFixedThreadPool(16);
@@ -54,11 +55,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     double beforeTime = 0;
     double afterTime = 0;
 
-    public OthelloAIPlayer(String name, OthelloTile symbol, Server client){
-        this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null);
+    public OthelloAIPlayer(String name, OthelloTile symbol, Server client) {
+        this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null, ITERATIVE_DEEPENING);
     }
 
-    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName){
+    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName, boolean iterativeDeepening) {
         super(name, symbol, client);
         this.mobility_diffWeight = mobWeight;
         this.corner_diffWeight = cornerWeight;
@@ -66,6 +67,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         this.disc_diffWeight = discWeight;
         this.maxDepth = maxDepth;
         this.parentName = parentName;
+        this.iterativeDeepening = iterativeDeepening;
     }
 
     public String getParent() {
@@ -79,12 +81,15 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     public double getCorner_diffWeight() {
         return corner_diffWeight;
     }
+
     public double getStability_diffWeight() {
         return stability_diffWeight;
     }
+
     public double getDisc_diffWeight() {
         return disc_diffWeight;
     }
+
     public int getMaxDepth() {
         return maxDepth;
     }
@@ -126,82 +131,113 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         return move;
     }
 
-    public int[] getBestMove(Board<OthelloTile> board){
+    public int[] getBestMove(Board<OthelloTile> board) {
         int[] bestMove = new int[]{-1, -1};
-        int bestValue = Integer.MIN_VALUE;
 
         this.beforeTime = 0;
         this.stableTime = 0;
         this.afterTime = 0;
 
         int tileCounter = 64;
-        for(int row = 0; row < boardSize; row++) {
+        for (int row = 0; row < boardSize; row++) {
             for (int col = 0; col < boardSize; col++) {
                 if (board.getTile(col, row) == OthelloTile.EMPTY) {
                     tileCounter--;
                 }
             }
         }
+        int availableDepth = 64 - tileCounter;
 
         byte[] avm = OthelloUtils.getAvailableMovesBytes(board, this.symbol, this.otherSymbol, reversiFirstFour);
-
-        List<Future<MoveEvaluation>> futures = new ArrayList<>();
-
-        for (byte move : avm) {
-            if (move == 0) break;
-
-            int x = ((move >> 4) & 0b00001111) - 1;
-            int y = (move & 0b00001111) - 1;
-
-            tileCounter++;
-            Board<OthelloTile> copiedBoard = board.copyBoard();
-            copiedBoard.setTile(x, y, symbol);
-            OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
-
-            final int tileCounterFinal = tileCounter;
-            Callable<MoveEvaluation> task = () -> {
-                int moveValue = minimax(copiedBoard, maxDepth, -100000, 100000, false, false, tileCounterFinal);
-                return new MoveEvaluation(x, y, moveValue);
-            };
-            futures.add(executor.submit(task));
-        }
 
         for (String[] aiMove : aiMoves) {
             Arrays.fill(aiMove, "");
         }
 
-        try {
-            for (Future<MoveEvaluation> future : futures) {
-                MoveEvaluation result = future.get(); // This blocks until the thread is done
-                if (result.score > bestValue) {
-                    bestValue = result.score;
-                    bestMove = new int[]{result.x, result.y};
-                }
+        long previousDepthDuration = 0;
+        long moveDeadlineTime = 0;
+        long maxMoveTime = 8_500_000_000L;
+        moveDeadlineTime = System.nanoTime() + maxMoveTime;
 
-                aiMoves[result.x][result.y] = result.score + "";
+        int startingDepth = 4;
+        if (!iterativeDeepening) startingDepth = this.maxDepth;
+
+        while (System.nanoTime() < moveDeadlineTime && startingDepth <= availableDepth + 5 && (moveDeadlineTime - System.nanoTime() > previousDepthDuration)) { // + 5 overhead for possible skipped moves
+            System.out.println("depth: " + startingDepth);
+            long startOfDepthRemainingDuration = moveDeadlineTime - System.nanoTime();
+
+            int[] bestMoveOfCurrentDepth = null;
+            double bestValueOfCurrentDepth = Integer.MIN_VALUE;
+            List<Future<MoveEvaluation>> futures = new ArrayList<>();
+
+            for (byte move : avm) {
+                if (move == 0) break;
+                if (System.nanoTime() > moveDeadlineTime) break;
+
+                int x = ((move >> 4) & 0b00001111) - 1;
+                int y = (move & 0b00001111) - 1;
+
+                Board<OthelloTile> copiedBoard = board.copyBoard();
+                copiedBoard.setTile(x, y, symbol);
+                OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
+
+                final int tileCounterFinal = tileCounter;
+                final int startingDepthFinal = startingDepth;
+                Callable<MoveEvaluation> task = () -> {
+                    double moveValue = minimax(copiedBoard, startingDepthFinal, -100000, 100000, false, false, tileCounterFinal + 1);
+                    return new MoveEvaluation(x, y, moveValue);
+                };
+                futures.add(executor.submit(task));
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+
+            if (System.nanoTime() > moveDeadlineTime) break;
+            try {
+                for (Future<MoveEvaluation> future : futures) {
+                    if (!(moveDeadlineTime - System.nanoTime() > 1000))
+                        throw new TimeoutException(); // padding to avoid negative timeout to future .get()
+                    MoveEvaluation result = future.get(moveDeadlineTime - System.nanoTime(), TimeUnit.NANOSECONDS); // This blocks until the thread is done or timeout
+                    if (result.score > bestValueOfCurrentDepth) {
+                        bestValueOfCurrentDepth = result.score;
+                        bestMoveOfCurrentDepth = new int[]{result.x, result.y};
+                    }
+
+                    aiMoves[result.x][result.y] = result.score + "";
+                }
+            } catch (TimeoutException e) {
+                break;
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("bestMoveOfCurrentDepth: " + bestMoveOfCurrentDepth[0] + ", " + bestMoveOfCurrentDepth[1]);
+            System.out.println("bestValueOfCurrentDepth: " + bestValueOfCurrentDepth);
+            System.out.println("time left ms?: " + ((moveDeadlineTime - System.nanoTime()) / 1_000_000));
+
+            bestMove = bestMoveOfCurrentDepth;
+
+            previousDepthDuration = startOfDepthRemainingDuration - (moveDeadlineTime - System.nanoTime());
+            startingDepth++;
+            if (!iterativeDeepening) break;
         }
 
         return bestMove;
     }
 
-    private long createBitMask(int x, int y){
+    private long createBitMask(int x, int y) {
         return 1L << (x | (y << 3));
     }
 
-    public int evaluateBoard(Board<OthelloTile> board, int myMobility, int otherMobility){
+    public double evaluateBoard(Board<OthelloTile> board, int myMobility, int otherMobility) {
         this.evalCount++;
 
         double startTimeBefore = System.nanoTime();
 
-        int value = 0;
+        double value = 0;
 
-        if(useReversiRules){
+        if (useReversiRules) {
             //als een pass een loss is:
-            if(myMobility == 0){
-                return -1000;
+            if (myMobility == 0) {
+                return -100000;
             }
         }
 
@@ -222,24 +258,21 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         int myCorner = 0;
         int otherCorner = 0;
 
-        int cPunishments = 0;
-        int xPunishments = 0;
+        int punishments = 0;
 
-        for (int[] c : corners){
+        for (int[] c : corners) {
             int x = c[0];
             int y = c[1];
 
-            if(board.getTile(x, y) == symbol){
+            if (board.getTile(x, y) == symbol) {
                 myCorner++;
                 myStableDiscs++;
                 //hoef je niet te checken voor x en c want je krijgt er geen extra pluspunten voor
-            }
-            else if(board.getTile(x, y) == otherSymbol){
+            } else if (board.getTile(x, y) == otherSymbol) {
                 otherCorner++;
                 otherStableDiscs++;
                 //hoef je niet te checken voor x en c want je krijgt er geen extra pluspunten voor
             }
-
 
             if (board.getTile(x, y) != symbol) {
                 //check voor x en c corner sides en geef harde minpunten voor het hebben van deze zonder de corner te hebben
@@ -253,13 +286,13 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 }
 
                 if (board.getTile(x + directionX, y) == symbol) {
-                    cPunishments++;
+                    punishments++;
                 }
                 if (board.getTile(x, y + directionY) == symbol) {
-                    cPunishments++;
+                    punishments++;
                 }
                 if (board.getTile(x + directionX, y + directionY) == symbol) {
-                    xPunishments++;
+                    punishments++;
                 }
             }
         }
@@ -277,19 +310,18 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         // doe alleen zoeken naar stable pieces als de corner aan die kant van het bord behouden wordt door de speler
 
         //als je corner links boven hebt
-        if(board.getTile(0, 0) == symbol){
+        if (board.getTile(0, 0) == symbol) {
 
             //count stable discs upper side, left > right
-            for (int col = 1; col < boardSize - 1; col++){
-                if(board.getTile(col, 0) == board.getTile(col - 1, 0) && board.getTile(col, 0) != OthelloTile.EMPTY){
-                    if(board.getTile(col, 0) == symbol){
-                        if((isStable & createBitMask(col, 0)) == 0) {
+            for (int col = 1; col < boardSize - 1; col++) {
+                if (board.getTile(col, 0) == board.getTile(col - 1, 0) && board.getTile(col, 0) != OthelloTile.EMPTY) {
+                    if (board.getTile(col, 0) == symbol) {
+                        if ((isStable & createBitMask(col, 0)) == 0) {
                             isStable |= createBitMask(col, 0);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(col, 0) == otherSymbol) {
-                        if((isStable & createBitMask(col, 0)) == 0) {
+                    } else if (board.getTile(col, 0) == otherSymbol) {
+                        if ((isStable & createBitMask(col, 0)) == 0) {
                             isStable |= createBitMask(col, 0);
                             otherStableDiscs++;
                         }
@@ -300,16 +332,15 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
 
             //count stable discs left side, up > down
-            for (int row = 1; row < boardSize - 1; row++){
-                if(board.getTile(0, row) == board.getTile(0, row - 1) && board.getTile(0, row) != OthelloTile.EMPTY){
-                    if(board.getTile(0, row) == symbol) {
-                        if((isStable & createBitMask(0, row)) == 0) {
+            for (int row = 1; row < boardSize - 1; row++) {
+                if (board.getTile(0, row) == board.getTile(0, row - 1) && board.getTile(0, row) != OthelloTile.EMPTY) {
+                    if (board.getTile(0, row) == symbol) {
+                        if ((isStable & createBitMask(0, row)) == 0) {
                             isStable |= createBitMask(0, row);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(0, row) == otherSymbol) {
-                        if((isStable & createBitMask(0, row)) == 0) {
+                    } else if (board.getTile(0, row) == otherSymbol) {
+                        if ((isStable & createBitMask(0, row)) == 0) {
                             isStable |= createBitMask(0, row);
                             otherStableDiscs++;
                         }
@@ -321,19 +352,18 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         }
 
         //als je corner links onder hebt
-        if(board.getTile(0, boardSize - 1) == symbol){
+        if (board.getTile(0, boardSize - 1) == symbol) {
 
             //count stable discs lower side, left > right
-            for (int col = 1; col < boardSize - 1; col++){
-                if(board.getTile(col, boardSize - 1) == board.getTile(col - 1, boardSize - 1) && board.getTile(col, boardSize - 1) != OthelloTile.EMPTY){
-                    if(board.getTile(col, boardSize - 1) == symbol) {
-                        if((isStable & createBitMask(col, boardSize - 1)) == 0) {
+            for (int col = 1; col < boardSize - 1; col++) {
+                if (board.getTile(col, boardSize - 1) == board.getTile(col - 1, boardSize - 1) && board.getTile(col, boardSize - 1) != OthelloTile.EMPTY) {
+                    if (board.getTile(col, boardSize - 1) == symbol) {
+                        if ((isStable & createBitMask(col, boardSize - 1)) == 0) {
                             isStable |= createBitMask(col, boardSize - 1);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(col, boardSize - 1) == otherSymbol) {
-                        if((isStable & createBitMask(col, boardSize - 1)) == 0) {
+                    } else if (board.getTile(col, boardSize - 1) == otherSymbol) {
+                        if ((isStable & createBitMask(col, boardSize - 1)) == 0) {
                             isStable |= createBitMask(col, boardSize - 1);
                             otherStableDiscs++;
                         }
@@ -344,16 +374,15 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
 
             //count stable discs left side, down > up
-            for (int row = boardSize - 2; row > 0; row--){
-                if(board.getTile(0, row) == board.getTile(0, row + 1) && board.getTile(0, row) != OthelloTile.EMPTY){
-                    if(board.getTile(0, row) == symbol) {
-                        if((isStable & createBitMask(0, row)) == 0) {
+            for (int row = boardSize - 2; row > 0; row--) {
+                if (board.getTile(0, row) == board.getTile(0, row + 1) && board.getTile(0, row) != OthelloTile.EMPTY) {
+                    if (board.getTile(0, row) == symbol) {
+                        if ((isStable & createBitMask(0, row)) == 0) {
                             isStable |= createBitMask(0, row);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(0, row) == otherSymbol) {
-                        if((isStable & createBitMask(0, row)) == 0) {
+                    } else if (board.getTile(0, row) == otherSymbol) {
+                        if ((isStable & createBitMask(0, row)) == 0) {
                             isStable |= createBitMask(0, row);
                             otherStableDiscs++;
                         }
@@ -365,19 +394,18 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         }
 
         //als je corner rechts boven hebt
-        if(board.getTile(boardSize - 1, 0) == symbol){
+        if (board.getTile(boardSize - 1, 0) == symbol) {
 
             //count stable discs upper side, right > left
-            for (int col = boardSize - 2; col > 0; col--){
-                if(board.getTile(col, 0) == board.getTile(col + 1, 0) && board.getTile(col, 0) != OthelloTile.EMPTY){
-                    if(board.getTile(col, 0) == symbol) {
-                        if((isStable & createBitMask(col, 0)) == 0) {
+            for (int col = boardSize - 2; col > 0; col--) {
+                if (board.getTile(col, 0) == board.getTile(col + 1, 0) && board.getTile(col, 0) != OthelloTile.EMPTY) {
+                    if (board.getTile(col, 0) == symbol) {
+                        if ((isStable & createBitMask(col, 0)) == 0) {
                             isStable |= createBitMask(col, 0);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(col, 0) == otherSymbol) {
-                        if((isStable & createBitMask(col, 0)) == 0) {
+                    } else if (board.getTile(col, 0) == otherSymbol) {
+                        if ((isStable & createBitMask(col, 0)) == 0) {
                             isStable |= createBitMask(col, 0);
                             otherStableDiscs++;
                         }
@@ -388,16 +416,15 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
 
             //count stable discs right side, up > down
-            for (int row = 1; row < boardSize - 1; row++){
-                if(board.getTile(boardSize - 1, row) == board.getTile(boardSize - 1, row - 1) && board.getTile(boardSize - 1, row) != OthelloTile.EMPTY){
-                    if(board.getTile(boardSize - 1, row) == symbol) {
-                        if((isStable & createBitMask(boardSize - 1, row)) == 0) {
+            for (int row = 1; row < boardSize - 1; row++) {
+                if (board.getTile(boardSize - 1, row) == board.getTile(boardSize - 1, row - 1) && board.getTile(boardSize - 1, row) != OthelloTile.EMPTY) {
+                    if (board.getTile(boardSize - 1, row) == symbol) {
+                        if ((isStable & createBitMask(boardSize - 1, row)) == 0) {
                             isStable |= createBitMask(boardSize - 1, row);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(boardSize - 1, row) == otherSymbol) {
-                        if((isStable & createBitMask(boardSize - 1, row)) == 0) {
+                    } else if (board.getTile(boardSize - 1, row) == otherSymbol) {
+                        if ((isStable & createBitMask(boardSize - 1, row)) == 0) {
                             isStable |= createBitMask(boardSize - 1, row);
                             otherStableDiscs++;
                         }
@@ -409,19 +436,18 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         }
 
         //als je corner rechts onder hebt
-        if(board.getTile(boardSize - 1, boardSize - 1) == symbol){
+        if (board.getTile(boardSize - 1, boardSize - 1) == symbol) {
 
             //count stable discs lower side, right > left
-            for (int col = boardSize - 2; col > 0; col--){
-                if(board.getTile(col, boardSize - 1) == board.getTile(col + 1, boardSize - 1) && board.getTile(col, boardSize - 1) != OthelloTile.EMPTY){
-                    if(board.getTile(col, boardSize - 1) == symbol) {
-                        if((isStable & createBitMask(col, boardSize - 1)) == 0) {
+            for (int col = boardSize - 2; col > 0; col--) {
+                if (board.getTile(col, boardSize - 1) == board.getTile(col + 1, boardSize - 1) && board.getTile(col, boardSize - 1) != OthelloTile.EMPTY) {
+                    if (board.getTile(col, boardSize - 1) == symbol) {
+                        if ((isStable & createBitMask(col, boardSize - 1)) == 0) {
                             isStable |= createBitMask(col, boardSize - 1);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(col, boardSize - 1) == otherSymbol) {
-                        if((isStable & createBitMask(col, boardSize - 1)) == 0) {
+                    } else if (board.getTile(col, boardSize - 1) == otherSymbol) {
+                        if ((isStable & createBitMask(col, boardSize - 1)) == 0) {
                             isStable |= createBitMask(col, boardSize - 1);
                             otherStableDiscs++;
                         }
@@ -432,16 +458,15 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
             }
 
             //count stable discs right side, down > up
-            for (int row = boardSize - 2; row > 0; row--){
-                if(board.getTile(boardSize - 1, row) == board.getTile(boardSize - 1, row + 1) && board.getTile(boardSize - 1, row) != OthelloTile.EMPTY){
-                    if(board.getTile(boardSize - 1, row) == symbol) {
-                        if((isStable & createBitMask(boardSize - 1, row)) == 0) {
+            for (int row = boardSize - 2; row > 0; row--) {
+                if (board.getTile(boardSize - 1, row) == board.getTile(boardSize - 1, row + 1) && board.getTile(boardSize - 1, row) != OthelloTile.EMPTY) {
+                    if (board.getTile(boardSize - 1, row) == symbol) {
+                        if ((isStable & createBitMask(boardSize - 1, row)) == 0) {
                             isStable |= createBitMask(boardSize - 1, row);
                             myStableDiscs++;
                         }
-                    }
-                    else if (board.getTile(boardSize - 1, row) == otherSymbol) {
-                        if((isStable & createBitMask(boardSize - 1, row)) == 0) {
+                    } else if (board.getTile(boardSize - 1, row) == otherSymbol) {
+                        if ((isStable & createBitMask(boardSize - 1, row)) == 0) {
                             isStable |= createBitMask(boardSize - 1, row);
                             otherStableDiscs++;
                         }
@@ -460,11 +485,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         double startTimeAfter = System.nanoTime();
 
         //heb je gewonnen of verloren?
-        if(totalTiles == 64){
-            if(discDiff > 0){
-                value += 1000;
-            } else{
-                value -= 1000;
+        if (totalTiles == 64) {
+            if (discDiff > 0) {
+                value += 100000;
+            } else {
+                value -= 100000;
             }
         }
 
@@ -473,11 +498,11 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         double mobilityPhase = (1 - phase);
         double discPhase = phase;
 
-        value += (int)((mobilityDiff * mobility_diffWeight * mobilityPhase) +
-                (myCorner * corner_diffWeight) +
+        value += (mobilityDiff * mobility_diffWeight * mobilityPhase) +
+                (cornerDiff * corner_diffWeight) +
                 (stableDiscDiff * stability_diffWeight) +
                 (discDiff * disc_diffWeight * discPhase) -
-                ((cPunishments + xPunishments) * corner_diffWeight));
+                (punishments * corner_diffWeight);
 
         double endTimeAfter = System.nanoTime();
         this.afterTime += endTimeAfter - startTimeAfter;
@@ -485,7 +510,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         return value;
     }
 
-    public int minimax(Board<OthelloTile> board, int depth, int alpha, int beta, boolean isMax, boolean depthIsDecreased, int tileCounter){
+    public double minimax(Board<OthelloTile> board, int depth, double alpha, double beta, boolean isMax, boolean depthIsDecreased, int tileCounter) {
         boolean boardFull = (tileCounter == 64);
 
         byte[] availableMovesUpcoming = new byte[BOARD_SIZED_SQUARED];
@@ -498,23 +523,23 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         }
 
 
-        if(boardFull || depth <= 0){
+        if (boardFull || depth <= 0) {
             if (!isMax) {
                 OthelloUtils.getAvailableMovesCore(board, this.symbol, this.otherSymbol, availableMovesUpcoming, reversiFirstFour);
             } else {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
             }
-            return evaluateBoard(board, availableMovesUpcoming.length, availableMovesOpponent.length);
+            return evaluateBoard(board, availableMovesCount(availableMovesUpcoming), availableMovesCount(availableMovesOpponent));
         }
 
-        if(isMax){
+        if (isMax) {
 
-            if (availableMovesUpcoming.length > 10 && !depthIsDecreased) {
+            if (availableMovesCount(availableMovesUpcoming) > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
 
-            int highestVal = -10000;
+            double highestVal = -10000;
 
             if (!hasMoves(availableMovesUpcoming)) {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesOpponent, reversiFirstFour);
@@ -522,8 +547,8 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                     return evaluateBoard(board, 0, 0);
                 }
 
-                int curVal = minimax(board, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
-                highestVal= Math.max(highestVal, curVal);
+                double curVal = minimax(board, depth - 1, alpha, beta, false, depthIsDecreased, tileCounter);
+                highestVal = Math.max(highestVal, curVal);
 
             }
 
@@ -539,33 +564,32 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
 
                 tileCounter++;
-                int curVal = minimax(copiedBoard, depth-1, alpha, beta, false, depthIsDecreased, tileCounter);
+                double curVal = minimax(copiedBoard, depth - 1, alpha, beta, false, depthIsDecreased, tileCounter);
 
-                highestVal= Math.max(highestVal, curVal);
+                highestVal = Math.max(highestVal, curVal);
                 alpha = Math.max(alpha, curVal);
-                if(beta <= alpha){
+                if (beta <= alpha) {
                     break;
                 }
             }
 
             return highestVal;
-        }
-        else {
+        } else {
 
-            if (availableMovesOpponent.length > 10 && !depthIsDecreased) {
+            if (availableMovesCount(availableMovesOpponent) > 10 && !depthIsDecreased) {
                 depth--;
                 depthIsDecreased = true;
             }
 
-            int lowestVal = 10000;
+            double lowestVal = 10000;
 
             if (!hasMoves(availableMovesOpponent)) {
                 OthelloUtils.getAvailableMovesCore(board, this.otherSymbol, this.symbol, availableMovesUpcoming, reversiFirstFour);
                 if (!hasMoves(availableMovesUpcoming)) {
                     return evaluateBoard(board, 0, 0);
                 }
-                int curVal = minimax(board, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
-                lowestVal= Math.min(lowestVal, curVal);
+                double curVal = minimax(board, depth - 1, alpha, beta, true, depthIsDecreased, tileCounter);
+                lowestVal = Math.min(lowestVal, curVal);
 
             }
 
@@ -577,15 +601,15 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
                 int y = (move & 0b00001111) - 1;
 
                 Board<OthelloTile> copiedBoard = board.copyBoard();
-                copiedBoard.setTile(x, y, symbol);
-                OthelloUtils.flipTiles(copiedBoard, x, y, symbol);
+                copiedBoard.setTile(x, y, this.otherSymbol);
+                OthelloUtils.flipTiles(copiedBoard, x, y, this.otherSymbol);
 
                 tileCounter++;
-                int curVal = minimax(copiedBoard, depth-1, alpha, beta, true, depthIsDecreased, tileCounter);
+                double curVal = minimax(copiedBoard, depth - 1, alpha, beta, true, depthIsDecreased, tileCounter);
 
-                lowestVal= Math.min(lowestVal, curVal);
+                lowestVal = Math.min(lowestVal, curVal);
                 beta = Math.min(beta, curVal);
-                if(beta <= alpha){
+                if (beta <= alpha) {
                     break;
                 }
             }
@@ -595,7 +619,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     }
 
 
-    public static boolean hasMoves(byte[] moves){
+    public static boolean hasMoves(byte[] moves) {
         if (moves == null) return false;
         return moves[0] != 0;
     }
@@ -607,8 +631,9 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
 
     private static class MoveEvaluation {
         int x, y;
-        int score;
-        MoveEvaluation(int x, int y, int score) {
+        double score;
+
+        MoveEvaluation(int x, int y, double score) {
             this.x = x;
             this.y = y;
             this.score = score;

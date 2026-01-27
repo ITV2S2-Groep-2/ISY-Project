@@ -96,8 +96,8 @@ public class TicTacToeAIPlayer extends Player<TicTacToeTile> {
 
         int indexMax = boardSize - 1;
         for (int i = 0; i < boardSize; i++) {
-            if (board.getTile(i, indexMax - 1) == symbol) sumSymbol++;
-            else if (board.getTile(i, indexMax - 1) == otherSymbol) sumOther++;
+            if (board.getTile(i, indexMax - i) == symbol) sumSymbol++;
+            else if (board.getTile(i, indexMax - i) == otherSymbol) sumOther++;
         }
 
 
