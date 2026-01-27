@@ -30,10 +30,10 @@ public class Main {
     public static final int MINDEPTH = 4;
 
     public static boolean endCase = false;
-    public static boolean oneVone = false;
+    public static boolean oneVone = true;
 
-    public static OthelloAIPlayer testAI = new OthelloAIPlayer("testAI", OthelloTile.PLAYER_1, null, 5, 25, 10, 1, 5, "testAI");
-    public static OthelloAIPlayer opponent = new OthelloAIPlayer("Opponent", OthelloTile.PLAYER_2, null, 5, 25, 10, 1, 2, "Opponent");
+    public static OthelloAIPlayer testAI = new OthelloAIPlayer("testAI", OthelloTile.PLAYER_1, null, 5, 250, 100, 1, 5, "testAI", true);
+    public static OthelloAIPlayer opponent = new OthelloAIPlayer("Opponent", OthelloTile.PLAYER_2, null, 5, 250, 100, 1, 2, "Opponent", false);
 
     public static void main(String[] args) {
         while (!endCase) {
@@ -76,7 +76,7 @@ public class Main {
                     UUID id = UUID.randomUUID();
                     String modelId = id.toString();
 
-                    OthelloAIPlayer baseModel = new OthelloAIPlayer(modelId, OthelloTile.PLAYER_1, null, baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName);
+                    OthelloAIPlayer baseModel = new OthelloAIPlayer(modelId, OthelloTile.PLAYER_1, null, baseMobilityDiffWeight, baseCornerDiffWeight, baseStabilityDiffWeight, baseDiscDiffWeight, baseMaxDepth, baseModelName, false);
                     models.add(baseModel);
 
                     for (int i = 0; i < 4; i++) {
@@ -190,11 +190,11 @@ public class Main {
         UUID id = UUID.randomUUID();
         String modelId = id.toString();
 
-        OthelloAIPlayer model = new OthelloAIPlayer(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModelName);
+        OthelloAIPlayer model = new OthelloAIPlayer(modelId, OthelloTile.PLAYER_1, null, roundObWeight, roundCornerWeight, roundStabilityWeight, roundValueDiscWeight, roundMaxDepth, baseModelName, false);
         return model;
     }
 
-    static final int GAME_AMOUNT = 500;
+    static final int GAME_AMOUNT = 1;
     static final int MAX_GAME_THREADS = 10;
     static class ModelRunner implements Runnable{
         final ExecutorService executor = Executors.newFixedThreadPool(MAX_GAME_THREADS);

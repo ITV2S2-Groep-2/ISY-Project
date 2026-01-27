@@ -92,22 +92,22 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             winscene handler
          */
         if (this.state == GameState.WON) {
-            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
-                ResultWriter.addLoss(getOpponent().getName());
+            if (this.players[0] instanceof OthelloRandomAI || this.players[0].getName().equals("Opponent")) {
+                ResultWriter.addLoss(this.players[1].getName());
             } else {
-                ResultWriter.addWin(this.activeTurnPlayer.getName());
+                ResultWriter.addWin(this.players[0].getName());
             }
         } else if (this.state == GameState.LOST) {
-            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
-                ResultWriter.addWin(getOpponent().getName());
+            if (this.players[0] instanceof OthelloRandomAI || this.players[0].getName().equals("Opponent")) {
+                ResultWriter.addWin(this.players[1].getName());
             } else {
-                ResultWriter.addLoss(this.activeTurnPlayer.getName());
+                ResultWriter.addLoss(this.players[0].getName());
             }
         } else {
-            if (this.activeTurnPlayer instanceof OthelloRandomAI || this.activeTurnPlayer.getName().equals("Opponent")) {
-                ResultWriter.addDraw(getOpponent().getName());
+            if (this.players[0] instanceof OthelloRandomAI || this.players[0].getName().equals("Opponent")) {
+                ResultWriter.addDraw(this.players[1].getName());
             } else {
-                ResultWriter.addDraw(this.activeTurnPlayer.getName());
+                ResultWriter.addDraw(this.players[0].getName());
             }
         }
     }
