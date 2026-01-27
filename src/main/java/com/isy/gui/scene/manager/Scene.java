@@ -30,8 +30,6 @@ public abstract class Scene {
         return window;
     }
 
-    public void initGame(Game<?> game){}
-
     public abstract void init();
 
     public void show() {

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 public class Promise{
     private String accept;
     private String command = null;
+    private Supplier<Boolean> secondaryBreakStatement = () -> false;
     private static PrintWriter out;
     private static Socket socket = null;
 
@@ -26,6 +28,11 @@ public class Promise{
 
     public Promise(String accept){
         this.accept = accept;
+    }
+
+    public Promise(String accept, Supplier<Boolean> secondaryBreakStatement){
+        this.accept = accept;
+        this.secondaryBreakStatement = secondaryBreakStatement;
     }
 
     public Promise setCommand(String command) {
@@ -59,13 +66,14 @@ public class Promise{
 
         try {
             while (current.getMessage() != null) {
-//                System.out.println("PROMISE: " + accept.pattern() + ", " + current.getMessage());
+                if (this.secondaryBreakStatement.get()) return null;
 
                 if (current.getMessage().matches(accept) && current.isStillValid()){
                     break;
                 }
 
                 while (current.getNext() == null){
+                    if (this.secondaryBreakStatement.get()) return null;
                     Thread.sleep(ServerUtils.waitTime);
                 }
 

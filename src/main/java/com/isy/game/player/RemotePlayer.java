@@ -2,6 +2,7 @@ package com.isy.game.player;
 
 import com.isy.game.Game;
 import com.isy.game.ITile;
+import com.isy.game.ticTacToe.GameState;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 
@@ -24,7 +25,9 @@ public abstract class RemotePlayer<T extends Enum<T> & ITile> extends Player<T> 
             throw new IllegalStateException("RemotePlayer needs a server client");
         }
 
-        String serverMove = await(new Promise("^(?:ERR|SVR GAME MOVE).*"));
+        String serverMove = await(new Promise("^(?:ERR|SVR GAME MOVE).*", () -> this.game.getState() != GameState.ONGOING));
+
+        if (serverMove == null) return null;
 
         System.out.println("REMOTE PLAYER MOVE: " + serverMove);
 

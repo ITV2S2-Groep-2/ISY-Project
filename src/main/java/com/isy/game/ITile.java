@@ -10,4 +10,6 @@ public interface ITile {
 
     int size();
     int index();
+
+    void createDisplayIcon(JLabel label);
 }

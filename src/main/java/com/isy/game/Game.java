@@ -1,6 +1,7 @@
 package com.isy.game;
 
 import com.isy.Main;
+import com.isy.game.othello.OthelloRemotePlayer;
 import com.isy.game.player.Player;
 import com.isy.game.player.RemotePlayer;
 import com.isy.game.ticTacToe.GameState;
@@ -10,7 +11,8 @@ import com.isy.gui.scene.WinScene;
 import com.isy.server.Server;
 import com.isy.server.await.Promise;
 import com.isy.util.PlayerEventManager;
-import com.isy.util.lang.LangHandler;
+
+import java.util.List;
 
 import static com.isy.server.ServerUtils.asyncAwait;
 
@@ -45,17 +47,21 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
          */
         if (isOnline){
             asyncAwait(new Promise("^SVR GAME (?:WIN|LOSS).*"), (result) -> {
-//                System.out.println(result);
-
                 if(result.toUpperCase().contains("ERR")){
 
-                }else if(result.toUpperCase().contains("WIN")){
-                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
-                    this.setState(GameState.WON);
+                } else if(result.toUpperCase().contains("WIN")) {
+                    if (this.players[0] instanceof OthelloRemotePlayer) {
+                        this.state = GameState.LOST;
+                    } else {
+                        this.state = GameState.WON;
+                    }
                     PlayerEventManager.get().stop();
-                }else if(result.toUpperCase().contains("LOSS")) {
-                    Server.getInstance().addFakeMessage("ERR GAME STOPPED");
-                    this.setState(GameState.LOST);
+                } else if (result.toUpperCase().contains("LOSS")) {
+                    if (this.players[0] instanceof OthelloRemotePlayer) {
+                        this.state = GameState.WON;
+                    } else {
+                        this.state = GameState.LOST;
+                    }
                     PlayerEventManager.get().stop();
                 }
             });
@@ -77,7 +83,7 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         this.renderBoard();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -86,14 +92,15 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             winscene handler
          */
         Main.window.getManager().addScene(new WinScene(Main.window));
-        if (this.state == GameState.WON){
-            String playerName = this.activeTurnPlayer.getName();
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(playerName, isOnline);
-        }else if(this.state == GameState.LOST){
-            ((WinScene) Main.window.getManager().getScene("winScene")).lost(LangHandler.get().translate("win_scene.person.you"), isOnline);
-        } else {
-            ((WinScene) Main.window.getManager().getScene("winScene")).win(LangHandler.get().translate("win_scene.person.nobody"), isOnline);
+        WinScene winScene = ((WinScene) Main.window.getManager().getScene("winScene"));
+
+        switch (this.state) {
+            case WON -> winScene.win(players[0], isOnline);
+            case LOST -> winScene.win(players[1], isOnline);
+            case DRAW -> winScene.win(null, isOnline);
         }
+
+        this.cleanUp();
     };
 
     public boolean handleSingleTurn() {
@@ -106,21 +113,20 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
             return false;
         }
 
-        boolean correctMove = this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
+        List<int[]> availableMoves = getAvailableMoves(this.getBoard(), this.activeTurnPlayer.getSymbol(), this.getOpponent().getSymbol());
+        int[] finalMove = move;
+        boolean isAvailable = availableMoves.stream().anyMatch(val -> {
+            return val[0] == finalMove[0] && val[1] == finalMove[1];
+        });
 
-        if (correctMove && this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) {
-            this.activeTurnPlayer.sendServerData(move);
-        }
+        boolean correctMove =
+                isAvailable &&
+                this.getBoard().setTile(move[0], move[1], this.activeTurnPlayer.getSymbol());
 
         if (correctMove) {
-            if(this.checkWin(move[0], move[1], this.activeTurnPlayer)){
-                this.state = GameState.WON;
-                return false;
-            } else if (this.board.isBoardFull()) {
-                return true;
-            }
-
-            this.giveTurnOver();
+            if (this.client != null && !(this.activeTurnPlayer instanceof RemotePlayer<?>)) this.activeTurnPlayer.sendServerData(move);
+            this.checkWin(this.activeTurnPlayer, this.getOpponent());
+            if (this.state == GameState.ONGOING) this.giveTurnOver();
         }
 
         return false;
@@ -132,12 +138,17 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
         }
     }
 
+    public abstract List<int[]> getAvailableMoves(
+            Board<T> board,
+            T playerSymbol,
+            T opponentSymbol);
 
-    public abstract boolean checkWin(int x, int y, Player<T> p);
+    public abstract GameState checkWin(Player<T> p, Player<T> o);
 
-    public void setRenderScene(Scene scene){
+    public void setRenderScene(GameScene scene){
         this.renderScene = scene;
         scene.initGame(this);
+        scene.setPlayerNames(this.players[0], this.players[1]);
     }
 
     public Scene getRenderScene(){
@@ -176,5 +187,11 @@ public abstract class Game<T extends Enum<T> & ITile> implements Runnable {
     public void run() {
         gameLoop();
     }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void cleanUp() {}
 
 }

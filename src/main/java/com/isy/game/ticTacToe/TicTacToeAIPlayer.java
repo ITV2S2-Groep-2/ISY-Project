@@ -5,8 +5,8 @@ import com.isy.game.Game;
 import com.isy.game.player.Player;
 import com.isy.server.Server;
 
-public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
-    public TicTacToeAiPlayer(String name, TicTacToeTile symbol, Server client){
+public class TicTacToeAIPlayer extends Player<TicTacToeTile> {
+    public TicTacToeAIPlayer(String name, TicTacToeTile symbol, Server client){
         super(name, symbol, client);
     }
 
@@ -96,8 +96,8 @@ public class TicTacToeAiPlayer extends Player<TicTacToeTile> {
 
         int indexMax = boardSize - 1;
         for (int i = 0; i < boardSize; i++) {
-            if (board.getTile(i, indexMax - 1) == symbol) sumSymbol++;
-            else if (board.getTile(i, indexMax - 1) == otherSymbol) sumOther++;
+            if (board.getTile(i, indexMax - i) == symbol) sumSymbol++;
+            else if (board.getTile(i, indexMax - i) == otherSymbol) sumOther++;
         }
 
 

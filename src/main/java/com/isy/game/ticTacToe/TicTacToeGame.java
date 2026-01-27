@@ -4,6 +4,9 @@ import com.isy.game.Board;
 import com.isy.game.player.Player;
 import com.isy.game.Game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TicTacToeGame extends Game<TicTacToeTile> {
 
     public TicTacToeGame(Player<TicTacToeTile>[] players) {
@@ -12,52 +15,86 @@ public class TicTacToeGame extends Game<TicTacToeTile> {
 
 
     @Override
-    public boolean checkWin(int x, int y, Player<TicTacToeTile> p) {
-        TicTacToeTile symbol = p.getSymbol();
+    public List<int[]> getAvailableMoves(Board<TicTacToeTile> board, TicTacToeTile playerSymbol, TicTacToeTile opponentSymbol) {
+        List<int[]> am = new ArrayList<>();
 
-        boolean rowWin = true;
-        for (int i = 0; i < 3; i++) {
-            if (this.getBoard().getTile(i, y) != symbol) {
-                rowWin = false;
-                break;
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                if (board.getTile(x, y) == TicTacToeTile.EMPTY) {
+                    am.add(new int[]{x, y});
+                }
             }
         }
-        if (rowWin) return true;
+        return am;
+    }
 
-
-        boolean colWin = true;
-        for (int i = 0; i < 3; i++) {
-            if (this.board.getTile(x, i) != symbol) {
-                colWin = false;
-                break;
-            }
+    @Override
+    public GameState checkWin(Player<TicTacToeTile> p, Player<TicTacToeTile> o) {
+        if (this.hasVerticalWin(p) || this.hasHorizontalWin(p) || this.hasDiagonalWin(p)) {
+            this.state = GameState.WON;
+            return GameState.WON;
         }
-        if (colWin) return true;
 
+        if (this.hasVerticalWin(o) || this.hasHorizontalWin(o) || this.hasDiagonalWin(o)) {
+            this.state = GameState.LOST;
+            return GameState.LOST;
+        }
 
-        if (x == y) {
-            boolean diagWin = true;
-            for (int i = 0; i < 3; i++) {
-                if (this.board.getTile(i, i) != symbol) {
-                    diagWin = false;
+        if (this.board.isBoardFull()) {
+            this.state = GameState.DRAW;
+            return GameState.DRAW;
+        }
+
+        return GameState.ONGOING;
+    }
+
+    private boolean hasHorizontalWin(Player<TicTacToeTile> p) {
+        boolean horizontalWin = false;
+        for (int row = 0; row < this.getBoard().getWidth(); row++) {
+            horizontalWin = true;
+            for (int col = 0; col < this.getBoard().getHeight(); col++) {
+                if (this.getBoard().getTile(row, col) != p.getSymbol()) {
+                    horizontalWin = false;
                     break;
                 }
             }
-            if (diagWin) return true;
+            if (horizontalWin) return true;
         }
-
-
-        if (x + y == 2) {
-            boolean antiDiagWin = true;
-            for (int i = 0; i < 3; i++) {
-                if (this.board.getTile(i, 2 - i) != symbol) {
-                    antiDiagWin = false;
-                    break;
-                }
-            }
-            return antiDiagWin;
-        }
-
         return false;
+    }
+
+    private boolean hasVerticalWin(Player<TicTacToeTile> p) {
+        boolean verticalWin = false;
+        for (int col = 0; col < this.getBoard().getHeight(); col++) {
+            verticalWin = true;
+            for (int row = 0; row < this.getBoard().getWidth(); row++) {
+                if (this.getBoard().getTile(row, col) != p.getSymbol()) {
+                    verticalWin = false;
+                    break;
+                }
+            }
+            if (verticalWin) return true;
+        }
+        return false;
+    }
+
+    private boolean hasDiagonalWin(Player<TicTacToeTile> p) {
+        TicTacToeTile symbol = p.getSymbol();
+        boolean diagonalWin = false;
+        if (this.getBoard().getTile(0,0) == symbol
+                && this.getBoard().getTile(1,1) == symbol
+                && this.getBoard().getTile(2,2) == symbol
+        ) {
+            diagonalWin = true;
+        }
+
+        if (this.getBoard().getTile(2,0) == symbol
+                && this.getBoard().getTile(1,1) == symbol
+                && this.getBoard().getTile(0,2) == symbol
+        ) {
+            diagonalWin = true;
+        }
+
+        return diagonalWin;
     }
 }
