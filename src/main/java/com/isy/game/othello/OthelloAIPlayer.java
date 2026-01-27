@@ -16,8 +16,7 @@ import static com.isy.game.othello.OthelloUtils.*;
 public class OthelloAIPlayer extends Player<OthelloTile> {
     public static final double MOBILITY = 3, CORNER = 40, STABILITY = 20, DISC = 1;
     public static final int DEPTH = 2;
-
-    public static final boolean iterativeDeepening = false;
+    public static final boolean ITERATIVE_DEEPENING = true;
 
     String parentName = "BASEMODEL";
     double mobility_diffWeight = 5;
@@ -25,6 +24,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     double stability_diffWeight = 10;
     double disc_diffWeight = 1;
     int maxDepth;
+    public boolean iterativeDeepening = false;
 
     OthelloTile symbol = getSymbol();
     OthelloTile otherSymbol = (symbol == OthelloTile.PLAYER_1) ? OthelloTile.PLAYER_2 : OthelloTile.PLAYER_1;
@@ -56,10 +56,10 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
     double afterTime = 0;
 
     public OthelloAIPlayer(String name, OthelloTile symbol, Server client) {
-        this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null);
+        this(name, symbol, client, MOBILITY, CORNER, STABILITY, DISC, DEPTH, null, ITERATIVE_DEEPENING);
     }
 
-    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName) {
+    private OthelloAIPlayer(String name, OthelloTile symbol, Server client, double mobWeight, double cornerWeight, double stabilityWeight, double discWeight, int maxDepth, String parentName, boolean iterativeDeepening) {
         super(name, symbol, client);
         this.mobility_diffWeight = mobWeight;
         this.corner_diffWeight = cornerWeight;
@@ -67,6 +67,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         this.disc_diffWeight = discWeight;
         this.maxDepth = maxDepth;
         this.parentName = parentName;
+        this.iterativeDeepening = iterativeDeepening;
     }
 
     public String getParent() {
@@ -159,7 +160,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         moveDeadlineTime = System.nanoTime() + maxMoveTime;
 
         int startingDepth = 4;
-        if (iterativeDeepening) startingDepth = this.maxDepth;
+        if (!iterativeDeepening) startingDepth = this.maxDepth;
 
         while (System.nanoTime() < moveDeadlineTime && startingDepth <= availableDepth + 5 && (moveDeadlineTime - System.nanoTime() > previousDepthDuration)) { // + 5 overhead for possible skipped moves
             System.out.println("depth: " + startingDepth);
@@ -236,7 +237,7 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         if (useReversiRules) {
             //als een pass een loss is:
             if (myMobility == 0) {
-                return -1000;
+                return -100000;
             }
         }
 
@@ -486,9 +487,9 @@ public class OthelloAIPlayer extends Player<OthelloTile> {
         //heb je gewonnen of verloren?
         if (totalTiles == 64) {
             if (discDiff > 0) {
-                value += 1000;
+                value += 100000;
             } else {
-                value -= 1000;
+                value -= 100000;
             }
         }
 
